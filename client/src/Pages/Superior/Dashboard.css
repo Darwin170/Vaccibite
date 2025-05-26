@@ -1,0 +1,54 @@
+  .dashboard-wrapper {
+    display: flex;
+  }
+  
+  .dashboard-container {
+    margin-left: 220px;
+    padding: 30px;
+    flex-grow: 1;
+    background-color: #6565654b;
+    min-height: 100vh;
+  }
+  
+  .dashboard-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  /* Filters styling */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+    margin-left: 55px;
+  }
+  
+  .filters select {
+    padding: 10px 12px;
+    border: 1px solid #b6b6b6;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f8f7f7;
+    margin-left: 10px;
+  }
+  
+  
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  
+  .chart-card {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-left: 75px;
+  }
+  
+  .chart-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: #333;
+  }
+  

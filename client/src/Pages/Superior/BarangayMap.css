@@ -1,0 +1,73 @@
+/* BarangayMap.css */
+
+.map-section {
+  height: 500px;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.map-container-wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+.map-area {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.report-section {
+  margin-top: 40px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.report-section h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.report-section table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.report-section table th,
+.report-section table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.report-section table th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}
+
+.report-section table td a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.report-section table td a:hover {
+  text-decoration: underline;
+}
+
+.view-map-btn {
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.view-map-btn:hover {
+  background-color: #1565c0;
+}

@@ -1,0 +1,49 @@
+.container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.heading {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.archive-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.archive-table th,
+.archive-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.archive-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.map-button {
+  background-color: #40c4b7;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.retrieve-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}

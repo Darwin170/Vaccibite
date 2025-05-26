@@ -1,0 +1,60 @@
+/* ActivityLogs.css */
+
+.container {
+  max-width: 800px;
+ 
+  background-color: #f8f9fa;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+  margin-left:100 ;
+}
+
+.inputGroup {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: 90px;
+}
+
+.tableHeader {
+  background-color: #f1f1f1;
+}
+
+.tableCell {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.deleteButton {
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

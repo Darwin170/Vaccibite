@@ -1,0 +1,75 @@
+.app-sidebar {
+
+  box-shadow: 5px 0 10px rgba(0, 0, 0, 0.3);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+
+    
+
+.logo-container {
+  display: flex;
+  gap: 5px;
+  padding: 6px;
+  width: 100%; 
+  background-color: #ffffff;
+  box-sizing: border-box;
+  margin-right: 50px;
+box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.logo-container img {
+  max-height: 60px;
+  width: auto;
+  object-fit: contain;
+  margin-right: 20px;
+}
+
+  
+  .sidebar-title {
+    margin-top: 33px;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    color: #646464 ;
+  }
+  
+.app-sidebar {
+  background-color: #a40575;
+  color: #ffffff;
+  height: 100vh;
+  z-index: 1000;
+  padding: 0;
+  width: 240px; /* or whatever your sidebar width is */
+  box-sizing: border-box;
+}
+
+.app-sidebar button {
+  display: block;
+  background-color: transparent;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 15px 16px;
+  width: 100%;
+  border: none;
+  outline: none;
+  margin: 0;
+  box-sizing: border-box;
+  transition: background 0.3s ease;
+}
+
+.app-sidebar button:hover {
+  background-image: linear-gradient(to right, #f8e7f6, #242121);
+  border-radius: 0;
+  color:#0a0a0a
+}
+
+  

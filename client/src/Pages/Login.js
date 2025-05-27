@@ -1,4 +1,3 @@
-// src/Pages/Login.js
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
@@ -7,7 +6,6 @@ import { useAuth } from '../routes/AuthContext';
 import { logActivity } from './System_Admin/Activitylogger';
 
 const Login = () => {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,24 +22,24 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8787/auth/login", {
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/login`,
+        {
+          email: email.trim().toLowerCase(),
+          password,
+        }
+      );
 
       if (response.data && response.data.user) {
         const user = response.data.user;
 
-        // Save user in context (for global use)
         setUser(user);
 
-        // ✅ Save user in localStorage (for PrivateRoute)
         localStorage.setItem("user", JSON.stringify({
           username: user.username || user.email,
           role: user.position,
         }));
 
-        // ✅ Log activity
         await logActivity(
           {
             userId: user._id,
@@ -52,7 +50,6 @@ const Login = () => {
           "User logged in successfully"
         );
 
-        
         if (user.position === "System_Admin") {
           navigate("/admin/UserManagement");
         } else if (user.position === "Superior_Admin") {
@@ -63,7 +60,6 @@ const Login = () => {
           setError("Unauthorized role.");
           console.log("User role:", user.role);
           alert("Role is: " + user.role);
-
         }
       } else {
         setError("Login failed. Please try again.");
@@ -103,5 +99,6 @@ const Login = () => {
       </div>
     </div>
   );
-}
+};
+
 export default Login;

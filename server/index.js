@@ -1,5 +1,5 @@
   const express = require("express");
-  const cors = require("cors");
+  const cors = require('cors');
   const dotenv = require("dotenv");
   const connectDB = require("./config/db");
   const authroute = require("./routes/authroute");
@@ -10,7 +10,11 @@
   // Middleware to handle JSON requests
   const app = express();
   app.use(express.json()); 
-  app.use(cors());
+  app.use(cors({
+  origin: 'https://vaccibite.onrender.com', 
+  credentials: true
+  }));
+
   connectDB();
   const PORT = process.env.PORT || 8787;
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

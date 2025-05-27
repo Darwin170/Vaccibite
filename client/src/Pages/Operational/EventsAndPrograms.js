@@ -1,3 +1,4 @@
+// src/Pages/CalendarScheduler.js
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { Calendar } from "react-big-calendar";
@@ -22,21 +23,21 @@ const localizer = dateFnsLocalizer({
 
 const CalendarScheduler = () => {
   const [events, setEvents] = useState([]);
-
-  // Control current view: month, week, day, agenda
   const [view, setView] = useState("month");
-
-  // Control current date displayed on calendar
   const [date, setDate] = useState(new Date());
 
   const fetchEvents = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:8787/auth/getAllEvents");
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/auth/getAllEvents`
+      );
+
       const formattedEvents = response.data.map((event) => ({
         ...event,
         start: new Date(event.start),
         end: new Date(event.end),
       }));
+
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -51,7 +52,6 @@ const CalendarScheduler = () => {
     <div style={{ display: "flex" }}>
       <Sidebar />
       <div className="reporting-container" style={{ marginLeft: "220px", flex: 1 }}>
-        
         <div className="calendar-wrapper">
           <Calendar
             localizer={localizer}
@@ -59,10 +59,10 @@ const CalendarScheduler = () => {
             startAccessor="start"
             endAccessor="end"
             style={{ height: 500 }}
-            view={view}           
-            onView={setView}     
-            date={date}          
-            onNavigate={setDate}  
+            view={view}
+            onView={setView}
+            date={date}
+            onNavigate={setDate}
           />
         </div>
       </div>

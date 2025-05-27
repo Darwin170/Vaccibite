@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar'; // ✅ Import Sidebar
-import './Sidebar.css'; // ✅ Sidebar styles
+import Sidebar from './Sidebar';
+import './Sidebar.css';
 import './ResolutionPage.css';
 
 function ResolutionPage() {
@@ -10,14 +10,16 @@ function ResolutionPage() {
   const [barangays, setBarangays] = useState([]);
   const navigate = useNavigate();
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchReportsAndBarangays = async () => {
       try {
-        const res = await axios.get('http://localhost:8787/auth/reports');
+        const res = await axios.get(`${API_URL}/auth/reports`);
         const resolved = res.data.filter(report => report.status === 'Resolved');
         setResolvedReports(resolved);
 
-        const barangayRes = await axios.get('http://localhost:8787/auth/barangays');
+        const barangayRes = await axios.get(`${API_URL}/auth/barangays`);
         setBarangays(barangayRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -25,7 +27,7 @@ function ResolutionPage() {
     };
 
     fetchReportsAndBarangays();
-  }, []);
+  }, [API_URL]);
 
   const getBarangayName = (barangayId) => {
     const barangay = barangays.find((b) => b._id === barangayId);
@@ -45,8 +47,6 @@ function ResolutionPage() {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div className="resolution-container" style={{ marginLeft: '300px', marginTop: '25px', flex: 1 }}>
-
-
         {resolvedReports.length === 0 ? (
           <p>No resolved reports available.</p>
         ) : (
@@ -76,7 +76,7 @@ function ResolutionPage() {
                   <td>
                     {report.filePath ? (
                       <a
-                        href={`http://localhost:8787/${report.filePath}`}
+                        href={`${API_URL}/${report.filePath}`}
                         download
                         target="_blank"
                         rel="noopener noreferrer"

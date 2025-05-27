@@ -39,8 +39,8 @@ const BarangayMap = () => {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:8787/auth/Barangays').then(res => res.json()),
-      fetch('http://localhost:8787/auth/reports').then(res => res.json())
+      fetch(`${process.env.REACT_APP_API_URL}/auth/Barangays`).then(res => res.json()),
+      fetch(`${process.env.REACT_APP_API_URL}/auth/reports`).then(res => res.json())
     ])
       .then(([barangayData, reportData]) => {
         const reportedBarangayIds = new Set(reportData.map(report => report.barangayId));
@@ -72,7 +72,6 @@ const BarangayMap = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap contributors"
           />
-          {/* Dynamic barangay markers and circles */}
           {barangays.map((brgy, index) => (
             <React.Fragment key={brgy._id || index}>
               <Marker position={brgy.coords}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import './Sidebar.css';
-import Sidebar  from './Sidebar';
+import Sidebar from './Sidebar';
 import axios from 'axios';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
@@ -19,14 +19,16 @@ const Dashboard = () => {
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [lineRes, pieRes] = await Promise.all([
-          axios.get('http://localhost:8787/auth/line-data', {
+          axios.get(`${API_URL}/auth/line-data`, {
             params: { startMonth, endMonth, barangayId: selectedLocation }
           }),
-          axios.get('http://localhost:8787/auth/pie-data', {
+          axios.get(`${API_URL}/auth/pie-data`, {
             params: { startMonth, endMonth, status, barangayId: selectedLocation }
           })
         ]);
@@ -39,12 +41,12 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [startMonth, endMonth, status, selectedLocation]);
+  }, [startMonth, endMonth, status, selectedLocation, API_URL]);
 
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await axios.get('http://localhost:8787/auth/Barangays');
+        const res = await axios.get(`${API_URL}/auth/Barangays`);
         setLocations(res.data || []);
       } catch (error) {
         console.error('Error fetching locations:', error);
@@ -52,14 +54,12 @@ const Dashboard = () => {
     };
 
     fetchLocations();
-  }, []);
+  }, [API_URL]);
 
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div className="reporting-container" style={{ marginLeft: '220px', flex: 1 }}>
-
-       
         <div className="filters">
           <label>
             Start Month:

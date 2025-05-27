@@ -17,6 +17,9 @@ function ReportingPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
+
   const [form, setForm] = useState({
     type: '',
     barangayId: '',
@@ -29,7 +32,7 @@ function ReportingPage() {
     const fetchReports = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('http://localhost:8787/auth/reports');
+        const res = await axios.get('${API_URL}/auth/reports');
         setReports(res.data);
       } catch (error) {
         console.error('Failed to fetch reports:', error);
@@ -40,7 +43,7 @@ function ReportingPage() {
 
     const fetchBarangays = async () => {
       try {
-        const res = await axios.get('http://localhost:8787/auth/Barangays');
+        const res = await axios.get('${API_URL}auth/Barangays');
         setBarangays(res.data);
       } catch (error) {
         console.error('Failed to fetch barangays:', error);
@@ -75,7 +78,7 @@ function ReportingPage() {
     formData.append('file', file);
 
     try {
-      await axios.post('http://localhost:8787/auth/Createreport', formData, {
+      await axios.post('${API_URL}/auth/Createreport', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setForm({ type: '', barangayId: '', date: '', status: '', file: null });
@@ -90,7 +93,7 @@ function ReportingPage() {
   const handleDelete = async (_id) => {
     if (!window.confirm('Are you sure you want to delete this report?')) return;
     try {
-      await axios.delete(`http://localhost:8787/auth/deleteReport/${_id}`);
+      await axios.delete(`${API_URL}/auth/deleteReport/${_id}`);
       setReports((prev) => prev.filter((report) => report._id !== _id));
     } catch (error) {
       console.error('Failed to delete report:', error);
@@ -112,7 +115,7 @@ function ReportingPage() {
       formData.append('status', newStatus);
       if (file) formData.append('file', file);
 
-      await axios.put(`http://localhost:8787/auth/updateReportStatus/${reportId}`, formData, {
+      await axios.put(`${API_URL}/auth/updateReportStatus/${reportId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
@@ -122,7 +125,7 @@ function ReportingPage() {
       if (newStatus === 'Resolved') {
         navigate('/resolution');
       } else {
-        const updatedReports = await axios.get('http://localhost:8787/auth/reports');
+        const updatedReports = await axios.get('${API_URL}/auth/reports');
         setReports(updatedReports.data);
       }
     } catch (error) {
@@ -280,7 +283,7 @@ function ReportingPage() {
                     <td>
                       {report.filePath ? (
                         <a
-                          href={`http://localhost:8787/${report.filePath}`}
+                          href={`${API_URL}/${report.filePath}`}
                           download
                           target="_blank"
                           rel="noopener noreferrer"

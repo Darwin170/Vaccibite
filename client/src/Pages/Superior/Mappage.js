@@ -44,13 +44,15 @@ const MapPage = () => {
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         const [barangayRes, reportsRes] = await Promise.all([
-          axios.get('http://localhost:8787/auth/Barangays'),
-          axios.get('http://localhost:8787/auth/reports'),
+          axios.get(`${API_URL}/auth/Barangays`),
+          axios.get(`${API_URL}/auth/reports`),
         ]);
         setBarangays(barangayRes.data);
         setReports(reportsRes.data);
@@ -61,7 +63,7 @@ const MapPage = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [API_URL]);
 
   const getBarangayName = (barangayId) => {
     const barangay = barangays.find(b => b._id === barangayId);
@@ -76,8 +78,6 @@ const MapPage = () => {
       alert("Barangay location not found.");
     }
   };
-
-  
 
   const filteredReports = reports.filter((report) =>
     (typeFilter === '' || report.type === typeFilter) &&
@@ -100,7 +100,6 @@ const MapPage = () => {
                 attribution="&copy; OpenStreetMap contributors"
               />
 
-              {/* Barangay Circles & Markers */}
               {barangays.map((brgy) => (
                 <React.Fragment key={brgy._id}>
                   <Marker position={[brgy.latitude, brgy.longitude]}>
@@ -114,7 +113,6 @@ const MapPage = () => {
                 </React.Fragment>
               ))}
 
-              {/* Report Markers */}
               {filteredReports.map((report) => {
                 const coords = report.coordinates;
                 const position = Array.isArray(coords)
@@ -138,6 +136,29 @@ const MapPage = () => {
           {/* === Reports Table === */}
           <div className="report-section">
             <h2>Reports</h2>
+
+            {/* Optional: Filters UI */}
+            <div className="filters">
+              <label>
+                Type:
+                <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+                  <option value="">All</option>
+                  <option value="bite">Bite</option>
+                  <option value="roaming">Roaming</option>
+                  <option value="missing">Missing</option>
+                </select>
+              </label>
+
+              <label>
+                Status:
+                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                  <option value="">All</option>
+                  <option value="pending">Pending</option>
+                  <option value="resolved">Resolved</option>
+                </select>
+              </label>
+            </div>
+
             <table>
               <thead>
                 <tr>
@@ -147,7 +168,6 @@ const MapPage = () => {
                   <th>Date</th>
                   <th>Status</th>
                   <th>File</th>
-                  
                 </tr>
               </thead>
               <tbody>
@@ -166,15 +186,11 @@ const MapPage = () => {
                         </button>
                       </td>
                       <td>{new Date(report.date).toLocaleDateString()}</td>
-                      <td>
-                       
-                          value={report.status}
-                          
-                      </td>
+                      <td>{report.status}</td>
                       <td>
                         {report.filePath ? (
                           <a
-                            href={`http://localhost:8787/${report.filePath}`}
+                            href={`${API_URL}/${report.filePath}`}
                             download
                             target="_blank"
                             rel="noopener noreferrer"
@@ -189,7 +205,7 @@ const MapPage = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="7">No reports found.</td>
+                    <td colSpan="6">No reports found.</td>
                   </tr>
                 )}
               </tbody>

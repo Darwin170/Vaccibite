@@ -33,7 +33,7 @@ const CalendarScheduler = () => {
 
   const fetchEvents = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:8787/auth/getAllEvents");
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getAllEvents`);
       const formattedEvents = response.data.map((event) => ({
         ...event,
         start: new Date(event.start),
@@ -57,7 +57,7 @@ const CalendarScheduler = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8787/auth/createEvent", {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/createEvent`, {
         title,
         start: new Date(start).toISOString(),
         end: new Date(end).toISOString(),
@@ -89,7 +89,7 @@ const CalendarScheduler = () => {
     if (!selectedEvent) return;
 
     try {
-      await axios.delete(`http://localhost:8787/auth/deleteEvents/${selectedEvent._id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteEvents/${selectedEvent._id}`);
       setEvents(events.filter((event) => event._id !== selectedEvent._id));
       setSelectedEvent(null);
     } catch (error) {
@@ -99,14 +99,9 @@ const CalendarScheduler = () => {
   };
 
   return (
-  
     <div style={{ display: "flex" }}>
-      
       <Sidebar />
-      
       <div className="reporting-container" style={{ marginLeft: "220px" }}>
-
-      
         <button className="add-button" onClick={() => setShowModal(true)}>
           + Add Event
         </button>

@@ -16,6 +16,9 @@
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
   app.use('/auth', authroute);
 
+app.get('/', (req, res) => {
+  res.send('Backend is running 🚀');
+});
 
 
 

@@ -3,6 +3,8 @@ import axios from 'axios';
 import './BackupReports.css';
 import Sidebar from './Sidebar';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const BackupReports = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ const BackupReports = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
-        const res = await axios.get('http://localhost:8787/auth/reports');
+        const res = await axios.get(`${API_URL}/auth/reports`);
         setReports(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         console.error('Failed to fetch reports:', error);
@@ -67,7 +69,7 @@ const BackupReports = () => {
                     <td>
                       {report.filePath ? (
                         <a
-                          href={`http://localhost:8787/${report.filePath}`}
+                          href={`${API_URL}/${report.filePath}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           download

@@ -3,6 +3,8 @@ import './ArchiveReports.css';
 import axios from 'axios';
 import Sidebar from './Sidebar';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const ArchivedReports = () => {
   const [reports, setReports] = useState([]);
   const [barangays, setBarangays] = useState([]);
@@ -11,8 +13,8 @@ const ArchivedReports = () => {
   const fetchArchivedReports = async () => {
     try {
       const [archivedRes, barangayRes] = await Promise.all([
-        axios.get('http://localhost:8787/auth/archived'),
-        axios.get('http://localhost:8787/auth/barangays'),
+        axios.get(`${API_URL}/auth/archived`),
+        axios.get(`${API_URL}/auth/barangays`),
       ]);
 
       setReports(Array.isArray(archivedRes.data) ? archivedRes.data : []);
@@ -30,7 +32,7 @@ const ArchivedReports = () => {
 
   const handleRetrieve = async (id) => {
     try {
-      const res = await fetch(`http://localhost:8787/auth/retrieve/${id}`, {
+      const res = await fetch(`${API_URL}/auth/retrieve/${id}`, {
         method: 'POST',
       });
 
@@ -51,7 +53,7 @@ const ArchivedReports = () => {
     if (!confirmed) return;
 
     try {
-      const res = await fetch(`http://localhost:8787/auth/delete/${id}`, {
+      const res = await fetch(`${API_URL}/auth/delete/${id}`, {
         method: 'DELETE',
       });
 
@@ -105,7 +107,7 @@ const ArchivedReports = () => {
                     <td>
                       {report.filePath ? (
                         <a
-                          href={`http://localhost:8787/${report.filePath}`}
+                          href={`${API_URL}/${report.filePath}`}
                           download
                           target="_blank"
                           rel="noopener noreferrer"

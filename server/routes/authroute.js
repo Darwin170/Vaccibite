@@ -19,12 +19,14 @@ const createLogs = require("../controller/createactivitylogs");
 const { deleteLog } = require('../controller/deletelog');
 const {getArchivedReports} = require('../controller/Archivedreports');
 const { retrieveReport } = require('../controller/retriever');
+const { deleteArchivedReport } = require('../controller/deletearchive');
 const router = express.Router();
 router.get('/line-data', getLineChartData);
 router.get('/pie-data', getPieChartData);
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage });
 
+router.delete('/delete/:id', deleteArchivedReport);
 router.post('/retrieve/:id', retrieveReport);
 router.get('/archived', getArchivedReports);
 router.delete('/deleteLog/:id', deleteLog);

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar"; // ✅ Make sure Sidebar is imported
+import Sidebar from "./Sidebar";
 import "./UserManagement.css";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -21,7 +23,7 @@ function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:8787/auth/getUser");
+      const res = await axios.get(`${API_URL}/auth/getUser`);
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users:", err);
@@ -33,7 +35,7 @@ function UserManagement() {
     if (!name || !email || !phone || !password || !position) return;
 
     try {
-      await axios.post("http://localhost:8787/auth/createUser", newUser);
+      await axios.post(`${API_URL}/auth/createUser`, newUser);
       setNewUser({ name: "", email: "", phone: "", password: "", position: "" });
       setShowAddUserModal(false);
       fetchUsers();
@@ -47,7 +49,7 @@ function UserManagement() {
     if (!name || !email || !phone || !password || !position) return;
 
     try {
-      await axios.put(`http://localhost:8787/auth/updateUser/${editUserId}`, newUser);
+      await axios.put(`${API_URL}/auth/updateUser/${editUserId}`, newUser);
       setNewUser({ name: "", email: "", phone: "", password: "", position: "" });
       setEditUserId(null);
       setShowAddUserModal(false);
@@ -60,7 +62,7 @@ function UserManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(`http://localhost:8787/auth/deleteUser/${id}`);
+      await axios.delete(`${API_URL}/auth/deleteUser/${id}`);
       fetchUsers();
     } catch (err) {
       console.error("Error deleting user:", err);
@@ -73,14 +75,14 @@ function UserManagement() {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      password: "", 
+      password: "",
       position: user.position,
     });
     setShowAddUserModal(true);
   };
 
   return (
-        <div className="User-container">
+    <div className="User-container">
       <Sidebar />
       <div style={{ marginLeft: "250px", padding: "20px" }}>
         <button
@@ -122,7 +124,6 @@ function UserManagement() {
           </tbody>
         </table>
 
-        {/* Modal */}
         {showAddUserModal && (
           <div className="modal-overlay">
             <div className="modal-content">

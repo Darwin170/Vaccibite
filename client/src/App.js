@@ -1,5 +1,5 @@
 // App.js
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login';
 import SuperiorRoutes from './Pages/Superior/index';
 import OperationalRoutes from './Pages/Operational/index';
@@ -9,9 +9,12 @@ import { AuthProvider } from './routes/AuthContext'; // ✅ import AuthProvider
 
 function App() {
   return (
-    <AuthProvider> {/* Wrap the whole app in AuthProvider */}
+    <AuthProvider>
       <Router>
         <Routes>
+          {/* 🔁 Redirect root to login */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+
           <Route path="/login" element={<Login />} />
           
           <Route

@@ -33,22 +33,20 @@ const Login = () => {
 
       if (response.data?.user) {
         const user = response.data.user;
-        
-        // Save user details in context and localStorage
+       
         setUser(user);
         localStorage.setItem("user", JSON.stringify({
           username: user.username || user.email,
           role: user.position,
         }));
 
-        // Log login activity
+
         await logActivity(
           { userId: user._id, username: user.username || user.email, position: user.position },
           "Login",
           "User logged in successfully"
         );
 
-        // Navigate based on user role
         switch (user.position) {
           case "System_Admin":
             navigate("/admin/UserManagement");

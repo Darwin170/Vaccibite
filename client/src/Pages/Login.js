@@ -18,7 +18,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error message
+    setError(""); 
 
     if (!email || !password) {
       setError("Email and password are required.");
@@ -26,7 +26,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/login`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, {
         email: email.trim().toLowerCase(),
         password,
       });

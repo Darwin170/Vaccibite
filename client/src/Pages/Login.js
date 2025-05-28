@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Login.css";
 import axios from "axios";
-import { useAuth } from '../routes/AuthContext';
-import { logActivity } from './System_Admin/Activitylogger';
+import { useAuth } from "../routes/AuthContext";
+import { logActivity } from "./System_Admin/Activitylogger";
 
-import Vaccibitelogo from '../Assets/Vaccibitelogo.png';
-import Acdclogo from '../Assets/Acdclogo.png';
-import Qcvetlogo from '../Assets/Qcvetlogo.png';
+import Vaccibitelogo from "../Assets/Vaccibitelogo.png";
+import Acdclogo from "../Assets/Acdclogo.png";
+import Qcvetlogo from "../Assets/Qcvetlogo.png";
+import "./Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
   const { setUser } = useAuth();
 
@@ -26,24 +27,33 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, {
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      // Normalize the email for consistency
+      const normalizedEmail = email.trim().toLowerCase();
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/login`,
+        {
+          email: normalizedEmail,
+          password,
+        }
+      );
 
       if (response.data && response.data.user) {
         const user = response.data.user;
 
-        // Save user in context (for global use)
+        // Save user in global context for application-wide access
         setUser(user);
 
-        // Save user in localStorage (for PrivateRoute)
-        localStorage.setItem("user", JSON.stringify({
-          username: user.username || user.email,
-          role: user.position,
-        }));
+        // Cache minimal user details in localStorage for protected routes
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            username: user.username || user.email,
+            role: user.position,
+          })
+        );
 
-        // Log activity
+        // Log the login activity
         await logActivity(
           {
             userId: user._id,
@@ -55,36 +65,45 @@ const Login = () => {
         );
 
         // Navigate based on user role
-        if (user.position === "System_Admin") {
-          navigate("/admin/UserManagement");
-        } else if (user.position === "Superior_Admin") {
-          navigate("/superior/Dashboard");
-        } else if (user.position === "Operational_Staff") {
-          navigate("/operational/Report");
-        } else {
-          setError("Unauthorized role.");
-          console.log("User role:", user.position);
-          alert("Role is: " + user.position);
+        switch (user.position) {
+          case "System_Admin":
+            navigate("/admin/UserManagement");
+            break;
+          case "Superior_Admin":
+            navigate("/superior/Dashboard");
+            break;
+          case "Operational_Staff":
+            navigate("/operational/Report");
+            break;
+          default:
+            setError("Unauthorized role.");
+            console.error("Unauthorized role:", user.position);
+            break;
         }
       } else {
         setError("Login failed. Please try again.");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError(err.response?.data?.msg || "Login failed. Try again.");
+      setError(err.response?.data?.msg || "Login failed. Please try again.");
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
-        <img src={Vaccibitelogo} alt="Vaccibite Logo" className="logo-image" />
+        <img
+          src={Vaccibitelogo}
+          alt="Vaccibite Logo"
+          className="logo-image"
+        />
         <h2 className="login-title">Vaccibite Login</h2>
         {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleLogin}>
           <div className="input-group">
-            <label>Email</label>
+            <label htmlFor="email">Email</label>
             <input
+              id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -92,15 +111,18 @@ const Login = () => {
             />
           </div>
           <div className="input-group">
-            <label>Password</label>
+            <label htmlFor="password">Password</label>
             <input
+              id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button type="submit" className="login-button">Login</button>
+          <button type="submit" className="login-button">
+            Login
+          </button>
         </form>
         <div className="logo-row">
           <img src={Acdclogo} alt="ACDC" className="bottom-logo" />

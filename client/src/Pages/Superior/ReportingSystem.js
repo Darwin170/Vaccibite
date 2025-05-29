@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar'; 
-import './Sidebar.css'; 
+import Sidebar from './Sidebar';
+import './Sidebar.css';
 import './ReportingSystem.css';
 
 function ReportingPage() {
@@ -19,7 +19,6 @@ function ReportingPage() {
 
   const API_URL = process.env.REACT_APP_API_URL;
 
-
   const [form, setForm] = useState({
     type: '',
     barangayId: '',
@@ -32,7 +31,7 @@ function ReportingPage() {
     const fetchReports = async () => {
       setLoading(true);
       try {
-        const res = await axios.get('${API_URL}/auth/reports');
+        const res = await axios.get(`${API_URL}/auth/reports`);
         setReports(res.data);
       } catch (error) {
         console.error('Failed to fetch reports:', error);
@@ -43,7 +42,7 @@ function ReportingPage() {
 
     const fetchBarangays = async () => {
       try {
-        const res = await axios.get('${API_URL}auth/Barangays');
+        const res = await axios.get(`${API_URL}/auth/Barangays`);
         setBarangays(res.data);
       } catch (error) {
         console.error('Failed to fetch barangays:', error);
@@ -52,7 +51,7 @@ function ReportingPage() {
 
     fetchReports();
     fetchBarangays();
-  }, []);
+  }, [API_URL]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +77,7 @@ function ReportingPage() {
     formData.append('file', file);
 
     try {
-      await axios.post('${API_URL}/auth/Createreport', formData, {
+      await axios.post(`${API_URL}/auth/Createreport`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setForm({ type: '', barangayId: '', date: '', status: '', file: null });
@@ -104,8 +103,7 @@ function ReportingPage() {
     if (newStatus === 'Resolved') {
       setStatusUpdateModal({ reportId, newStatus });
     } else {
-      const file = statusUpdateFile || null;
-      updateReportStatus(reportId, newStatus, file);
+      updateReportStatus(reportId, newStatus);
     }
   };
 
@@ -125,7 +123,7 @@ function ReportingPage() {
       if (newStatus === 'Resolved') {
         navigate('/resolution');
       } else {
-        const updatedReports = await axios.get('${API_URL}/auth/reports');
+        const updatedReports = await axios.get(`${API_URL}/auth/reports`);
         setReports(updatedReports.data);
       }
     } catch (error) {
@@ -156,13 +154,8 @@ function ReportingPage() {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div className="reporting-container" style={{ marginLeft: '220px', flex: 1 }}>
-     
-       
-
         <div className="actions-bar">
-          <button className="add-report-btn" onClick={() => setShowForm(true)}>
-            + Add Report
-          </button>
+          <button className="add-report-btn" onClick={() => setShowForm(true)}>+ Add Report</button>
 
           <div className="filters">
             <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
@@ -282,27 +275,16 @@ function ReportingPage() {
                     </td>
                     <td>
                       {report.filePath ? (
-                        <a
-                          href={`${API_URL}/${report.filePath}`}
-                          download
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {report.filePath.split('/').pop()}
-                        </a>
-                      ) : 'N/A'}
+                        <a href={`${API_URL}/${report.filePath}`} download>Download</a>
+                      ) : 'No file'}
                     </td>
                     <td>
-                      <button className="delete-btn" onClick={() => handleDelete(report._id)}>
-                        🗑️
-                      </button>
+                      <button onClick={() => handleDelete(report._id)} className="delete-btn">Delete</button>
                     </td>
                   </tr>
                 ))
               ) : (
-                <tr>
-                  <td colSpan="7">No reports found.</td>
-                </tr>
+                <tr><td colSpan="7">No reports found.</td></tr>
               )}
             </tbody>
           </table>

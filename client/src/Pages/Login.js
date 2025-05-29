@@ -5,9 +5,9 @@ import "./Login.css";
 import axios from "axios";
 import { useAuth } from '../routes/AuthContext';
 import { logActivity } from './System_Admin/Activitylogger';
-import Vaccibitelogo from './Vaccibitelogo.png';
-import Acdclogo from './Acdclogo.png';
-import Qcvetlogo from './Qcvetlogo.png';
+import Vaccibitelogo from '../Assets/Vaccibitelogo.png';
+import Acdclogo from '../Assets/Acdclogo.png';
+import Qcvetlogo from '../Assets/Qcvetlogo.png';
 
 const Login = () => {
   const [email, setEmail] = useState("");

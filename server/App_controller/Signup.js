@@ -16,10 +16,7 @@ const signupUser = async (req, res) => {
       return res.status(400).json({ message: 'Email is already registered.' });
     }
 
-    // Hash the password
-    const saltRounds = 10;
-
-
+    
     // Create new user document
     const newUser = new User({
       fullName,

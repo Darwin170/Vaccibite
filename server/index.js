@@ -3,6 +3,7 @@
   const dotenv = require("dotenv");
   const connectDB = require("./config/db");
   const authroute = require("./routes/authroute");
+  const Mauthroute = require("./routes/Mauthroute");
   const path = require("path"); 
   dotenv.config();
 
@@ -19,6 +20,7 @@
   const PORT = process.env.PORT || 8787;
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
   app.use('/auth', authroute);
+  app.use('/mauth',Mauthroute);
 
 app.get('/', (req, res) => {
   res.send('Backend is running 🚀');

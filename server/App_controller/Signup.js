@@ -1,20 +1,16 @@
-const User = require('../model/M_user'); // adjust path to your User model
-
+const User = require('../model/M_user');
+const bcrypt = require('bcrypt');
 
 const signupUser = async (req, res) => {
   try {
-    const { fullName, email, password, confirmPassword, barangay } = req.body;
 
-    // Basic validation
-    if (!fullName || !email || !password || !confirmPassword || !barangay) {
+    const { fullName, email, password, barangay } = req.body;
+
+    if (!fullName || !email || !password || !barangay) {
       return res.status(400).json({ message: 'Please fill in all fields.' });
     }
 
-    if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match.' });
-    }
 
-    // Check if user already exists by email
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email is already registered.' });
@@ -37,7 +33,14 @@ const signupUser = async (req, res) => {
     res.status(201).json({ message: 'User registered successfully!' });
   } catch (error) {
     console.error('Signup error:', error);
-    res.status(500).json({ message: 'Server error' });
+    // More specific error messages for debugging:
+    if (error.name === 'ValidationError') {
+        return res.status(400).json({ message: error.message });
+    }
+    if (error.code === 11000) { // Duplicate key error (e.g., duplicate email)
+        return res.status(400).json({ message: 'A user with this email already exists.' });
+    }
+    res.status(500).json({ message: 'Server error during signup.' });
   }
 };
 

@@ -18,13 +18,13 @@ const signupUser = async (req, res) => {
 
     // Hash the password
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
 
     // Create new user document
     const newUser = new User({
       fullName,
       email,
-      password: hashedPassword,
+      password,
       barangay,
     });
 

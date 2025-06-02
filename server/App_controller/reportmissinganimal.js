@@ -39,7 +39,7 @@ const addMissinganimal = async (req, res) => {
     await newReport.save();
     res.status(201).json({ message: 'Missing Animal reported successfully', report: newReport });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to report Animal Bite', details: error.message });
+    res.status(500).json({ error: 'Failed to report Animal Missing', details: error.message });
   }
 };
 

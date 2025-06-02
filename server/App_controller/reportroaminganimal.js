@@ -39,7 +39,7 @@ const addRoamingAnimal = async (req, res) => {
     await newReport.save();
     res.status(201).json({ message: 'Roaming Animal reported successfully', report: newReport });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to report Animal Bite', details: error.message });
+    res.status(500).json({ error: 'Failed to report Animal Roaming', details: error.message });
   }
 };
 

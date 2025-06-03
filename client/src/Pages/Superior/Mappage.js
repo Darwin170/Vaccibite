@@ -50,7 +50,7 @@ const MapPage = () => {
       try {
         const [barangayRes, reportsRes] = await Promise.all([
           axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`),
-         axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`)
+          axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`)
         ]);
         setBarangays(barangayRes.data);
         setReports(reportsRes.data);
@@ -77,8 +77,6 @@ const MapPage = () => {
     }
   };
 
-  
-
   const filteredReports = reports.filter((report) =>
     (typeFilter === '' || report.type === typeFilter) &&
     (statusFilter === '' || report.status === statusFilter)
@@ -89,7 +87,7 @@ const MapPage = () => {
       <Sidebar />
 
       <div className="map-area">
-        <div className="container" >
+        <div className="container">
           {/* === Map Section === */}
           <div className="map-section">
             <MapContainer center={[14.5526, 121.0356]} zoom={13} style={{ height: '100%', width: '100%' }}>
@@ -99,19 +97,24 @@ const MapPage = () => {
                 attribution="&copy; OpenStreetMap contributors"
               />
 
-              {/* Barangay Circles & Markers */}
-              {barangays.map((brgy) => (
-                <React.Fragment key={brgy._id}>
-                  <Marker position={[brgy.latitude, brgy.longitude]}>
-                    <Popup>{brgy.name}</Popup>
-                  </Marker>
-                  <Circle
-                    center={[brgy.latitude, brgy.longitude]}
-                    radius={brgy.radius}
-                    pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 0.2 }}
-                  />
-                </React.Fragment>
-              ))}
+              {/* Barangay Circles & Markers - Only if there's at least one report */}
+              {barangays.map((brgy) => {
+                const hasReports = reports.some(report => report.barangayId === brgy._id);
+                if (!hasReports) return null;
+
+                return (
+                  <React.Fragment key={brgy._id}>
+                    <Marker position={[brgy.latitude, brgy.longitude]}>
+                      <Popup>{brgy.name}</Popup>
+                    </Marker>
+                    <Circle
+                      center={[brgy.latitude, brgy.longitude]}
+                      radius={brgy.radius}
+                      pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 0.2 }}
+                    />
+                  </React.Fragment>
+                );
+              })}
 
               {/* Report Markers */}
               {filteredReports.map((report) => {
@@ -146,7 +149,6 @@ const MapPage = () => {
                   <th>Date</th>
                   <th>Status</th>
                   <th>File</th>
-                  
                 </tr>
               </thead>
               <tbody>
@@ -165,11 +167,7 @@ const MapPage = () => {
                         </button>
                       </td>
                       <td>{new Date(report.date).toLocaleDateString()}</td>
-                      <td>
-                       
-                          {report.status}
-                          
-                      </td>
+                      <td>{report.status}</td>
                       <td>
                         {report.filePath ? (
                           <a

@@ -160,7 +160,7 @@ function ReportingPage() {
           <div className="filters">
             <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
               <option value="">All Types</option>
-              <option value="Bite Incident">Bite Incident</option>
+              <option value="Bite Incident">Animal Bite</option>
               <option value="Missing Animal">Missing Animal</option>
               <option value="Animal Sighting">Animal Sighting</option>
             </select>

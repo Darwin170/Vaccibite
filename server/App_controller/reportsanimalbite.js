@@ -12,7 +12,6 @@ const addAnimalBite = async (req, res) => {
       animalType,
       color,
       size,
-      location,
       severity,
       caughtStatus
     } = req.body;
@@ -30,7 +29,6 @@ const addAnimalBite = async (req, res) => {
         animalType,
         color,
         size,
-        location,
         severity,
         caughtStatus
       }

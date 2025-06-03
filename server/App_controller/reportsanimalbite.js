@@ -19,7 +19,7 @@ const addAnimalBite = async (req, res) => {
     const filePath = req.file ? req.file.originalname : null;
 
     const newReport = new Report({
-      type: 'Animal Bite',
+      type: 'Bite Incident',
       barangayId, 
       date: new Date(),
       status: 'Pending',

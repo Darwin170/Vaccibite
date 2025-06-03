@@ -167,7 +167,7 @@ const MapPage = () => {
                       <td>{new Date(report.date).toLocaleDateString()}</td>
                       <td>
                        
-                          value={report.status}
+                          {report.status}
                           
                       </td>
                       <td>

@@ -13,6 +13,7 @@
   app.use(express.json()); 
   app.use(cors({
   origin: 'https://vaccibite.onrender.com', 
+  'http://localhost:8000',
   credentials: true
   }));
 

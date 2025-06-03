@@ -49,8 +49,8 @@ const MapPage = () => {
       setLoading(true);
       try {
         const [barangayRes, reportsRes] = await Promise.all([
-          axios.get('http://localhost:8787/auth/Barangays'),
-          axios.get('http://localhost:8787/auth/reports'),
+          axios.get('${process.env.REACT_APP_API_URL}/auth/Barangays'),
+          axios.get('${process.env.REACT_APP_API_URL}/auth/reports'),
         ]);
         setBarangays(barangayRes.data);
         setReports(reportsRes.data);
@@ -173,7 +173,7 @@ const MapPage = () => {
                       <td>
                         {report.filePath ? (
                           <a
-                            href={`http://localhost:8787/${report.filePath}`}
+                            href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
                             download
                             target="_blank"
                             rel="noopener noreferrer"

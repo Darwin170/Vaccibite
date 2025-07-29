@@ -314,7 +314,7 @@ function ReportingPage() {
                     </td>
                     <td>
                       <button className="view-btn" onClick={() => setSelectedDetails(report)}>👁️ View</button>
-                      <button className="delete-btn" onClick={() => handleDelete(report._id)}>🗑️</button>
+                      <button onClick={() => handleDelete(report._id)} className="delete-btn">Delete</button>
                     </td>
                   </tr>
                 ))

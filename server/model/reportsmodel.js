@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 const reportSchema = new mongoose.Schema({
   type: {
     type: String,
-    required: true
+    required: true,
+    enum: ['Animal Bite', 'Missing Animal', 'Roaming Animal']
   },
+
   barangayId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Barangay',
@@ -16,12 +18,16 @@ const reportSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending', 'Ongoing', 'Resolved'],
+    enum: ['Pending','Resolved'],
     default: 'Pending'
   },
   filePath: {
     type: String
+  },
+  categoryDetails: {
+    type: mongoose.Schema.Types.Mixed
   }
+  
 });
 
 const Report = mongoose.model('Reports', reportSchema, 'Reports');

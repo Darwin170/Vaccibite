@@ -49,7 +49,7 @@ const Login = () => {
         await logActivity(
           {
             userId: user._id,
-            username: user.username || user.email,
+            username: user.email,
             position: user.position,
           },
           "Login",
@@ -111,4 +111,5 @@ const Login = () => {
 };
 
 export default Login;
+
 

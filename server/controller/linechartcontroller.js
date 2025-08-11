@@ -1,48 +1,74 @@
 const Report = require('../model/reportsmodel');
 
 const getLineChartData = async (req, res) => {
-    const { startMonth, endMonth } = req.query;  // Accept startMonth and endMonth from query
-  
-    try {
-      let query = {};
-      if (startMonth && endMonth) {
-        query.date = {
-          $gte: new Date(new Date().getFullYear(), startMonth - 1, 1),  // Start month
-          $lte: new Date(new Date().getFullYear(), endMonth, 0)          // End month
-        };
-      } else if (startMonth) {
-        query.date = {
-          $gte: new Date(new Date().getFullYear(), startMonth - 1, 1),  // Filter for one month
-          $lte: new Date(new Date().getFullYear(), startMonth, 0)
-        };
-      }
-  
-      const data = await Report.aggregate([
-        { $match: query },  // Apply the query filter
-        {
-          $group: {
-            _id: { $month: "$date" },
-            count: { $sum: 1 }
-          }
-        },
-        { $sort: { "_id": 1 } }
-      ]);
-  
-      const monthNames = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      
-      const formatted = data.map(item => ({
-        month: monthNames[item._id - 1],
-        count: item.count
-      }));
-      
-  
-      res.json(formatted);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch line chart data' });
+  // Capture all possible filters from the request
+  const { startMonth, endMonth, status, barangayId, incidentType } = req.query;
+
+  try {
+    let matchQuery = {};
+
+    // Add filters to the match query if they are provided
+    if (status) {
+      matchQuery.status = status;
     }
-  };
-  
-  module.exports = { getLineChartData };
+    if (barangayId) {
+      matchQuery.barangay = barangayId;
+    }
+    if (incidentType) {
+        matchQuery.type = incidentType;
+    }
+    
+    // Add a filter for the month range if both start and end months are provided
+    // This uses the $expr operator to get the month number from the date
+    // and correctly filter all years without needing to know the current year.
+    if (startMonth && endMonth) {
+      matchQuery.$expr = {
+        $and: [
+          { $gte: [{ $month: "$date" }, parseInt(startMonth)] },
+          { $lte: [{ $month: "$date" }, parseInt(endMonth)] }
+        ]
+      };
+    }
+
+    const data = await Report.aggregate([
+      // Apply all filters first using the matchQuery object
+      { $match: matchQuery },
+      {
+        // Group the reports by both year and month to get a complete count over time
+        $group: {
+          _id: {
+            year: { $year: "$date" },
+            month: { $month: "$date" }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        // Sort the data chronologically, first by year then by month
+        $sort: {
+          "_id.year": 1,
+          "_id.month": 1
+        }
+      }
+    ]);
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    // Format the data to be easily consumed by the Recharts line graph
+    const formattedData = data.map(item => ({
+      // The 'month' label now includes the year, so different years are distinct points
+      month: `${monthNames[item._id.month - 1]} ${item._id.year}`,
+      count: item.count
+    }));
+
+    res.json(formattedData);
+  } catch (error) {
+    console.error("Error fetching line chart data:", error);
+    res.status(500).json({ error: 'Failed to fetch line chart data' });
+  }
+};
+
+module.exports = { getLineChartData };

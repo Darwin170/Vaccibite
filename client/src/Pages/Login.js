@@ -9,6 +9,8 @@ import Vaccibitelogo from '../Assets/Vaccibitelogo.png';
 import Acdclogo from '../Assets/Acdclogo.png';
 import Qcvetlogo from '../Assets/Qcvetlogo.png';
 
+const API_URL = 'http://localhost:8787';
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +29,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
+        `${API_URL}/auth/login`,
         {
           email: email.trim().toLowerCase(),
           password,
@@ -58,8 +60,6 @@ const Login = () => {
           navigate("/admin/UserManagement");
         } else if (user.position === "Superior_Admin") {
           navigate("/superior/Dashboard");
-        } else if (user.position === "Operational_Staff") {
-          navigate("/operational/Report");
         } else {
           setError("Unauthorized role.");
           console.log("User role:", user.role);

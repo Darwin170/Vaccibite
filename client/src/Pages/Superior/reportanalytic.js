@@ -16,20 +16,30 @@ const Dashboard = () => {
   const [startMonth, setStartMonth] = useState('1');
   const [endMonth, setEndMonth] = useState('12');
   const [status, setStatus] = useState('');
+  const [incidentType, setIncidentType] = useState('');
   const [locations, setLocations] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState('');
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [lineRes, pieRes] = await Promise.all([
-          axios.get(`${API_URL}/auth/line-data`, {
-            params: { startMonth, endMonth, barangayId: selectedLocation }
+          axios.get('http://localhost:8787/auth/line-data', {
+            params: {
+              startMonth,
+              endMonth,
+              barangayId: selectedLocation,
+              incidentType
+            }
           }),
-          axios.get(`${API_URL}/auth/pie-data`, {
-            params: { startMonth, endMonth, status, barangayId: selectedLocation }
+          axios.get('http://localhost:8787/auth/pie-data', {
+            params: {
+              startMonth,
+              endMonth,
+              status,
+              barangayId: selectedLocation,
+              incidentType
+            }
           })
         ]);
 
@@ -41,12 +51,12 @@ const Dashboard = () => {
     };
 
     fetchData();
-  }, [startMonth, endMonth, status, selectedLocation, API_URL]);
+  }, [startMonth, endMonth, status, selectedLocation, incidentType]);
 
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await axios.get(`${API_URL}/auth/Barangays`);
+        const res = await axios.get('http://localhost:8787/auth/Barangays');
         setLocations(res.data || []);
       } catch (error) {
         console.error('Error fetching locations:', error);
@@ -54,7 +64,7 @@ const Dashboard = () => {
     };
 
     fetchLocations();
-  }, [API_URL]);
+  }, []);
 
   return (
     <div style={{ display: 'flex' }}>
@@ -88,8 +98,17 @@ const Dashboard = () => {
             <select value={status} onChange={(e) => setStatus(e.target.value)}>
               <option value="">All Status</option>
               <option value="Pending">Pending</option>
-              <option value="Ongoing">Ongoing</option>
               <option value="Resolved">Resolved</option>
+            </select>
+          </label>
+
+          <label>
+            Incident Type:
+            <select value={incidentType} onChange={(e) => setIncidentType(e.target.value)}>
+              <option value="">All Types</option>
+              <option value="Animal Bite">Animal Bite</option>
+              <option value="Missing Animal">Missing Animal</option>
+              <option value="Animal Sighting">Animal Sighting</option>
             </select>
           </label>
 

@@ -24,7 +24,7 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const [lineRes, pieRes] = await Promise.all([
-          axios.get('http://localhost:8787/auth/line-data', {
+          axios.get(`${process.env.REACT_APP_API_URL}/auth/line-data`, {
             params: {
               startMonth,
               endMonth,
@@ -32,7 +32,7 @@ const Dashboard = () => {
               incidentType
             }
           }),
-          axios.get('http://localhost:8787/auth/pie-data', {
+          axios.get(`${process.env.REACT_APP_API_URL}/auth/pie-data`, {
             params: {
               startMonth,
               endMonth,
@@ -56,7 +56,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const res = await axios.get('http://localhost:8787/auth/Barangays');
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`);
         setLocations(res.data || []);
       } catch (error) {
         console.error('Error fetching locations:', error);
@@ -176,3 +176,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

@@ -58,7 +58,7 @@ const CalendarScheduler = () => {
 
   // Fetch barangays with districts
   useEffect(() => {
-    axios.get(`${API_URL}/auth/getAllBarangays`)
+    axios.get(`${process.env.REACT_APP_API_URL}/auth/getAllBarangays`)
       .then(res => setBarangays(res.data))
       .catch(err => console.error("Error fetching barangays:", err));
   }, []);
@@ -66,7 +66,7 @@ const CalendarScheduler = () => {
   // Fetch events from backend
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await axios.get(`${API_URL}/auth/getAllEvents`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getAllEvents`);
       const formatted = res.data.map(ev => ({
         ...ev,
         start: new Date(ev.start),
@@ -91,7 +91,7 @@ const CalendarScheduler = () => {
     }
 
     try {
-      const res = await axios.post(`${API_URL}/auth/createEvent`, {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/createEvent`, {
         title,
         start: new Date(start).toISOString(),
         end: new Date(end).toISOString(),
@@ -113,7 +113,7 @@ const CalendarScheduler = () => {
     if (!editedEvent) return;
 
     try {
-      await axios.put(`${API_URL}/auth/updateEvent/${editedEvent._id}`, {
+      await axios.put(`${process.env.REACT_APP_API_URL}/auth/updateEvent/${editedEvent._id}`, {
         title: editedEvent.title,
         start: new Date(editedEvent.start).toISOString(),
         end: new Date(editedEvent.end).toISOString(),
@@ -138,7 +138,7 @@ const CalendarScheduler = () => {
     if (!selectedEvent) return;
 
     try {
-      await axios.delete(`${API_URL}/auth/deleteEvents/${selectedEvent._id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteEvents/${selectedEvent._id}`);
       setEvents(events.filter(ev => ev._id !== selectedEvent._id));
       setSelectedEvent(null);
     } catch (err) {
@@ -241,3 +241,4 @@ const CalendarScheduler = () => {
 };
 
 export default CalendarScheduler;
+

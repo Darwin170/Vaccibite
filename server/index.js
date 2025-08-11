@@ -15,7 +15,10 @@
   // Middleware to handle JSON requests
   const app = express();
   app.use(express.json()); 
-  app.use(cors());
+ app.use(cors({
+  origin: 'https://vaccibite.onrender.com',
+  credentials: true,
+}));
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
@@ -66,6 +69,7 @@ app.get("/", (req, res) => {
       
     ));
   })();
+
 
 
 

@@ -55,6 +55,9 @@ const transporter = nodemailer.createTransport({
 
 
 
+app.get("/", (req, res) => {
+  res.send("Server is running ✅");
+});
 
 
   (async () => {
@@ -63,6 +66,7 @@ const transporter = nodemailer.createTransport({
       
     ));
   })();
+
 
 
 

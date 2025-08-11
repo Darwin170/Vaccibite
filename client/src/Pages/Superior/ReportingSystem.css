@@ -1,156 +1,521 @@
+/* General Body/HTML defaults (consider putting in index.css if global) */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern, readable font */
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5; /* A slightly softer background */
+    color: #333;
+}
+
+/* Reporting Container */
 .reporting-container {
-  background-color: #f8f9fa;
-  min-height: 100vh;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    /* The margin-left is handled directly in the React component's inline style
+       for interaction with the sidebar. If the sidebar becomes dynamic,
+       consider using CSS Grid or Flexbox on the parent of Sidebar and ReportingPage. */
+    /* flex: 1; is also handled by inline style in React */
 }
 
+/* Header (if used, but not in provided React component) */
 .header {
-  background-color: #b23a8b;
-  color: white;
-  padding: 16px 24px;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
+    background-color: #b23a8b; /* Main brand color, adjust as needed */
+    color: white;
+    padding: 16px 24px;
+    font-size: 28px; /* Slightly larger for prominence */
+    font-weight: bold;
+    margin-bottom: 25px; /* More spacing */
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
+/* Actions Bar (buttons and filters) */
 .actions-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px; /* Consistent spacing */
+    padding: 0 20px;
+    flex-wrap: wrap; /* Allows items to wrap on smaller screens */
+    gap: 15px; /* Spacing between elements when wrapping */
 }
 
+/* Add Report Button */
 .add-report-btn {
-  background-color: #8aa98e;
-  color: white;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-left: 85px;
+    background-color: #8aa98e; /* Defined color */
+    color: white;
+    padding: 10px 20px; /* Slightly more horizontal padding */
+    border: none;
+    border-radius: 8px; /* Slightly more rounded */
+    font-weight: 600; /* Semibold */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for subtle click effect */
+    font-size: 1em; /* Ensure consistent font size */
 }
 
 .add-report-btn:hover {
-  background-color: #729377;
+    background-color: #729377;
+    transform: translateY(-1px); /* Lift effect on hover */
+}
+
+.add-report-btn:active {
+    transform: translateY(0); /* Press effect */
+}
+
+/* Search Bar */
+.search-bar-container {
+    flex-grow: 1; /* Allows it to take available space */
+    margin: 0 15px; /* Space from button and filters */
+    max-width: 400px; /* Limit width on very wide screens */
+}
+
+.search-input {
+    width: 100%; /* Take full width of its container */
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding in width */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #8aa98e; /* Highlight on focus */
+    box-shadow: 0 0 0 3px rgba(138, 169, 142, 0.3); /* Subtle glow */
+    outline: none;
+}
+
+/* Filters Container */
+.filters {
+    display: flex;
+    gap: 15px; /* Space between filter selects */
+    flex-wrap: wrap; /* Allow filters to wrap on smaller screens */
 }
 
 .filters select {
-  margin-right: 40px;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+    padding: 9px 12px; /* Adjusted padding for better visual alignment with search input */
+    border-radius: 8px; /* Consistent with other inputs */
+    border: 1px solid #ccc;
+    min-width: 160px; /* Slightly more minimum width */
+    background-color: white; /* Ensure background is white */
+    appearance: none; /* Remove default arrow on some browsers */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.9L146.2%20209.6%205.4%2069.9c-4.5-4.5-11.8-4.5-16.3%200-4.5%204.5-4.5%2011.8%200%2016.3l148.8%20148.8c4.5%204.5%2011.8%204.5%2016.3%200L287%2086.2c4.5-4.5%204.5-11.8%200-16.3-.1-.1-.1-.2-.2-.3z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 12px top 50%;
+    background-size: 12px auto;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.filters select:focus {
+    border-color: #8aa98e;
+    box-shadow: 0 0 0 3px rgba(138, 169, 142, 0.3);
+    outline: none;
+}
+
+
+/* Table Wrapper */
 .table-wrapper {
-  overflow-x: auto;
+    overflow-x: auto; /* Ensures horizontal scroll for tables on small screens */
+    padding: 0 20px;
+    margin-bottom: 30px; /* Space below table */
 }
 
+/* Reporting Table */
 .reporting-table {
-  padding: 20px;
-  width: 90%;
-  border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-left: 80px;
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Stronger, more modern shadow */
+    border-radius: 8px; /* Rounded corners for the table */
+    overflow: hidden; /* Ensures rounded corners apply to content */
 }
 
 .reporting-table th,
 .reporting-table td {
-  padding: 10px 10px;
-  border: 1px solid #ddd;
-  text-align: center;
-  
+    padding: 14px 18px; /* More padding for better spacing */
+    border: 1px solid #e0e0e0; /* Lighter border color */
+    text-align: left;
+    vertical-align: middle; /* Center content vertically */
+    font-size: 0.95em; /* Slightly larger font for readability */
 }
 
 .reporting-table th {
-  background-color: #ccc;
-  font-weight: bold;
+    background-color: #f2f4f7; /* Soft grey header */
+    font-weight: 700; /* Bolder headers */
+    color: #444;
+    text-transform: uppercase; /* Uppercase headers */
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
 }
 
-.view-map-btn {
-  background-color: #36b4a7;
-  color: white;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 6px;
+.reporting-table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping for readability */
 }
 
-.view-map-btn:hover {
-  background-color: #2e9c93;
+.reporting-table tr:hover {
+    background-color: #f0f8ff; /* Subtle highlight on row hover */
+}
+
+/* Styles for specific table elements (buttons, selects within table) */
+.reporting-table td .view-map-btn {
+    font-size: 0.85em;
+    padding: 5px 10px;
+    margin-top: 5px; /* Space below barangay name */
+    background-color: #6c757d; /* A neutral gray for map button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.reporting-table td .view-map-btn:hover {
+    background-color: #5a6268;
+}
+
+.reporting-table td select {
+    padding: 7px; /* Slightly more padding */
+    border-radius: 6px; /* Consistent rounding */
+    border: 1px solid #ccc;
+    font-size: 0.9em;
+    min-width: unset; /* Override filters select min-width */
+    background-color: white;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%20viewBox%3D%220%200%20292.4%20292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.9L146.2%20209.6%205.4%2069.9c-4.5-4.5-11.8-4.5-16.3%200-4.5%204.5-4.5%2011.8%200%2016.3l148.8%20148.8c4.5%204.5%2011.8%204.5%2016.3%200L287%2086.2c4.5-4.5%204.5-11.8%200-16.3-.1-.1-.1-.2-.2-.3z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 8px top 50%;
+    background-size: 10px auto;
+}
+
+/* Table Action Buttons (View, Delete) */
+.view-btn, .delete-btn {
+    padding: 8px 12px; /* Consistent padding for action buttons */
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 0.9em; /* Slightly larger than map button */
+    color: white;
+    display: inline-flex; /* For better icon/text alignment if you add icons */
+    align-items: center;
+    justify-content: center;
+}
+
+.view-btn {
+    background-color: #007bff; /* Blue for view */
+    margin-right: 8px; /* Space between buttons */
+}
+
+.view-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
 }
 
 .delete-btn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+    background-color: #dc3545; /* Red for delete */
 }
 
 .delete-btn:hover {
-  background-color: #3e8e41;
+    background-color: #c82333;
+    transform: translateY(-1px);
 }
 
+/* Modal Overlay */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7); /* Darker, more prominent overlay */
+    z-index: 1000; /* Higher z-index to ensure it's on top */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease-out; /* Fade-in animation */
 }
 
+/* Modal Content */
 .modal-content {
-  background: white;
-  padding: 24px;
-  border-radius: 10px;
-  width: 400px;
+    background: white;
+    padding: 35px; /* More generous padding */
+    border-radius: 12px; /* More rounded corners */
+    width: 100%;
+    max-width: 550px; /* Slightly wider max-width */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); /* More pronounced shadow */
+    box-sizing: border-box;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideInFromTop 0.3s ease-out; /* Slide-in animation */
 }
 
-.modal-content input,
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 25px; /* More space below heading */
+    color: #222; /* Darker heading color */
+    text-align: center;
+    font-size: 1.8em;
+}
+
+.modal-content h3 {
+    margin-top: 30px; /* More space above category details header */
+    margin-bottom: 15px;
+    color: #444;
+    border-bottom: 1px solid #e0e0e0; /* Lighter border */
+    padding-bottom: 8px;
+    font-size: 1.2em;
+}
+
+.modal-content p {
+    margin-bottom: 8px; /* Tighten spacing for detail paragraphs */
+    font-size: 0.95em;
+}
+
+.modal-content p strong {
+    color: #555; /* Make labels stand out slightly */
+}
+
+/* Modal Input Fields */
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content input[type="time"],
 .modal-content select {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+    width: 100%; /* Full width */
+    padding: 12px 15px; /* Generous padding */
+    margin-bottom: 15px; /* Consistent bottom margin */
+    border-radius: 8px; /* Consistent rounding */
+    border: 1px solid #d0d0d0; /* Soft border */
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: white; /* Ensure consistent background */
 }
 
+.modal-content input[type="text"]:focus,
+.modal-content input[type="date"]:focus,
+.modal-content input[type="time"]:focus,
+.modal-content select:focus {
+    border-color: #8aa98e;
+    box-shadow: 0 0 0 3px rgba(138, 169, 142, 0.3);
+    outline: none;
+}
+
+.modal-content input[type="file"] {
+    width: 100%;
+    margin: 15px 0; /* More vertical space */
+}
+
+.modal-content p.selected-file { /* Added a class for the selected file name paragraph */
+    font-style: italic;
+    color: #666;
+    margin-top: -10px; /* Pull it closer to the input */
+    margin-bottom: 15px;
+}
+
+/* Modal Buttons */
 .modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px; /* More space between buttons */
+    margin-top: 30px; /* More space above buttons */
 }
 
-.submit-btn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.modal-buttons .submit-btn,
+.modal-buttons .cancel-btn {
+    padding: 12px 25px; /* Larger buttons */
+    border-radius: 8px; /* Consistent rounding */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: none;
+    font-size: 1em;
 }
 
-.cancel-btn {
-  background-color: #f44336;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.modal-buttons .submit-btn {
+    background-color: #28a745;
 }
 
+.modal-buttons .submit-btn:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+}
+
+.modal-buttons .cancel-btn {
+    background-color: #6c757d;
+}
+
+.modal-buttons .cancel-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Loading and Error Messages */
 .loading {
-  text-align: center;
-  padding: 20px;
-  font-size: 18px;
+    text-align: center;
+    padding: 40px; /* More prominent loading message */
+    font-size: 20px;
+    color: #555;
+    background-color: rgba(255, 255, 255, 0.8);
+    position: absolute; /* To center in viewport or container */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+    text-align: center;
+    padding: 30px;
+    font-size: 1.2em;
+    color: #dc3545; /* Red for errors */
+    background-color: #ffebe9; /* Light red background */
+    border: 1px solid #dc3545;
+    border-radius: 8px;
+    margin: 20px;
+    font-weight: 500;
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) { /* Adjust for medium screens (e.g., tablets) */
+    .actions-bar {
+        flex-direction: column;
+        align-items: stretch; /* Stretch items to full width */
+        padding: 0 15px;
+    }
+
+    .add-report-btn {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .search-bar-container {
+        width: 100%;
+        margin: 0 0 15px 0; /* Adjust margins for stacking */
+        max-width: none; /* Remove max-width on smaller screens */
+    }
+
+    .filters {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px; /* Slightly less gap when stacked */
+    }
+
+    .filters select {
+        width: 100%;
+        min-width: unset; /* Allow full width */
+    }
+
+    .table-wrapper {
+        padding: 0 15px;
+    }
+
+    .reporting-table th,
+    .reporting-table td {
+        padding: 10px 12px; /* Reduce table padding */
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 576px) { /* Adjust for small screens (e.g., mobile phones) */
+    .reporting-container {
+        padding: 10px;
+    }
+
+    .header {
+        font-size: 22px;
+        padding: 12px 15px;
+    }
+
+    .actions-bar {
+        padding: 0 10px;
+        gap: 10px;
+    }
+
+    .add-report-btn {
+        padding: 10px 15px;
+    }
+
+    .search-input {
+        padding: 8px 12px;
+    }
+
+    .filters select {
+        padding: 8px 10px;
+    }
+
+    .table-wrapper {
+        padding: 0 5px; /* Even less padding */
+    }
+
+    .reporting-table th,
+    .reporting-table td {
+        padding: 8px; /* Minimal table padding */
+        font-size: 0.8em;
+    }
+
+    .reporting-table td .view-map-btn,
+    .view-btn, .delete-btn {
+        font-size: 0.75em;
+        padding: 6px 8px;
+    }
+
+    .modal-content {
+        padding: 25px;
+        margin: 0 10px;
+        border-radius: 8px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .modal-content h3 {
+        font-size: 1.1em;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .modal-content input,
+    .modal-content select {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .modal-buttons .submit-btn,
+    .modal-buttons .cancel-btn {
+        width: 100%;
+        padding: 10px 15px;
+    }
 }

@@ -9,7 +9,7 @@ import Vaccibitelogo from '../Assets/Vaccibitelogo.png';
 import Acdclogo from '../Assets/Acdclogo.png';
 import Qcvetlogo from '../Assets/Qcvetlogo.png';
 
-const API_URL = 'http://localhost:8787';
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -29,7 +29,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        `${API_URL}/auth/login`,
+        `${process.env.REACT_APP_API_URL}/auth/login`,
         {
           email: email.trim().toLowerCase(),
           password,
@@ -111,3 +111,4 @@ const Login = () => {
 };
 
 export default Login;
+

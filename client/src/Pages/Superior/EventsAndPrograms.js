@@ -8,6 +8,7 @@ import Sidebar from "./Sidebar";
 import "./Sidebar.css";
 import "./EventsAndPrograms.css";
 
+const API_URL = 'http://localhost:8787';
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -20,28 +21,60 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+const CustomToolbar = ({ label, onNavigate, onView, view }) => (
+  <div className="rbc-toolbar">
+    <span className="rbc-btn-group">
+      <button onClick={() => onNavigate("TODAY")}>Today</button>
+      <button onClick={() => onNavigate("PREV")}>Back</button>
+      <button onClick={() => onNavigate("NEXT")}>Next</button>
+    </span>
+    <span className="rbc-toolbar-label">{label}</span>
+    <span className="rbc-btn-group">
+      <button className={view === "month" ? "rbc-active" : ""} onClick={() => onView("month")}>Month</button>
+      <button className={view === "week" ? "rbc-active" : ""} onClick={() => onView("week")}>Week</button>
+      <button className={view === "day" ? "rbc-active" : ""} onClick={() => onView("day")}>Day</button>
+      <button className={view === "agenda" ? "rbc-active" : ""} onClick={() => onView("agenda")}>Agenda</button>
+    </span>
+  </div>
+);
+
 const CalendarScheduler = () => {
   const [events, setEvents] = useState([]);
+  const [barangays, setBarangays] = useState([]);
   const [newEvent, setNewEvent] = useState({
     title: "",
     start: "",
     end: "",
     details: "",
+    barangayId: "",
   });
+
   const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editedEvent, setEditedEvent] = useState(null);
+  const [currentView, setCurrentView] = useState("month");
+  const [currentDate, setCurrentDate] = useState(new Date());
 
+  // Fetch barangays with districts
+  useEffect(() => {
+    axios.get(`${API_URL}/auth/getAllBarangays`)
+      .then(res => setBarangays(res.data))
+      .catch(err => console.error("Error fetching barangays:", err));
+  }, []);
+
+  // Fetch events from backend
   const fetchEvents = useCallback(async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getAllEvents`);
-      const formattedEvents = response.data.map((event) => ({
-        ...event,
-        start: new Date(event.start),
-        end: new Date(event.end),
+      const res = await axios.get(`${API_URL}/auth/getAllEvents`);
+      const formatted = res.data.map(ev => ({
+        ...ev,
+        start: new Date(ev.start),
+        end: new Date(ev.end),
       }));
-      setEvents(formattedEvents);
-    } catch (error) {
-      console.error("Error fetching events:", error);
+      setEvents(formatted);
+    } catch (err) {
+      console.error("Error fetching events:", err);
     }
   }, []);
 
@@ -49,68 +82,89 @@ const CalendarScheduler = () => {
     fetchEvents();
   }, [fetchEvents]);
 
+  // Create new event
   const handleAddEvent = async () => {
-    const { title, start, end, details } = newEvent;
-    if (!title || !start || !end || !details) {
-      alert("Please fill out all fields.");
+    const { title, start, end, details, barangayId } = newEvent;
+    if (!title || !start || !end || !details || !barangayId) {
+      console.error("Please fill out all fields.");
       return;
     }
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/createEvent`, {
+      const res = await axios.post(`${API_URL}/auth/createEvent`, {
         title,
         start: new Date(start).toISOString(),
         end: new Date(end).toISOString(),
         details,
+        barangayId
       });
 
-      const created = response.data.event;
-      setEvents([
-        ...events,
-        {
-          ...created,
-          start: new Date(created.start),
-          end: new Date(created.end),
-        },
-      ]);
-      setNewEvent({ title: "", start: "", end: "", details: "" });
+      const created = res.data.event;
+      setEvents([...events, { ...created, start: new Date(created.start), end: new Date(created.end) }]);
+      setNewEvent({ title: "", start: "", end: "", details: "", barangayId: "" });
       setShowModal(false);
-    } catch (error) {
-      console.error("Error creating event:", error);
-      alert("Failed to create event.");
+    } catch (err) {
+      console.error("Error creating event:", err);
     }
   };
 
-  const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
+  // Update event
+  const handleUpdateEvent = async () => {
+    if (!editedEvent) return;
+
+    try {
+      await axios.put(`${API_URL}/auth/updateEvent/${editedEvent._id}`, {
+        title: editedEvent.title,
+        start: new Date(editedEvent.start).toISOString(),
+        end: new Date(editedEvent.end).toISOString(),
+        details: editedEvent.details,
+        barangayId: editedEvent.barangayId
+      });
+
+      setEvents(events.map(ev =>
+        ev._id === editedEvent._id
+          ? { ...editedEvent, start: new Date(editedEvent.start), end: new Date(editedEvent.end) }
+          : ev
+      ));
+      setShowEditModal(false);
+      setEditedEvent(null);
+    } catch (err) {
+      console.error("Error updating event:", err);
+    }
   };
 
+  // Delete event
   const handleDeleteEvent = async () => {
     if (!selectedEvent) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteEvents/${selectedEvent._id}`);
-      setEvents(events.filter((event) => event._id !== selectedEvent._id));
+      await axios.delete(`${API_URL}/auth/deleteEvents/${selectedEvent._id}`);
+      setEvents(events.filter(ev => ev._id !== selectedEvent._id));
       setSelectedEvent(null);
-    } catch (error) {
-      console.error("Error deleting event:", error);
-      alert("Failed to delete event.");
+    } catch (err) {
+      console.error("Error deleting event:", err);
     }
+  };
+
+  // Format for datetime-local input
+  const formatDateForInput = (date) => {
+    if (!date) return "";
+    const dt = new Date(date);
+    dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
+    return dt.toISOString().slice(0, 16);
   };
 
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
       <div className="reporting-container" style={{ marginLeft: "220px" }}>
-        <button className="add-button" onClick={() => setShowModal(true)}>
-          + Add Event
-        </button>
+        <button className="add-button" onClick={() => setShowModal(true)}>+ Add Event</button>
 
         {/* Add Event Modal */}
         {showModal && (
           <div className="modal-overlay">
             <div className="modal">
-              <h3 className="modal-title">New Event</h3>
+              <h3>New Event</h3>
               <input
                 type="text"
                 placeholder="Event Title"
@@ -118,6 +172,21 @@ const CalendarScheduler = () => {
                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                 className="input"
               />
+
+              <label>Barangay:</label>
+              <select
+                value={newEvent.barangayId}
+                onChange={(e) => setNewEvent({ ...newEvent, barangayId: e.target.value })}
+                className="input"
+              >
+                <option value="">-- Select Barangay --</option>
+                {barangays.map((b) => (
+                  <option key={b._id} value={b._id}>
+                    {b.name} ({b.districtId?.name})
+                  </option>
+                ))}
+              </select>
+
               <label>Start:</label>
               <input
                 type="datetime-local"
@@ -134,39 +203,15 @@ const CalendarScheduler = () => {
               />
               <label>Details:</label>
               <textarea
-                placeholder="Event Details or Description"
+                placeholder="Event Details"
                 value={newEvent.details}
                 onChange={(e) => setNewEvent({ ...newEvent, details: e.target.value })}
                 className="textarea"
               />
-              <div className="modal-buttons">
-                <button onClick={() => setShowModal(false)} className="cancel-button">
-                  Cancel
-                </button>
-                <button onClick={handleAddEvent} className="save-button">
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* View & Delete Modal */}
-        {selectedEvent && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h3 className="modal-title">Event Details</h3>
-              <p><strong>Title:</strong> {selectedEvent.title}</p>
-              <p><strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
-              <p><strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
-              <p><strong>Details:</strong> {selectedEvent.details}</p>
               <div className="modal-buttons">
-                <button onClick={() => setSelectedEvent(null)} className="cancel-button">
-                  Close
-                </button>
-                <button onClick={handleDeleteEvent} className="delete-button">
-                  Delete
-                </button>
+                <button onClick={() => setShowModal(false)} className="cancel-button">Cancel</button>
+                <button onClick={handleAddEvent} className="save-button">Save</button>
               </div>
             </div>
           </div>
@@ -181,10 +226,13 @@ const CalendarScheduler = () => {
             endAccessor="end"
             style={{ height: 500 }}
             views={["month", "week", "day", "agenda"]}
-            defaultView="month"
-            toolbar={true}
-            popup={true}
-            onSelectEvent={handleSelectEvent}
+            date={currentDate}
+            view={currentView}
+            onNavigate={setCurrentDate}
+            onView={setCurrentView}
+            components={{ toolbar: CustomToolbar }}
+            popup
+            onSelectEvent={setSelectedEvent}
           />
         </div>
       </div>

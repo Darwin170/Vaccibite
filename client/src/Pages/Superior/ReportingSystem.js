@@ -5,9 +5,7 @@ import Sidebar from './Sidebar';
 import './Sidebar.css';
 import './ReportingSystem.css';
 
-// It's good practice to use an environment variable for API_URL
-// For example, process.env.REACT_APP_API_URL if using Create React App
-const API_URL = 'http://localhost:8787';
+
 
 function ReportingPage() {
     const [reports, setReports] = useState([]);
@@ -43,11 +41,11 @@ function ReportingPage() {
             setLoading(true);
             try {
                 // Fetch reports
-                const reportsRes = await axios.get(`${API_URL}/auth/reports`);
+                const reportsRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
                 setReports(reportsRes.data);
 
                 // Fetch barangays
-                const barangaysRes = await axios.get(`${API_URL}/auth/Barangays`);
+                const barangaysRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`);
                 setBarangays(barangaysRes.data);
 
             } catch (err) {
@@ -137,7 +135,7 @@ function ReportingPage() {
             setShowForm(false); // Close the form modal
 
             // Re-fetch reports to update the table with the new entry
-            const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
+            const updatedReportsRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
             setReports(updatedReportsRes.data);
             alert('Report created successfully!');
         } catch (error) {
@@ -179,7 +177,7 @@ function ReportingPage() {
                 formData.append('file', file);
             }
 
-            await axios.put(`${API_URL}/auth/updateReportStatus/${reportId}`, formData, {
+            await axios.put(`${process.env.REACT_APP_API_URL}/auth/updateReportStatus/${reportId}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }, // Important for FormData
             });
 
@@ -192,7 +190,7 @@ function ReportingPage() {
                 navigate('/resolution');
             } else {
                 // Re-fetch reports to update the table if status changed to Pending
-                const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
+                const updatedReportsRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
                 setReports(updatedReportsRes.data);
                 alert('Report status updated successfully!');
             }
@@ -525,7 +523,7 @@ function ReportingPage() {
                                         <td>
                                             {report.filePath ? (
                                                 <a
-                                                    href={`${API_URL}/${report.filePath}`}
+                                                    href=`${process.env.REACT_APP_API_URL}/${report.filePath}`}
                                                     download
                                                     target="_blank"
                                                     rel="noopener noreferrer"
@@ -554,3 +552,4 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
+

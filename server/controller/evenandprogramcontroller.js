@@ -20,6 +20,7 @@ const createEvent = async (req, res) => {
 
     const newEvent = new Event({
       title,
+      barangayId,
       start: startDate,
       end: endDate,
       details,

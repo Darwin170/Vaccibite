@@ -13,7 +13,7 @@ const OtpVerification = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp", // change to your backend route
+       `${process.env.REACT_APP_API_URL}/auth/verify`, // change to your backend route
         { otp },
         { withCredentials: true } // needed if using express-session
       );
@@ -23,7 +23,7 @@ const OtpVerification = () => {
       localStorage.setItem("token", res.data.token);
 
       // Redirect to dashboard or homepage
-      navigate("/dashboard");
+      navigate("/superior/dashboard");
     } catch (err) {
       setMessage(err.response?.data?.msg || "Verification failed");
     }

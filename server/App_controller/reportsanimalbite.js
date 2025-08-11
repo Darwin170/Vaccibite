@@ -1,8 +1,33 @@
 const multer = require('multer');
+const path = require('path');
 const Report = require('../model/reportsmodel');
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
+// Store files in uploads/ with unique name
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Accept images & documents
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|pdf|doc|docx/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (extname && mimetype) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPG, PNG, PDF, DOC, DOCX files are allowed!'));
+    }
+  }
+});
 
 const addAnimalBite = async (req, res) => {
   try {
@@ -12,36 +37,44 @@ const addAnimalBite = async (req, res) => {
       animalType,
       color,
       size,
+      location,
       severity,
       caughtStatus
     } = req.body;
 
-    const filePath = req.file ? req.file.originalname : null;
+    // Save uploaded file path
+    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
 
     const newReport = new Report({
-      type: 'Bite Incident',
+      type: 'Animal Bite',
       barangayId, 
       date: new Date(),
       status: 'Pending',
-      filePath,
+      filePath, // This will be used for download/view
       categoryDetails: {
         Name,
         animalType,
         color,
         size,
+        location,
         severity,
         caughtStatus
       }
     });
 
     await newReport.save();
-    res.status(201).json({ message: 'Animal Bite reported successfully', report: newReport });
+    res.status(201).json({
+      message: 'Animal Bite reported successfully',
+      report: newReport
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to report Animal Bite', details: error.message });
+    res.status(500).json({
+      error: 'Failed to report Animal Bite',
+    });
   }
 };
 
 module.exports = {
-  upload,
+  upload, // multer middleware
   addAnimalBite
 };

@@ -6,6 +6,7 @@ import OperationalRoutes from './Pages/Operational/index';
 import AdminRoutes from './Pages/System_Admin';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './routes/AuthContext'; // ✅ import AuthProvider
+import OtpVerification from "./Pages/OtpVerification";
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
           <Route path="/" element={<Navigate to="/Login" replace />} />
 
           <Route path="/login" element={<Login />} />
-          
+          <Route path="/otp" element={<OtpVerification />} />
+
           <Route
             path="/superior/*"
             element={

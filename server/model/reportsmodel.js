@@ -9,9 +9,10 @@ const reportSchema = new mongoose.Schema({
 
   barangayId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Barangay',
+    ref: 'Barangays',
     required: true
   },
+  
   date: {
     type: Date,
     required: true

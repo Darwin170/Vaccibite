@@ -20,7 +20,7 @@ const verifyOTP = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(req.session.userId).select("-password"); // exclude password
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     // Create JWT
@@ -35,7 +35,12 @@ const verifyOTP = async (req, res) => {
     delete req.session.otpExpiry;
     delete req.session.userId;
 
-    res.json({ msg: "Login successful!", token });
+    // Send back user info + token
+    res.json({
+      msg: "Login successful!",
+      token,
+      user
+    });
 
   } catch (err) {
     res.status(500).json({ msg: "Server error", error: err });

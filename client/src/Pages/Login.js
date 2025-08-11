@@ -9,8 +9,6 @@ import Vaccibitelogo from '../Assets/Vaccibitelogo.png';
 import Acdclogo from '../Assets/Acdclogo.png';
 import Qcvetlogo from '../Assets/Qcvetlogo.png';
 
-
-
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,12 +31,21 @@ const Login = () => {
         {
           email: email.trim().toLowerCase(),
           password,
-        }
+        },
+        { withCredentials: true }
       );
 
+      // If OTP is sent, go to OTP verification page
+      if (response.data?.msg?.toLowerCase().includes("otp")) {
+        // Temporarily store email so OTP page knows which user is logging in
+        sessionStorage.setItem("pendingEmail", email.trim().toLowerCase());
+        navigate("/otp");
+        return;
+      }
+
+      // If backend still returns user directly (non-OTP flow)
       if (response.data && response.data.user) {
         const user = response.data.user;
-
         setUser(user);
 
         localStorage.setItem("user", JSON.stringify({
@@ -111,5 +118,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

@@ -1,11 +1,14 @@
 const express = require("express");
-const multer = require('multer');
+const { upload } = require("../middleware/upload");
 const { loginUser } = require("../controller/userlogin");
+
+const { verifyOTP } = require('../controller/authcontroller');
 const { createReport } = require("../controller/createreport");
 const { getAllReports } = require("../controller/reportcontroller");
 const { Barangays } = require("../controller/BarangayController");
 const { deleteReport } = require("../controller/deletereports");
 const { createEvent, deleteEvent, getAllEvents } = require('../controller/evenandprogramcontroller');
+const {updateEvent} = require ('../controller/updateEvent');
 const { checkReportsBeforeViewMap } = require('../controller/checkReportsBeforeViewMap');
 const { updateReportStatus } = require('../controller/updatestatus');
 const { getLineChartData } = require('../controller/linechartcontroller');
@@ -23,9 +26,8 @@ const { deleteArchivedReport } = require('../controller/deletearchive');
 const router = express.Router();
 router.get('/line-data', getLineChartData);
 router.get('/pie-data', getPieChartData);
-const storage = multer.memoryStorage(); 
-const upload = multer({ storage: storage });
 
+router.post('/verify', verifyOTP);
 router.delete('/delete/:id', deleteArchivedReport);
 router.post('/retrieve/:id', retrieveReport);
 router.get('/archived', getArchivedReports);
@@ -39,6 +41,7 @@ router.get('/getUser', getUser);
 router.get('/view-map', checkReportsBeforeViewMap);
 router.put('/updateReportStatus/:id', upload.single('file'), updateReportStatus);
 router.post('/createEvent', createEvent);
+router.put('/updateEvent/:id', updateEvent);
 router.delete('/deleteEvents/:id', deleteEvent);
 router.get('/getAllEvents', getAllEvents);
 router.delete('/deleteReport/:id', deleteReport);

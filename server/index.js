@@ -25,7 +25,7 @@
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI, // same URI from your db config
+    mongoUrl:MONGODB_URL, // same URI from your db config
     collectionName: "sessions",
     ttl: 14 * 24 * 60 * 60 // 14 days
   }),
@@ -66,6 +66,7 @@ app.get("/", (req, res) => {
       
     ));
   })();
+
 
 
 

@@ -270,7 +270,7 @@ const MapPage = () => {
                                                 <td>
                                                     {report.filePath ? (
                                                         <a
-                                                            href={`${API_URL}/${report.filePath}`}
+                                                            href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
                                                             download
                                                             target="_blank"
                                                             rel="noopener noreferrer"
@@ -295,4 +295,5 @@ const MapPage = () => {
 };
 
 export default MapPage;
+
 

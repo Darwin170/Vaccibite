@@ -126,7 +126,7 @@ function ReportingPage() {
         formData.append('categoryDetails', JSON.stringify(categoryDetails)); // Send as JSON string
 
         try {
-            await axios.post(`${API_URL}/auth/Createreport`, formData, {
+            await axios.post(`${process.env.REACT_APP_API_URL}/auth/Createreport`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             // Reset form
@@ -148,7 +148,7 @@ function ReportingPage() {
     const handleDelete = async (_id) => {
         if (!window.confirm('Are you sure you want to delete this report?')) return;
         try {
-            await axios.delete(`${API_URL}/auth/deleteReport/${_id}`);
+            await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteReport/${_id}`);
             // Update reports state by filtering out the deleted one
             setReports((prev) => prev.filter((report) => report._id !== _id));
             alert('Report deleted successfully!');
@@ -403,7 +403,7 @@ function ReportingPage() {
                                 <p>
                                     <strong>File:</strong>{' '}
                                     <a
-                                        href={`${API_URL}/${selectedDetails.filePath}`}
+                                        href={`${process.env.REACT_APP_API_URL}/${selectedDetails.filePath}`}
                                         download
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -552,4 +552,5 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
+
 

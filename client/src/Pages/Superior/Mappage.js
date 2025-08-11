@@ -80,7 +80,7 @@ const MapPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState(null);
 
-    const API_URL = 'http://localhost:8787';
+ 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -89,8 +89,8 @@ const MapPage = () => {
             try {
                 // Fetch both barangays and reports in parallel for efficiency
                 const [barangayRes, reportsRes] = await Promise.all([
-                    axios.get(`${API_URL}/auth/Barangays`),
-                    axios.get(`${API_URL}/auth/reports`)
+                    axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`),
+                    axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`)
                 ]);
 
                 // Map the reports to include the barangay name for easier filtering and display
@@ -295,3 +295,4 @@ const MapPage = () => {
 };
 
 export default MapPage;
+

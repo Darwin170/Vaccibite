@@ -3,11 +3,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./OtpVerification.css";
+import { useAuth } from '../routes/AuthContext'; // 👈 Import useAuth hook
+import { logActivity } from './System_Admin/Activitylogger'; // 👈 Import logActivity
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useAuth(); // 👈 Use the setUser function from AuthContext
 
   // Get email from sessionStorage
   const email = sessionStorage.getItem("pendingEmail");
@@ -21,22 +24,44 @@ const OtpVerification = () => {
     }
 
     try {
+      // 1. Make the API call to verify the OTP
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/verify`,
-        { email, otp }, // include email in request
+        { email, otp },
         { withCredentials: true }
       );
 
-      setMessage(res.data.msg);
-      localStorage.setItem("token", res.data.token); // store JWT
+      // Your backend returns the user object, which is exactly what we need
+      const { user } = res.data;
 
-      // Remove pending email from sessionStorage after successful verification
+      // 2. Set the user in the global AuthContext state
+      setUser(user);
+
+      // 3. Store the full user object in localStorage for PrivateRoute to use
+      localStorage.setItem("user", JSON.stringify({
+        username: user.username || user.email,
+        role: user.position,
+      }));
+
+      // You are already storing the JWT, which is good practice.
+      localStorage.setItem("token", res.data.token);
+
+      // 4. Log the login activity
+      await logActivity(
+        { userId: user._id, username: user.email, position: user.position },
+        "Login",
+        "User logged in via OTP successfully"
+      );
+
+      // 5. Remove pending email from sessionStorage after successful verification
       sessionStorage.removeItem("pendingEmail");
 
-      // Redirect based on user position
-      if (res.data.user.position === "Superior_Admin") {
+      setMessage(res.data.msg);
+
+      // 6. Redirect based on user position
+      if (user.position === "Superior_Admin") {
         navigate("/superior/dashboard");
-      } else if (res.data.user.position === "System_Admin") {
+      } else if (user.position === "System_Admin") {
         navigate("/admin/UserManagement");
       } else {
         navigate("/"); // fallback

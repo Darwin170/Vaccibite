@@ -2,7 +2,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login';
 import SuperiorRoutes from './Pages/Superior/index';
-import OperationalRoutes from './Pages/Operational/index';
 import AdminRoutes from './Pages/System_Admin';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './routes/AuthContext'; // ✅ import AuthProvider

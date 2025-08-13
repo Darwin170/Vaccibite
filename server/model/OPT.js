@@ -1,12 +1,10 @@
-const mongoose = require("mongoose");
-
 const otpSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true
   },
-  code: {
+  otp: {  // changed from "code" to "otp"
     type: Number,
     required: true
   },

@@ -28,14 +28,7 @@ function App() {
             }
           />
 
-          <Route
-            path="/operational/*"
-            element={
-              <PrivateRoute role="Operational_Staff">
-                <OperationalRoutes />
-              </PrivateRoute>
-            }
-          />
+         
 
           <Route
             path="/admin/*"

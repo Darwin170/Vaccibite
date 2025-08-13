@@ -10,7 +10,7 @@ const verifyOTP = async (req, res) => {
     const user = await User.findOne({ email: normalizedEmail }).select("-password");
     if (!user) return res.status(404).json({ msg: "User not found" });
 
-    const otpRecord = await OTP.findOne({ userId: user._id });
+    const otpRecord = await otp.findOne({ userId: user._id });
     if (!otpRecord) return res.status(400).json({ msg: "No OTP found. Please log in again." });
 
     if (Date.now() > otpRecord.expiresAt.getTime()) {
@@ -45,4 +45,5 @@ const verifyOTP = async (req, res) => {
 };
 
 module.exports = { verifyOTP };
+
 

@@ -1,44 +1,43 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/usermode");
+const OTP = require("../model/OTP");
 
 const verifyOTP = async (req, res) => {
-  const { otp } = req.body;
-
-  // Check if OTP session exists
-  if (!req.session.otp || !req.session.otpExpiry || !req.session.userId) {
-    return res.status(400).json({ msg: "No OTP found. Please log in again." });
-  }
-
-  // Check if OTP expired
-  if (Date.now() > req.session.otpExpiry) {
-    req.session.destroy();
-    return res.status(400).json({ msg: "OTP expired. Please log in again." });
-  }
-
-  // Validate OTP
-  if (parseInt(otp) !== req.session.otp) {
-    return res.status(400).json({ msg: "Invalid OTP" });
-  }
-
   try {
-    const user = await User.findById(req.session.userId).select("-password");
+    const { otp, email } = req.body;
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({ email: normalizedEmail }).select("-password");
     if (!user) return res.status(404).json({ msg: "User not found" });
 
-    // Create JWT token
+    const otpRecord = await OTP.findOne({ userId: user._id });
+    if (!otpRecord) return res.status(400).json({ msg: "No OTP found. Please log in again." });
+
+    if (Date.now() > otpRecord.expiresAt.getTime()) {
+      await OTP.deleteOne({ _id: otpRecord._id });
+      return res.status(400).json({ msg: "OTP expired. Please log in again." });
+    }
+
+    if (parseInt(otp) !== otpRecord.otp) {
+      return res.status(400).json({ msg: "Invalid OTP" });
+    }
+
+    // OTP valid — delete it
+    await OTP.deleteOne({ _id: otpRecord._id });
+
+    // Create JWT
     const token = jwt.sign(
       { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    // Clear OTP from session
-    req.session.destroy();
-
     return res.json({
       msg: "Login successful!",
       token,
       user
     });
+
   } catch (err) {
     console.error(err);
     return res.status(500).json({ msg: "Server error", error: err });

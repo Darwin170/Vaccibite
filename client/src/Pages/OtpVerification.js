@@ -9,25 +9,35 @@ const OtpVerification = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleVerify = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(
-       `${process.env.REACT_APP_API_URL}/auth/verify`, // change to your backend route
-        { otp },
-        { withCredentials: true } // needed if using express-session
-      );
-
-      setMessage(res.data.msg);
-      // Store token if needed
-      localStorage.setItem("token", res.data.token);
-
-      // Redirect to dashboard or homepage
-      navigate("/superior/dashboard");
-    } catch (err) {
-      setMessage(err.response?.data?.msg || "Verification failed");
+ const handleVerify = async (e) => {
+  e.preventDefault();
+  try {
+    const email = localStorage.getItem("email"); // or wherever you stored it after login
+    if (!email) {
+      setMessage("Email not found. Please login again.");
+      return;
     }
-  };
+
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/auth/verify`,
+      { email, otp }, 
+      { withCredentials: true } 
+    );
+
+    setMessage(res.data.msg);
+    localStorage.setItem("token", res.data.token);
+
+    // Redirect based on position if needed
+    if (res.data.user.position === "Superior_Admin") {
+      navigate("/superior/dashboard");
+    } else {
+      navigate("/system/dashboard");
+    }
+
+  } catch (err) {
+    setMessage(err.response?.data?.msg || "Verification failed");
+  }
+};
 
   return (
     <div className="otp-container">

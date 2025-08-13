@@ -26,10 +26,12 @@ const Login = () => {
     }
 
     try {
+      const normalizedEmail = email.trim().toLowerCase();
+
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/login`,
         {
-          email: email.trim().toLowerCase(),
+          email: normalizedEmail,
           password,
         },
         { withCredentials: true }
@@ -37,8 +39,8 @@ const Login = () => {
 
       // If OTP is sent, go to OTP verification page
       if (response.data?.msg?.toLowerCase().includes("otp")) {
-        // Temporarily store email so OTP page knows which user is logging in
-        sessionStorage.setItem("pendingEmail", email.trim().toLowerCase());
+        // Store email in sessionStorage for OTP page
+        sessionStorage.setItem("pendingEmail", normalizedEmail);
         navigate("/otp");
         return;
       }
@@ -69,8 +71,8 @@ const Login = () => {
           navigate("/superior/Dashboard");
         } else {
           setError("Unauthorized role.");
-          console.log("User role:", user.role);
-          alert("Role is: " + user.role);
+          console.log("User role:", user.position);
+          alert("Role is: " + user.position);
         }
       } else {
         setError("Login failed. Please try again.");

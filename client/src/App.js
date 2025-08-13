@@ -10,16 +10,16 @@ import OtpVerification from './Pages/OtpVerification';
 function App() {
   return (
     <AuthProvider>
-      <Router basename="/">
+      <Router>
         <Routes>
-          {/* Default redirect */}
+          {/* Default route */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Public Routes */}
+          {/* Auth pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/otp" element={<OtpVerification />} />
 
-          {/* Protected Routes */}
+          {/* Protected routes */}
           <Route
             path="/superior/*"
             element={
@@ -28,6 +28,7 @@ function App() {
               </PrivateRoute>
             }
           />
+
           <Route
             path="/admin/*"
             element={
@@ -37,7 +38,7 @@ function App() {
             }
           />
 
-          {/* Catch-all: redirect unknown routes to login */}
+          {/* Catch-all → redirect to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

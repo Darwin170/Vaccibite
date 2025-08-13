@@ -13,9 +13,9 @@ function App() {
       <Router>
         <Routes>
           {/* 🔁 Redirect root to login */}
-          <Route path="/Login" element={<Navigate to="/Login" replace />} />
+          <Route path="/" element={<Navigate to="/Login" replace />} />
 
-
+          <Route path="/Login" element={<Login />} />
           <Route path="/otp" element={<OtpVerification />} />
 
           <Route

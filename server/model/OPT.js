@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const otpSchema = new mongoose.Schema({
   userId: {
@@ -6,7 +6,7 @@ const otpSchema = new mongoose.Schema({
     ref: "User",
     required: true
   },
-  otp: {  // changed from "code" to "otp"
+  otp: { // must match the field used in loginUser & verifyOTP
     type: Number,
     required: true
   },
@@ -14,6 +14,6 @@ const otpSchema = new mongoose.Schema({
     type: Date,
     required: true
   }
-});
+}, { timestamps: true }); // optional: keeps createdAt and updatedAt
 
 module.exports = mongoose.model("OTP", otpSchema);

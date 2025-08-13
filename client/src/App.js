@@ -1,24 +1,25 @@
 // App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login';
-import SuperiorRoutes from './Pages/Superior/index';
+import SuperiorRoutes from './Pages/Superior';
 import AdminRoutes from './Pages/System_Admin';
 import PrivateRoute from './routes/PrivateRoute';
-import { AuthProvider } from './routes/AuthContext'; // ✅ import AuthProvider
-import OtpVerification from "./Pages/OtpVerification";
+import { AuthProvider } from './routes/AuthContext';
+import OtpVerification from './Pages/OtpVerification';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router basename="/">
         <Routes>
-          {/* 🔁 Redirect root to login */}
-         <Route path="/login" element={<Login />} />
+          {/* Default redirect */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
-      
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
           <Route path="/otp" element={<OtpVerification />} />
 
+          {/* Protected Routes */}
           <Route
             path="/superior/*"
             element={
@@ -27,9 +28,6 @@ function App() {
               </PrivateRoute>
             }
           />
-
-         
-
           <Route
             path="/admin/*"
             element={
@@ -38,6 +36,9 @@ function App() {
               </PrivateRoute>
             }
           />
+
+          {/* Catch-all: redirect unknown routes to login */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

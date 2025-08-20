@@ -182,7 +182,7 @@ const CalendarScheduler = () => {
                 <option value="">-- Select Barangay --</option>
                 {barangays.map((b) => (
                   <option key={b._id} value={b._id}>
-                    {b.name} ({b.districtId?.name})
+                    {b.name} 
                   </option>
                 ))}
               </select>
@@ -241,6 +241,7 @@ const CalendarScheduler = () => {
 };
 
 export default CalendarScheduler;
+
 
 
 

@@ -58,7 +58,7 @@ const CalendarScheduler = () => {
 
   // Fetch barangays with districts
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/auth/getAllBarangays`)
+    axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`)
       .then(res => setBarangays(res.data))
       .catch(err => console.error("Error fetching barangays:", err));
   }, []);
@@ -241,5 +241,6 @@ const CalendarScheduler = () => {
 };
 
 export default CalendarScheduler;
+
 
 

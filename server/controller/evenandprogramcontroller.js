@@ -3,10 +3,10 @@ const Event = require('../model/evenandprogram');
 // Create Event
 const createEvent = async (req, res) => {
   try {
-    const { title, start, end, details } = req.body;
+    const { title, start, end, details, barangayId} = req.body;
 
     // Validate required fields
-    if (!title || !start || !end || !details) {
+    if (!title || !start || !end || !details || !barangayId) {
       return res.status(400).json({ message: 'Please fill out all fields.' });
     }
 
@@ -68,3 +68,4 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+

@@ -8,7 +8,7 @@ import Sidebar from "./Sidebar";
 import "./Sidebar.css";
 import "./EventsAndPrograms.css";
 
-const API_URL = 'http://localhost:8787';
+
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -241,4 +241,5 @@ const CalendarScheduler = () => {
 };
 
 export default CalendarScheduler;
+
 

@@ -30,7 +30,7 @@ const upload = multer({
 const addRoamingAnimal = async (req, res) => {
   try {
     const {
-      Name,
+      Name_of_the_barangay_officer,
       barangayId, 
       animalType,
       color,
@@ -50,7 +50,7 @@ const addRoamingAnimal = async (req, res) => {
       status: 'Pending',
       filePath,
       categoryDetails: {
-        Name,
+        Name_of_the_barangay_officer,
         animalType,
         color,
         breed,
@@ -72,4 +72,5 @@ module.exports = {
   upload,
   addRoamingAnimal
 };
+
 

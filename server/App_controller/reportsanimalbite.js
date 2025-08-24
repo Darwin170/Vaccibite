@@ -52,7 +52,9 @@ const addAnimalBite = async (req, res) => {
       status: 'Pending',
       filePath, // This will be used for download/view
       categoryDetails: {
-        Name,
+        Name_of_the_barangay_officer,
+        barangayId,
+        Name_Of_the_bitten_Person,
         animalType,
         color,
         size,
@@ -78,3 +80,4 @@ module.exports = {
   upload, // multer middleware
   addAnimalBite
 };
+

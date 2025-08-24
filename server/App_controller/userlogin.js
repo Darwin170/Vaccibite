@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require('../model/M_user');
-const jwt = require('jsonwebtoken'); // 👈 Import the jsonwebtoken library
+const jwt = require('jsonwebtoken'); 
 
 const loginUser = async (req, res) => {
     try {
@@ -53,3 +53,4 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+

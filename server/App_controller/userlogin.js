@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const User = require('../model/M_user'); 
 
 const loginUser = async (req, res) => {
@@ -41,3 +42,4 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+

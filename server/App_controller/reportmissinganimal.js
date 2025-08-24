@@ -33,10 +33,12 @@ const addMissinganimal = async (req, res) => {
   try {
     const {
       
-      Name,
+      Name_of_the_barangay_officer,
       barangayId, 
       animalType,
-      color_breed,
+      Name_of_the_animal_missing,
+      color,
+      breed,
       size,
       location,
       Date,
@@ -52,9 +54,11 @@ const addMissinganimal = async (req, res) => {
       status: 'Pending',
       filePath,
       categoryDetails: {
-        Name,
+        Name_of_the_barangay_officer,
         animalType,
-        color_breed,
+        Name_of_the_animal_missing,
+        color,
+        breed,
         size,
         location,
         date,
@@ -73,3 +77,4 @@ module.exports = {
   upload,
   addMissinganimal
 };
+

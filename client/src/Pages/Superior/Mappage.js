@@ -170,7 +170,7 @@ const MapPage = () => {
                                 <option value="">All</option>
                                 <option value="Animal Bite">Animal Bite</option>
                                 <option value="Missing Animal">Missing Animal</option>
-                                <option value="Animal Sighting">Animal Sighting</option>
+                                <option value="Animal Roaming">Animal Sighting</option>
                             </select>
                         </div>
                     </div>
@@ -295,5 +295,6 @@ const MapPage = () => {
 };
 
 export default MapPage;
+
 
 

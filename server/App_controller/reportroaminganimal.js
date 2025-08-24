@@ -33,7 +33,8 @@ const addRoamingAnimal = async (req, res) => {
       Name,
       barangayId, 
       animalType,
-      color_breed,
+      color,
+      breed,
       size,
       location,
       Time,
@@ -51,7 +52,8 @@ const addRoamingAnimal = async (req, res) => {
       categoryDetails: {
         Name,
         animalType,
-        color_breed,
+        color,
+        breed,
         size,
         location,
         Time,
@@ -70,3 +72,4 @@ module.exports = {
   upload,
   addRoamingAnimal
 };
+

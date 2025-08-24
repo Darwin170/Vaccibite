@@ -32,7 +32,7 @@ const loginUser = async (req, res) => {
         // Create a JWT token with a secret key
         const token = jwt.sign(
             payload,
-            process.env.JWT_SECRET || 'your_jwt_secret_key', //  Use an environment variable for the secret key
+            process.env.JWT_SECRET || 'supersecretjwtkey', //  Use an environment variable for the secret key
             { expiresIn: '1h' } // Token expires in 1 hour
         );
 
@@ -53,5 +53,6 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+
 
 

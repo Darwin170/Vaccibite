@@ -18,7 +18,7 @@ const loginUser = async (req, res) => {
         }
 
         // Use bcrypt.compare to check the password
-        const isMatch = await bcrypt.compare(password, user.password); // 👈 Correctly compare hashed passwords
+        const isMatch = await bcrypt.compare(password, user.password); //  Correctly compare hashed passwords
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid password.' });
         }
@@ -32,7 +32,7 @@ const loginUser = async (req, res) => {
         // Create a JWT token with a secret key
         const token = jwt.sign(
             payload,
-            process.env.JWT_SECRET || 'your_jwt_secret_key', // 👈 Use an environment variable for the secret key
+            process.env.JWT_SECRET || 'your_jwt_secret_key', //  Use an environment variable for the secret key
             { expiresIn: '1h' } // Token expires in 1 hour
         );
 
@@ -53,4 +53,5 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+
 

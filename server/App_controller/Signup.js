@@ -1,5 +1,5 @@
 const User = require('../model/M_user');
-
+const bcrypt = require('bcryptjs');
 
 const signupUser = async (req, res) => {
   try {
@@ -42,3 +42,4 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+

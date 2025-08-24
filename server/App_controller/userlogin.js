@@ -11,7 +11,7 @@ const loginUser = async (req, res) => {
         }
 
         // Find the user by barangay and email
-        const user = await User.findOne({ barangay, email });
+        const user = await User.findOne({ barangay, email,password });
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid barangay or email.' });
@@ -53,6 +53,7 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+
 
 
 

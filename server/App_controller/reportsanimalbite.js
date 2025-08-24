@@ -32,8 +32,9 @@ const upload = multer({
 const addAnimalBite = async (req, res) => {
   try {
     const {
-      Name,
-      barangayId, 
+      Name_of_the_barangay_officer,
+      barangayId,
+      Name_Of_the_bitten_Person,
       animalType,
       color,
       size,
@@ -80,4 +81,5 @@ module.exports = {
   upload, // multer middleware
   addAnimalBite
 };
+
 

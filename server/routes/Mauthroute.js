@@ -5,6 +5,7 @@ const { signupUser } = require("../App_controller/Signup");
 const { addAnimalBite } = require("../App_controller/reportsanimalbite");
 const { addMissinganimal } = require("../App_controller/reportmissinganimal");
 const { addRoamingAnimal } = require("../App_controller/reportroaminganimal");
+const {sendMUserOTP}= require("../App_controller/verify");
 
 const Mrouter = express.Router();
 
@@ -12,8 +13,9 @@ const Mrouter = express.Router();
 Mrouter.post('/missing', upload.single('file'), addMissinganimal);
 Mrouter.post('/Roaming', upload.single('file'), addRoamingAnimal);
 Mrouter.post('/a', upload.single('file'), addAnimalBite);
-
+Mrouter.post('/verify', sendMUserOTP);
 Mrouter.post('/login', loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+

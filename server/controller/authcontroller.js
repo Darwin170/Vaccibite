@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/usermode");
 const OTP = require("../model/OPT");
-const  M_User = require("../model/ M_user");
 
 const verifyOTP = async (req, res) => {
   try {
@@ -74,6 +73,7 @@ const verifyOTP = async (req, res) => {
 };
 
 module.exports = { verifyOTP };
+
 
 
 

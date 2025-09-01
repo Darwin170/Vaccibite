@@ -72,4 +72,5 @@ const verifyOTP = async (req, res) => {
   }
 };
 
-module.exports = { verifyOTP };
+module.exports = { verify };
+

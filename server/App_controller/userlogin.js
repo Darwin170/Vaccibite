@@ -1,7 +1,8 @@
 const bcrypt = require("bcryptjs");
 const User = require('../model/M_user');
 const jwt = require('jsonwebtoken'); 
-const OTP = require("../model/MOPT"); // 👈 make sure you have the OTP model
+const OTP = require("../model/MOPT"); // 👈 OTP model
+const transporter = require("../config/mailer"); // 👈 your nodemailer transporter
 
 const loginUser = async (req, res) => {
     try {
@@ -24,19 +25,19 @@ const loginUser = async (req, res) => {
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
 
         // Save OTP to DB
-        await MOTP.findOneAndUpdate(
+        await OTP.findOneAndUpdate(
             { userId: user._id },
             { otp: otpCode, expiresAt },
             { upsert: true, new: true }
         );
 
-                await transporter.sendMail({
+        // Send OTP email
+        await transporter.sendMail({
           from: process.env.EMAIL_USER,
           to: user.email,
           subject: 'Your OTP Code',
           text: `Your OTP is ${otpCode}. It expires in 5 minutes.`,
         });
-
 
         return res.json({ message: "OTP sent. Please verify.", email });
 
@@ -47,4 +48,3 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
-

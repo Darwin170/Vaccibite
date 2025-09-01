@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const User = require('../model/M_user');
 const jwt = require('jsonwebtoken'); 
+const OTP = require("../model/MOPT"); // 👈 make sure you have the OTP model
 
 const loginUser = async (req, res) => {
     try {
@@ -10,51 +11,38 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Please provide barangay, email, and password.' });
         }
 
-        // Find the user by barangay and email
+        // Find user
         const user = await User.findOne({ barangay, email });
+        if (!user) return res.status(401).json({ message: 'Invalid barangay or email.' });
 
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid barangay or email.' });
-        }
+        // Check password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(401).json({ message: 'Invalid password.' });
 
-        // Use bcrypt.compare to check the password
-        const isMatch = await bcrypt.compare(password, user.password); //  Correctly compare hashed passwords
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid password.' });
-        }
+        // ✅ Generate OTP
+        const otpCode = Math.floor(100000 + Math.random() * 900000); // 6-digit
+        const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
 
-        // Create a JWT payload. Use a unique identifier like the user's ID.
-        const payload = {
-            id: user._id,
-            email: user.email,
-        };
-
-        // Create a JWT token with a secret key
-        const token = jwt.sign(
-            payload,
-            process.env.JWT_SECRET || 'supersecretjwtkey', //  Use an environment variable for the secret key
-            { expiresIn: '1h' } // Token expires in 1 hour
+        // Save OTP to DB
+        await OTP.findOneAndUpdate(
+            { userId: user._id },
+            { otp: otpCode, expiresAt },
+            { upsert: true, new: true }
         );
 
-        res.status(200).json({
-            message: 'Login successful',
-            token: token, // 👈 Send the token to the client
-            user: {
-                id: user._id,
-                barangay: user.barangay,
-                email: user.email,
-            },
-        });
+        // TODO: send OTP via Gmail (Nodemailer)
+        // transporter.sendMail({
+        //     to: email,
+        //     subject: "Your OTP Code",
+        //     text: `Your OTP is ${otpCode}. It will expire in 5 minutes.`
+        // });
+
+        return res.json({ message: "OTP sent. Please verify.", email });
 
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ message: 'Server error during login. Please try again later.' });
+        console.error("Login error:", error);
+        res.status(500).json({ message: "Server error during login." });
     }
 };
 
 module.exports = { loginUser };
-
-
-
-
-

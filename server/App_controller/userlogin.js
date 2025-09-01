@@ -24,18 +24,19 @@ const loginUser = async (req, res) => {
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
 
         // Save OTP to DB
-        await OTP.findOneAndUpdate(
+        await MOTP.findOneAndUpdate(
             { userId: user._id },
             { otp: otpCode, expiresAt },
             { upsert: true, new: true }
         );
 
-        // TODO: send OTP via Gmail (Nodemailer)
-        // transporter.sendMail({
-        //     to: email,
-        //     subject: "Your OTP Code",
-        //     text: `Your OTP is ${otpCode}. It will expire in 5 minutes.`
-        // });
+                await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: user.email,
+          subject: 'Your OTP Code',
+          text: `Your OTP is ${otpCode}. It expires in 5 minutes.`,
+        });
+
 
         return res.json({ message: "OTP sent. Please verify.", email });
 
@@ -46,3 +47,4 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+

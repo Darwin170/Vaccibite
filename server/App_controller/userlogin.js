@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const User = require('../model/M_user');
 const jwt = require('jsonwebtoken'); 
 const OTP = require("../model/MOPT"); // 👈 OTP model
-const transporter = require("../config/mailer"); // 👈 your nodemailer transporter
 
 const loginUser = async (req, res) => {
     try {
@@ -48,3 +47,4 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+

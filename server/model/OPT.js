@@ -4,8 +4,10 @@ const otpSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    ref:"M_User",
     required: true
   },
+  
   otp: { // must match the field used in loginUser & verifyOTP
     type: Number,
     required: true

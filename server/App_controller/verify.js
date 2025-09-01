@@ -51,7 +51,7 @@ const verify = async (req, res) => {
     let token;
     try {
       token = jwt.sign(
-        { id: user._id, email: user.email, position: user.position },
+        { id: user._id, email: user.email },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
@@ -77,3 +77,4 @@ const verify = async (req, res) => {
 };
 
 module.exports = { verify };
+

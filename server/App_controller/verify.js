@@ -1,45 +1,75 @@
-const MUser = require("../model/M_user");
-const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
+const M_User = require("../model/M_user");
+const OTP = require("../model/MOPT");
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,   // your Gmail
-    pass: process.env.EMAIL_PASS,   // App password
-  },
-});
-
-const sendMUserOTP = async (req, res) => {
+const verifyOTP = async (req, res) => {
   try {
-    const { email } = req.body;
-
-    // Check if MUser exists
-    const user = await MUser.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ msg: "User not found" });
+    const { email, otp } = req.body;
+    if (!email || !otp) {
+      return res.status(400).json({ msg: "Email and OTP are required." });
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000);
+    const normalizedEmail = email.trim().toLowerCase();
 
-    // Store in session
-    req.session.otp = otp;
-    req.session.otpExpiry = Date.now() + 5 * 60 * 1000; 
-    req.session.userId = user._id;
+    // Find user
+    const user = await User.findOne({ email: normalizedEmail }).select("-password");
+    if (!user) return res.status(404).json({ msg: "User not found." });
 
-    // --- Send OTP via email ---
-    await transporter.sendMail({
-      from: `"Vaccibite" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: "Your Vaccibite OTP Code",
-      text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+    // Find OTP record
+    let otpRecord;
+    try {
+      otpRecord = await OTP.findOne({ userId: user._id });
+      console.log("Fetched OTP record:", otpRecord);
+    } catch (err) {
+      console.error("Error fetching OTP from DB:", err);
+      return res.status(500).json({ msg: "Server error fetching OTP." });
+    }
+
+    if (!otpRecord) {
+      return res.status(400).json({ msg: "No OTP found. Please login again." });
+    }
+
+    // Check if OTP expired
+    if (Date.now() > otpRecord.expiresAt.getTime()) {
+      await OTP.deleteOne({ _id: otpRecord._id });
+      return res.status(400).json({ msg: "OTP expired. Please login again." });
+    }
+
+    // Validate OTP
+    if (parseInt(otp) !== otpRecord.otp) {
+      return res.status(400).json({ msg: "Invalid OTP." });
+    }
+
+    // OTP is valid — delete it
+    try {
+      await OTP.deleteOne({ _id: otpRecord._id });
+    } catch (err) {
+      console.error("Failed to delete OTP record:", err);
+    }
+
+    // Create JWT safely
+    let token;
+    try {
+      token = jwt.sign(
+        { id: user._id, email: user.email, position: user.position },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+    } catch (err) {
+      console.error("JWT creation error:", err);
+      return res.status(500).json({ msg: "Server error generating token." });
+    }
+
+    return res.json({
+      msg: "Login successful!",
+      token,
+      user
     });
 
-    res.json({ msg: "OTP sent successfully! Please check your email." });
   } catch (err) {
-    console.error("Error sending OTP:", err);
-    res.status(500).json({ msg: "Server error", error: err.message });
+    console.error("Unexpected verifyOTP error:", err);
+    return res.status(500).json({ msg: "Server error", error: err.message });
   }
 };
 
-module.exports = { sendMUserOTP };
+module.exports = { verifyOTP };

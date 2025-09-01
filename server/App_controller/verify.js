@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const M_User = require("../model/M_user");
-const OTP = require("../model/MOPT");
+const MOTP = require("../model/MOPT");
 
-const verifyOTP = async (req, res) => {
+const verify = async (req, res) => {
   try {
     const { email, otp } = req.body;
     if (!email || !otp) {
@@ -73,4 +73,5 @@ const verifyOTP = async (req, res) => {
 };
 
 module.exports = { verify };
+
 

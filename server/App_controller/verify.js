@@ -1,5 +1,13 @@
 const MUser = require("../model/M_user");
+const nodemailer = require("nodemailer");
 
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,   // your Gmail
+    pass: process.env.EMAIL_PASS,   // App password
+  },
+});
 
 const sendMUserOTP = async (req, res) => {
   try {
@@ -19,8 +27,13 @@ const sendMUserOTP = async (req, res) => {
     req.session.otpExpiry = Date.now() + 5 * 60 * 1000; 
     req.session.userId = user._id;
 
-    // TODO: Replace this with email/SMS sending service
-    console.log(`OTP for MUser ${user.email}: ${otp}`);
+    // --- Send OTP via email ---
+    await transporter.sendMail({
+      from: `"Vaccibite" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: "Your Vaccibite OTP Code",
+      text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+    });
 
     res.json({ msg: "OTP sent successfully! Please check your email." });
   } catch (err) {

@@ -1,14 +1,9 @@
-import mongoose from "mongoose";
-
-const notificationSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId,
-     ref: "User",
-     required: true },
-  title: { type: String, required: true },
-  message: { type: String, required: true },
+const NotificationSchema = new mongoose.Schema({
+  senderId: { type: String, required: true },    // User who created the notification
+  receiverId: { type: String, required: true },  // M_User who receives it
+  title: String,
+  message: String,
   read: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
-export default mongoose.model("Notification", notificationSchema);
-
+module.exports = mongoose.model("Notification", NotificationSchema);

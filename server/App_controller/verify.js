@@ -11,14 +11,14 @@ const verify = async (req, res) => {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Find user
-    const user = await User.findOne({ email: normalizedEmail }).select("-password");
+    // Find MUser
+    const user = await M_User.findOne({ email: normalizedEmail }).select("-password");
     if (!user) return res.status(404).json({ msg: "User not found." });
 
     // Find OTP record
     let otpRecord;
     try {
-      otpRecord = await OTP.findOne({ userId: user._id });
+      otpRecord = await MOTP.findOne({ userId: user._id });
       console.log("Fetched OTP record:", otpRecord);
     } catch (err) {
       console.error("Error fetching OTP from DB:", err);
@@ -31,7 +31,7 @@ const verify = async (req, res) => {
 
     // Check if OTP expired
     if (Date.now() > otpRecord.expiresAt.getTime()) {
-      await OTP.deleteOne({ _id: otpRecord._id });
+      await MOTP.deleteOne({ _id: otpRecord._id });
       return res.status(400).json({ msg: "OTP expired. Please login again." });
     }
 
@@ -42,7 +42,7 @@ const verify = async (req, res) => {
 
     // OTP is valid — delete it
     try {
-      await OTP.deleteOne({ _id: otpRecord._id });
+      await MOTP.deleteOne({ _id: otpRecord._id });
     } catch (err) {
       console.error("Failed to delete OTP record:", err);
     }
@@ -63,15 +63,17 @@ const verify = async (req, res) => {
     return res.json({
       msg: "Login successful!",
       token,
-      user
+      user: {
+        id: user._id,
+        email: user.email,
+     
+      }
     });
 
   } catch (err) {
-    console.error("Unexpected verifyOTP error:", err);
+    console.error("Unexpected verify error:", err);
     return res.status(500).json({ msg: "Server error", error: err.message });
   }
 };
 
 module.exports = { verify };
-
-

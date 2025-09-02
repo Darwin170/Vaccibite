@@ -11,8 +11,8 @@ const verify = async (req, res) => {
 
     const normalizedEmail = email.trim().toLowerCase();
 
-    // Find MUser
-    const user = await M_User.findOne({ email: normalizedEmail }).select("-password");
+    // Find MUser and populate the 'barangay' field to get the full document
+    const user = await M_User.findOne({ email: normalizedEmail }).select("-password").populate('barangay');
     if (!user) return res.status(404).json({ msg: "User not found." });
 
     // Find OTP record
@@ -60,13 +60,16 @@ const verify = async (req, res) => {
       return res.status(500).json({ msg: "Server error generating token." });
     }
 
+    // Corrected response to include barangay and district from the populated field
     return res.json({
       msg: "Login successful!",
       token,
       user: {
         _id: user._id,
         email: user.email,
-     
+        userName: user.fullName,
+        userBarangay: user.barangay ? user.barangay.barangayName : null,
+        userDistrict: user.barangay ? user.barangay.districtName : null,
       }
     });
 
@@ -77,5 +80,3 @@ const verify = async (req, res) => {
 };
 
 module.exports = { verify };
-
-

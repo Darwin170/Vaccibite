@@ -20,8 +20,8 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'Please provide barangay, email, and password.' });
         }
 
-        // Find user
-        const user = await User.findOne({ barangay, email });
+        // Find user and populate the 'barangay' field to get the full document
+        const user = await User.findOne({ barangay, email }).populate('barangay').select('+password');
         if (!user) return res.status(401).json({ message: 'Invalid barangay or email.' });
 
         // Check password
@@ -47,15 +47,18 @@ const loginUser = async (req, res) => {
           text: `Your OTP is ${otpCode}. It expires in 5 minutes.`,
         });
 
-        //  FIX: Added the 'user' object to the response
-        return res.json({ 
-            message: "OTP sent. Please verify.", 
-            email, 
-            user: {
-                _id: user._id, // Ensure you return the _id
-                email: user.email,
-            }
-        });
+        // Corrected response to include barangay and district from the populated field
+        return res.json({ 
+            message: "OTP sent. Please verify.", 
+            email, 
+            user: {
+                _id: user._id,
+                email: user.email,
+                userName: user.fullName,
+                userBarangay: user.barangay ? user.barangay.barangayName : null,
+                userDistrict: user.barangay ? user.barangay.districtName : null,
+            }
+        });
 
     } catch (error) {
         console.error("Login error:", error);

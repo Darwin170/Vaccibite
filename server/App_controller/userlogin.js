@@ -15,19 +15,16 @@ const transporter = nodemailer.createTransport({
 const loginUser = async (req, res) => {
     try {
         const { barangay, email, password } = req.body;
-
         if (!barangay || !email || !password) {
             return res.status(400).json({ message: 'Please provide barangay, email, and password.' });
         }
-
-        // Find user and populate the 'barangay' field to get the full document
-        const user = await User.findOne({ barangay, email }).populate('barangay').select('+password');
+        // Find user
+        const user = await User.findOne({ barangay, email });
         if (!user) return res.status(401).json({ message: 'Invalid barangay or email.' });
 
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: 'Invalid password.' });
-
         // ✅ Generate OTP
         const otpCode = Math.floor(100000 + Math.random() * 900000); // 6-digit
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
@@ -47,16 +44,13 @@ const loginUser = async (req, res) => {
           text: `Your OTP is ${otpCode}. It expires in 5 minutes.`,
         });
 
-        // Corrected response to include barangay and district from the populated field
+        //  FIX: Added the 'user' object to the response
         return res.json({ 
             message: "OTP sent. Please verify.", 
             email, 
             user: {
-                _id: user._id,
+                _id: user._id, // Ensure you return the _id
                 email: user.email,
-                userName: user.fullName,
-                userBarangay: user.barangay ? user.barangay.barangayName : null,
-                userDistrict: user.barangay ? user.barangay.districtName : null,
             }
         });
 
@@ -65,5 +59,7 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: "Server error during login." });
     }
 };
+
+
 
 module.exports = { loginUser };

@@ -9,10 +9,12 @@ const {verify}= require("../App_controller/verify");
 const { sendOTP } = require("../App_controller/otpController");
 const {markAsRead}= require("../App_controller/markAsRead");
 const {getUserNotifications}= require ("../App_controller/getNotification");
-
+const {getDistrictAndBarangay} = require('../App_controller/getdata');
 const Mrouter = express.Router();
 
 // These now save files in /uploads and make them downloadable
+
+Mroute.get('/:userId/location',getDistrictAndBarangay);
 Mrouter.get('/getnotify/:receiverId', getUserNotifications);
 Mrouter.patch('/readmark/:id', markAsRead);
 Mrouter.post("/send", sendOTP);
@@ -24,6 +26,7 @@ Mrouter.post('/login', loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

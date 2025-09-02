@@ -1,5 +1,5 @@
-const M_User = require('../models/Mobile_User');
-const Barangay = require('../models/Barangay');
+const M_User = require('../model/M_user');
+const Barangay = require('../model/barangaymodel');
 
 const getDistrictAndBarangay = async (req, res) => {
   try {

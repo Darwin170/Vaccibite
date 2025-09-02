@@ -13,8 +13,8 @@ const {getUserNotifications}= require ("../App_controller/getNotification");
 const Mrouter = express.Router();
 
 // These now save files in /uploads and make them downloadable
-Mrouter.get("/getnotify/:receiverId", getUserNotifications);
-Mrouter.patch("/readmark/:id", markAsRead);
+Mrouter.get('/getnotify/:receiverId', getUserNotifications);
+Mrouter.patch('/readmark/:id', markAsRead);
 Mrouter.post("/send", sendOTP);
 Mrouter.post('/missing', upload.single('file'), addMissinganimal);
 Mrouter.post('/Roaming', upload.single('file'), addRoamingAnimal);
@@ -24,6 +24,7 @@ Mrouter.post('/login', loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

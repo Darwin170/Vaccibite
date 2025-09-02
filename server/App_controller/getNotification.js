@@ -1,3 +1,4 @@
+const Notification = require("../model/Notification");
 const getUserNotifications = async (req, res) => {
   try {
     const { receiverId } = req.params;
@@ -18,5 +19,6 @@ const getUserNotifications = async (req, res) => {
 };
 
 module.exports = { getUserNotifications };
+
 
 

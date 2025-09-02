@@ -64,7 +64,7 @@ const verify = async (req, res) => {
       msg: "Login successful!",
       token,
       user: {
-        id: user._id,
+        _id: user._id,
         email: user.email,
      
       }
@@ -77,4 +77,5 @@ const verify = async (req, res) => {
 };
 
 module.exports = { verify };
+
 

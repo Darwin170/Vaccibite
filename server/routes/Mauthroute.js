@@ -14,7 +14,7 @@ const Mrouter = express.Router();
 
 // These now save files in /uploads and make them downloadable
 
-Mroute.get('/:userId/location',getDistrictAndBarangay);
+Mrouter.get('/:userId/location',getDistrictAndBarangay);
 Mrouter.get('/getnotify/:receiverId', getUserNotifications);
 Mrouter.patch('/readmark/:id', markAsRead);
 Mrouter.post("/send", sendOTP);
@@ -26,6 +26,7 @@ Mrouter.post('/login', loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

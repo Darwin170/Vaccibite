@@ -1,7 +1,7 @@
 const express = require("express");
 const { upload } = require("../middleware/upload");
 const { loginUser } = require("../controller/userlogin");
-
+const { resendOtp } = require("../controller/resend-OTP");
 const { verifyOTP } = require('../controller/authcontroller');
 const { createReport } = require("../controller/createreport");
 const { getAllReports } = require("../controller/reportcontroller");
@@ -26,7 +26,7 @@ const { deleteArchivedReport } = require('../controller/deletearchive');
 const router = express.Router();
 router.get('/line-data', getLineChartData);
 router.get('/pie-data', getPieChartData);
-
+router.post("/resend-otp", resendOtp);
 router.post('/verify', verifyOTP);
 router.delete('/delete/:id', deleteArchivedReport);
 router.post('/retrieve/:id', retrieveReport);
@@ -51,3 +51,4 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+

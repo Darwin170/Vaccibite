@@ -1,6 +1,7 @@
 const Report = require('../model/reportsmodel');
 const Barangay = require('../model/barangaymodel');
 const path = require('path');
+const generateId = require('../utils/generateId');
 
 const createReport = async (req, res) => {
     try {
@@ -16,7 +17,6 @@ const createReport = async (req, res) => {
             return res.status(404).json({ message: 'Barangay not found.' });
         }
 
-        // Multer already saved file in /uploads — just store the path
         const filePath = path.join('uploads', file.filename);
 
         let parsedCategoryDetails = {};
@@ -29,13 +29,16 @@ const createReport = async (req, res) => {
             return res.status(400).json({ message: 'Invalid format for category details.' });
         }
 
+        const reportId = await generateId("report"); 
+
         const newReport = new Report({
+            reportId,
             type,
             barangayId,
             date,
             status,
             district,
-            filePath, // Save relative path in DB
+            filePath,
             categoryDetails: parsedCategoryDetails
         });
 

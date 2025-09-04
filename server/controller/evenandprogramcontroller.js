@@ -3,11 +3,11 @@ const Event = require('../model/evenandprogram');
 // Create Event
 const createEvent = async (req, res) => {
   try {
-    const { title, start, end, details, barangayId} = req.body;
+    const { title, start, end, details, barangayId } = req.body; // ✅ include barangayId
 
     // Validate required fields
     if (!title || !start || !end || !details || !barangayId) {
-      return res.status(400).json({ message: 'Please fill out all fields.' });
+      return res.status(400).json({ message: 'Please fill out all fields, including barangay.' });
     }
 
     // Convert start and end to Date objects explicitly
@@ -20,10 +20,10 @@ const createEvent = async (req, res) => {
 
     const newEvent = new Event({
       title,
-      barangayId,
       start: startDate,
       end: endDate,
       details,
+      barangayId, // ✅ properly assign
     });
 
     await newEvent.save();
@@ -34,6 +34,7 @@ const createEvent = async (req, res) => {
     res.status(500).json({ message: 'Server error creating event.' });
   }
 };
+
 
 // Delete Event
 const deleteEvent = async (req, res) => {
@@ -68,4 +69,3 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
-

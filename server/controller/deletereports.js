@@ -1,5 +1,5 @@
 const Report = require('../model/reportsmodel');
-const ArchivedReport = require('../model/ArchivingReportsmodel'); // make sure this model exists
+const ArchivedReport = require('../model/ArchivingReportsmodel'); 
 
 const deleteReport = async (req, res) => {
   try {

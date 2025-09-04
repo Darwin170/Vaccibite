@@ -1,10 +1,10 @@
 const User = require('../model/usermode');
+const generateId = require('../utils/generateId');
 
 // Register User
 const createUser = async (req, res) => {
-  const { name, email, phone, password,position } = req.body;
+  const { name, email, phone, password, position } = req.body;
 
-  // Check if any field is missing
   if (!name || !email || !phone || !password || !position) {
     return res.status(400).json({ error: "All fields are required" });
   }
@@ -16,20 +16,30 @@ const createUser = async (req, res) => {
       return res.status(400).json({ error: "Email already exists" });
     }
 
-    // 👇 No need to hash password manually anymore!
+    // 🔹 Generate custom userId
+    const userId = await generateId("user");
+
     const newUser = new User({
+      userId,
       name,
       email,
       phone,
-      password,// this will be hashed by the schema
+      password, // gets hashed by schema
       position 
     });
 
-    // Save user to the database
     await newUser.save();
 
-    // Send success response
-    res.status(201).json({ message: "User registered successfully" });
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        userId: newUser.userId,
+        name: newUser.name,
+        email: newUser.email,
+        phone: newUser.phone,
+        position: newUser.position
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });

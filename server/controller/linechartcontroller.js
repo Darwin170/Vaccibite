@@ -1,26 +1,31 @@
 const Report = require('../model/reportsmodel');
+const Barangay = require('../model/barangaymodel');
+const mongoose = require('mongoose'); // ✅ Add this line to access ObjectId
 
 const getLineChartData = async (req, res) => {
-  // Capture all possible filters from the request
-  const { startMonth, endMonth, status, barangayId, incidentType } = req.query;
+  const { startMonth, endMonth, status, barangayId, incidentType, district } = req.query;
 
   try {
     let matchQuery = {};
 
-    // Add filters to the match query if they are provided
     if (status) {
       matchQuery.status = status;
     }
+
+    // ✅ FIX: Convert the barangayId string to a MongoDB ObjectId
     if (barangayId) {
-      matchQuery.barangay = barangayId;
+      matchQuery.barangayId = new mongoose.Types.ObjectId(barangayId);
     }
+
     if (incidentType) {
-        matchQuery.type = incidentType;
+      matchQuery.type = incidentType;
     }
-    
-    // Add a filter for the month range if both start and end months are provided
-    // This uses the $expr operator to get the month number from the date
-    // and correctly filter all years without needing to know the current year.
+
+    if (district) {
+      const barangaysInDistrict = await Barangay.find({ district }).select("_id");
+      matchQuery.barangayId = { $in: barangaysInDistrict.map(b => b._id) };
+    }
+
     if (startMonth && endMonth) {
       matchQuery.$expr = {
         $and: [
@@ -31,10 +36,8 @@ const getLineChartData = async (req, res) => {
     }
 
     const data = await Report.aggregate([
-      // Apply all filters first using the matchQuery object
       { $match: matchQuery },
       {
-        // Group the reports by both year and month to get a complete count over time
         $group: {
           _id: {
             year: { $year: "$date" },
@@ -43,13 +46,7 @@ const getLineChartData = async (req, res) => {
           count: { $sum: 1 }
         }
       },
-      {
-        // Sort the data chronologically, first by year then by month
-        $sort: {
-          "_id.year": 1,
-          "_id.month": 1
-        }
-      }
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
     ]);
 
     const monthNames = [
@@ -57,9 +54,7 @@ const getLineChartData = async (req, res) => {
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
 
-    // Format the data to be easily consumed by the Recharts line graph
     const formattedData = data.map(item => ({
-      // The 'month' label now includes the year, so different years are distinct points
       month: `${monthNames[item._id.month - 1]} ${item._id.year}`,
       count: item.count
     }));

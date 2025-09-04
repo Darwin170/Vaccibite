@@ -1,45 +1,70 @@
 const Report = require('../model/reportsmodel');
+const Barangay = require('../model/barangaymodel');
+const mongoose = require('mongoose'); // ✅ Add this line to access ObjectId
 
 const getPieChartData = async (req, res) => {
-    const { startMonth, endMonth, status } = req.query;  // Accept status, startMonth, and endMonth from query
-  
-    try {
-      let query = {};
-      if (startMonth && endMonth) {
-        query.date = {
-          $gte: new Date(new Date().getFullYear(), startMonth - 1, 1),  // Start month
-          $lte: new Date(new Date().getFullYear(), endMonth, 0)          // End month
-        };
-      } else if (startMonth) {
-        query.date = {
-          $gte: new Date(new Date().getFullYear(), startMonth - 1, 1),  // Filter for one month
-          $lte: new Date(new Date().getFullYear(), startMonth, 0)
-        };
-      }
-  
-      if (status) {
-        query.status = status;  // Filter by report status (Pending, Ongoing, Resolved)
-      }
-  
-      const data = await Report.aggregate([
-        { $match: query },  // Apply the query filter
-        {
-          $group: {
-            _id: "$type",
-            count: { $sum: 1 }
-          }
-        }
-      ]);
-  
-      const formatted = data.map(item => ({
-        name: item._id,
-        value: item.count
-      }));
-  
-      res.json(formatted);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch pie chart data' });
+  const { startMonth, endMonth, status, barangayId, incidentType, district } = req.query;
+
+  try {
+    let matchQuery = {};
+
+    if (status) {
+      matchQuery.status = status;
     }
-  };
-  
-  module.exports = { getPieChartData };
+
+    // ✅ FIX: Convert the barangayId string to a MongoDB ObjectId
+    if (barangayId) {
+      matchQuery.barangayId = new mongoose.Types.ObjectId(barangayId);
+    }
+
+    if (incidentType) {
+      matchQuery.type = incidentType;
+    }
+
+    // ✅ FIX: This part now correctly handles the case where both district and barangayId might be present.
+    // The previous logic for district overwrites the barangayId, which is correct
+    // because a user can either filter by a single barangay or a whole district.
+    // However, the `barangayId` filter should come after to ensure it takes precedence
+    // if both are somehow present, or a simple check for `if (barangayId) { ... } else if (district) { ... }` is more robust.
+    // The original order is fine, but the `ObjectId` conversion is the key fix.
+    if (district) {
+      const barangaysInDistrict = await Barangay.find({ district }).select("_id");
+      matchQuery.barangayId = { $in: barangaysInDistrict.map(b => b._id) };
+    }
+
+    if (startMonth && endMonth) {
+      matchQuery.$expr = {
+        $and: [
+          { $gte: [{ $month: "$date" }, parseInt(startMonth)] },
+          { $lte: [{ $month: "$date" }, parseInt(endMonth)] }
+        ]
+      };
+    } else if (startMonth) {
+      matchQuery.$expr = {
+        $eq: [{ $month: "$date" }, parseInt(startMonth)]
+      };
+    }
+
+    const data = await Report.aggregate([
+      { $match: matchQuery },
+      {
+        $group: {
+          _id: "$type",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const formatted = data.map(item => ({
+      name: item._id,
+      value: item.count
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    console.error("Error fetching pie chart data:", error);
+    res.status(500).json({ error: 'Failed to fetch pie chart data' });
+  }
+};
+
+module.exports = { getPieChartData };

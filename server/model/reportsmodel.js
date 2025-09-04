@@ -1,6 +1,14 @@
 const mongoose = require('mongoose');
 
 const reportSchema = new mongoose.Schema({
+
+  reportId: { 
+    type: String, 
+    required: true, 
+    unique: true
+  },
+    
+
   type: {
     type: String,
     required: true,
@@ -27,9 +35,12 @@ const reportSchema = new mongoose.Schema({
   },
   categoryDetails: {
     type: mongoose.Schema.Types.Mixed
-  }
+  },
+   userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'M_User' }
   
-});
+},);
 
 const Report = mongoose.model('Reports', reportSchema, 'Reports');
 module.exports = Report;

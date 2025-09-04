@@ -1,41 +1,92 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../model/usermode');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../model/usermode");
+const OTP = require("../model/OPT");
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+}
+});
+
+// Simple OTP generator
+// Generate 6-digit OTP
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000); // 6-digit
+  return Math.floor(100000 + Math.random() * 900000);
+}
 
 const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    console.log("Login request:", req.body);
+ const loginUser = async (req, res) => {
 
-    const normalizedEmail = email.trim().toLowerCase();
-
-    const user = await User.findOne({ email: normalizedEmail });
-    console.log("User found:", user);
-
+// Find user
+const user = await User.findOne({ email: normalizedEmail });
     if (!user) return res.status(400).json({ msg: "NO EMAIL" });
+    if (!user) return res.status(400).json({ msg: "No user with this email." });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Only allow admins
+    if (!["Superior_Admin", "System_Admin"].includes(user.position)) {
+      return res.status(403).json({ msg: "Unauthorized position." });
+    }
+
+// Check password
+const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Invalid password" });
+    if (!isMatch) return res.status(400).json({ msg: "Invalid password." });
 
-    // 🔑 Generate JWT (expires in 1 hour)
+    // If user is Superior_Admin or System_Admin → OTP login
+    if (["Superior_Admin", "System_Admin"].includes(user.position)) {
+      // Generate OTP and expiry
+      const otp = generateOTP();
+      const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+    // Generate OTP
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+
+      // Delete old OTPs for this user
+      await OTP.deleteMany({ userId: user._id });
+    // Remove old OTPs
+    await OTP.deleteMany({ userId: user._id });
+
+      // Save new OTP to DB
+      await OTP.create({ userId: user._id, otp, expiresAt: otpExpiry });
+    // Save new OTP
+    await OTP.create({ userId: user._id, otp, expiresAt: otpExpiry });
+
+      // Send OTP email
+    // Send OTP email safely
+    try {
+await transporter.sendMail({
+from: process.env.EMAIL_USER,
+to: normalizedEmail,
+subject: "Your Login Verification Code",
+text: `Your OTP is ${otp}. It will expire in 5 minutes.`
+});
+
+      return res.json({ msg: "OTP sent to your Gmail. Please verify." });
+    } catch (err) {
+      console.error("Failed to send OTP email:", err);
+      return res.status(500).json({ msg: "Failed to send OTP email. Try again later." });
+}
+
+    // If user is not admin → login directly with JWT
     const token = jwt.sign(
-      { id: user._id, role: user.role }, 
-      process.env.JWT_SECRET, 
+      { id: user._id, email: user.email, position: user.position },
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    // Don’t send password hash back!
-    const { password: _, ...userData } = user._doc;
-
     res.json({
-      msg: "Login successful",
+      msg: "Login successful!",
       token,
-      user: userData,
+      user
     });
-  } catch (error) {
-    console.error(error);
+    res.json({ msg: "OTP sent to your email. Please verify." });
+
+} catch (error) {
+console.error("Login error:", error);
     res.status(500).json({ msg: "Server error", error });
-  }
+    res.status(500).json({ msg: "Server error", error: error.message });
+}
 };
 
 module.exports = { loginUser };
+

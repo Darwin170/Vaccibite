@@ -3,8 +3,14 @@ const jwt = require("jsonwebtoken");
 const User = require("../model/usermode");
 const OTP = require("../model/OPT");
 const nodemailer = require("nodemailer");
+
+// Gmail transporter using App Password
 const transporter = nodemailer.createTransport({
-}
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
 });
 
 // Simple OTP generator
@@ -15,10 +21,10 @@ function generateOTP() {
 }
 
 const loginUser = async (req, res) => {
- const loginUser = async (req, res) => {
+@@ -25,54 +24,46 @@
 
-// Find user
-const user = await User.findOne({ email: normalizedEmail });
+    // Find user
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user) return res.status(400).json({ msg: "NO EMAIL" });
     if (!user) return res.status(400).json({ msg: "No user with this email." });
 
@@ -27,8 +33,8 @@ const user = await User.findOne({ email: normalizedEmail });
       return res.status(403).json({ msg: "Unauthorized position." });
     }
 
-// Check password
-const isMatch = await bcrypt.compare(password, user.password);
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Invalid password" });
     if (!isMatch) return res.status(400).json({ msg: "Invalid password." });
 
@@ -54,18 +60,18 @@ const isMatch = await bcrypt.compare(password, user.password);
       // Send OTP email
     // Send OTP email safely
     try {
-await transporter.sendMail({
-from: process.env.EMAIL_USER,
-to: normalizedEmail,
-subject: "Your Login Verification Code",
-text: `Your OTP is ${otp}. It will expire in 5 minutes.`
-});
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: normalizedEmail,
+        subject: "Your Login Verification Code",
+        text: `Your OTP is ${otp}. It will expire in 5 minutes.`
+      });
 
       return res.json({ msg: "OTP sent to your Gmail. Please verify." });
     } catch (err) {
       console.error("Failed to send OTP email:", err);
       return res.status(500).json({ msg: "Failed to send OTP email. Try again later." });
-}
+    }
 
     // If user is not admin → login directly with JWT
     const token = jwt.sign(
@@ -81,12 +87,11 @@ text: `Your OTP is ${otp}. It will expire in 5 minutes.`
     });
     res.json({ msg: "OTP sent to your email. Please verify." });
 
-} catch (error) {
-console.error("Login error:", error);
+  } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ msg: "Server error", error });
     res.status(500).json({ msg: "Server error", error: error.message });
-}
+  }
 };
 
 module.exports = { loginUser };
-

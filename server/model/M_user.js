@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   fullName: {
@@ -11,7 +12,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
-    trim: true
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, "Invalid email format"]
   },
   password: {
     type: String,
@@ -19,9 +21,10 @@ const userSchema = new mongoose.Schema({
   },
   barangay: {
     type: mongoose.Schema.Types.ObjectId,  
-    ref: 'Barangays',                      
+    ref: 'Barangay',                      
     required: true
   }
+
 }, {
   timestamps: true
 });
@@ -29,4 +32,3 @@ const userSchema = new mongoose.Schema({
 const M_User = mongoose.model('Mobile_User', userSchema);
 
 module.exports = M_User;
-

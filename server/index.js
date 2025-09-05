@@ -15,7 +15,7 @@ const xss = require("xss-clean");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require('morgan'); // For better logging
-const errorHandler = require('./middleware/errorMiddleware'); // Custom error handler
+
 
 dotenv.config();
 
@@ -123,5 +123,6 @@ app.use(errorHandler);
     process.exit(1); // Exit with a failure code
   }
 })();
+
 
 

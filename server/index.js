@@ -108,8 +108,6 @@ app.get("/", (req, res) => {
   res.send("Server is running ✅");
 });
 
-// Custom error handling middleware
-app.use(errorHandler);
 
 // Connect to DB and start the server
 (async () => {
@@ -123,6 +121,7 @@ app.use(errorHandler);
     process.exit(1); // Exit with a failure code
   }
 })();
+
 
 
 

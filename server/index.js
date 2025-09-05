@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8787;
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authroute);
@@ -123,4 +123,5 @@ app.use(errorHandler);
     process.exit(1); // Exit with a failure code
   }
 })();
+
 

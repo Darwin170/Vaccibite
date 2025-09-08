@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const Report = require('../model/reportsmodel');
+const generateId = require("../utils/generateId");
 
 // Store files in uploads/ with unique name
 const storage = multer.diskStorage({
@@ -47,6 +48,9 @@ const addAnimalBite = async (req, res) => {
     // Save uploaded file path
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
 
+    const reportId = await generateId("report");
+
+
     const newReport = new Report({
       type: 'Animal Bite',
       barangayId, 
@@ -83,6 +87,7 @@ module.exports = {
   upload, // multer middleware
   addAnimalBite
 };
+
 
 
 

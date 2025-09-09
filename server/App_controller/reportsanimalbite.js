@@ -41,6 +41,7 @@ const addAnimalBite = async (req, res) => {
       size,
       location,
       location_of_bite,
+      street,
       severity,
       caughtStatus
     } = req.body;
@@ -66,6 +67,7 @@ const addAnimalBite = async (req, res) => {
         size,
         location,
         location_of_bite,
+        street,
         severity,
         caughtStatus
       }
@@ -87,6 +89,7 @@ module.exports = {
   upload, // multer middleware
   addAnimalBite
 };
+
 
 
 

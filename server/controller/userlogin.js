@@ -4,19 +4,20 @@ const User = require("../model/usermode");
 const OTP = require("../model/OPT");
 const nodemailer = require("nodemailer");
 
-// Gmail transporter using App Password
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-// Generate 6-digit OTP
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000);
 }
+
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 
 const loginUser = async (req, res) => {
   try {
@@ -27,6 +28,16 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) return res.status(400).json({ msg: "No user with this email." });
 
+    // Reset attempts if time window passed
+    if (user.lastAttempt && Date.now() - user.lastAttempt.getTime() > WINDOW_MS) {
+      user.loginAttempts = 0;
+    }
+
+    // Check if locked out
+    if (user.loginAttempts >= MAX_ATTEMPTS) {
+      return res.status(429).json({ msg: "Too many login attempts. Try again later." });
+    }
+
     // Only allow admins
     if (!["Superior_Admin", "System_Admin"].includes(user.position)) {
       return res.status(403).json({ msg: "Unauthorized position." });
@@ -34,26 +45,34 @@ const loginUser = async (req, res) => {
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid password." });
+    if (!isMatch) {
+      user.loginAttempts += 1;
+      user.lastAttempt = new Date();
+      await user.save();
+      return res.status(400).json({
+        msg: `Invalid password. Attempts left: ${MAX_ATTEMPTS - user.loginAttempts}`,
+      });
+    }
+
+    // ✅ Success → reset attempts
+    user.loginAttempts = 0;
+    user.lastAttempt = null;
+    await user.save();
 
     // If admin → OTP login
     if (["Superior_Admin", "System_Admin"].includes(user.position)) {
       const otp = generateOTP();
       const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 min
 
-      // Delete old OTPs for this user
-      await OTP.deleteMany({ userId: user._id });
-
-      // Save new OTP
+      await OTP.deleteMany({ userId: user._id }); // remove old OTPs
       await OTP.create({ userId: user._id, otp, expiresAt: otpExpiry });
 
-      // Send OTP email
       try {
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
           to: normalizedEmail,
           subject: "Your Login Verification Code",
-          text: `Your OTP is ${otp}. It will expire in 5 minutes.`
+          text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
         });
 
         return res.json({ msg: "OTP sent to your Gmail. Please verify." });
@@ -63,7 +82,7 @@ const loginUser = async (req, res) => {
       }
     }
 
-    // Non-admin → login directly with JWT
+    // Non-admin → JWT login (you said only admins are allowed, but keeping fallback)
     const token = jwt.sign(
       { id: user._id, email: user.email, position: user.position },
       process.env.JWT_SECRET,
@@ -73,7 +92,7 @@ const loginUser = async (req, res) => {
     res.json({
       msg: "Login successful!",
       token,
-      user
+      user,
     });
   } catch (error) {
     console.error("Login error:", error);

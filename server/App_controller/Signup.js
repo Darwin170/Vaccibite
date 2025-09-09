@@ -4,10 +4,10 @@ const bcrypt = require('bcryptjs');
 
 const signupUser = async (req, res) => {
   try {
-    const { fullName, email, password, confirmPassword, barangay } = req.body;
+    const { fullName, email, password, barangay } = req.body;
 
     // Basic validation
-    if (!fullName || !email || !password || !confirmPassword || !barangay) {
+    if (!fullName || !email || !password || !barangay) {
       return res.status(400).json({ message: 'Please fill in all fields.' });
     }
 
@@ -56,4 +56,5 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+
 

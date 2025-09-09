@@ -1,5 +1,6 @@
 const User = require('../model/M_user');
 const generateId = require('../utils/generateId');
+const bcrypt = require('bcryptjs');
 
 const signupUser = async (req, res) => {
   try {
@@ -26,15 +27,18 @@ const signupUser = async (req, res) => {
       return res.status(400).json({ message: 'Email is already registered.' });
     }
 
+    // --- Hash password once ---
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // --- Generate custom userId ---
     const MuserId = await generateId('Muser');
 
-    // --- Create new user (password will be hashed by model middleware) ---
+    // --- Create new user document ---
     const newUser = new User({
       MuserId,        // ✅ generated ID
       fullName,
       email,
-      password,       // ⚠️ raw password → will be hashed in model
+      password: hashedPassword,
       barangay,
     });
 

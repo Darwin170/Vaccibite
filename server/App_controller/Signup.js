@@ -1,5 +1,4 @@
 const User = require('../model/M_user');
-const Barangay = require('../model/barangaymodel'); // ✅ import Barangay model
 const generateId = require('../utils/generateId');
 const bcrypt = require('bcryptjs');
 
@@ -17,24 +16,15 @@ const signupUser = async (req, res) => {
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
+      return res
+        .status(400)
+        .json({ message: 'Password must be at least 6 characters long.' });
     }
 
     // Check if user already exists by email
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'Email is already registered.' });
-    }
-
-    // ✅ Find Barangay (accepts either ObjectId or name)
-    let barangayId = barangay;
-    if (!/^[0-9a-fA-F]{24}$/.test(barangay)) {
-      // If not a valid ObjectId, assume it's a name
-      const barangayDoc = await Barangay.findOne({ name: barangay });
-      if (!barangayDoc) {
-        return res.status(400).json({ message: 'Invalid barangay selected.' });
-      }
-      barangayId = barangayDoc._id;
     }
 
     // Hash the password
@@ -46,16 +36,19 @@ const signupUser = async (req, res) => {
 
     // Create new user document
     const newUser = new User({
-      MuserId,
+      MuserId, // ✅ generated ID
       fullName,
       email,
       password: hashedPassword,
-      barangay: barangayId, // ✅ always stored as ObjectId
+      barangay,
     });
 
     await newUser.save();
 
-    res.status(201).json({ message: 'User registered successfully!', MuserId });
+    res.status(201).json({
+      message: 'User registered successfully!',
+      MuserId,
+    });
   } catch (error) {
     console.error('Signup error:', error);
     res.status(500).json({ message: 'Server error, please try again later.' });
@@ -63,5 +56,3 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
-
-

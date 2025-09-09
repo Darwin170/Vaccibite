@@ -32,7 +32,7 @@ const signupUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Generate custom userId
-    const MuserId = await generateId('user');
+    const MuserId = await generateId('Muser');
 
     // Create new user document
     const newUser = new User({
@@ -56,3 +56,4 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+

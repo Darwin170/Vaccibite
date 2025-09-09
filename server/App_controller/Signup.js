@@ -1,5 +1,5 @@
 const User = require('../model/M_user');
-const Barangay = require('../model/Barangay'); // ✅ import Barangay model
+const Barangay = require('../model/barangay'); // ✅ import Barangay model
 const generateId = require('../utils/generateId');
 const bcrypt = require('bcryptjs');
 
@@ -63,3 +63,4 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+

@@ -1,5 +1,7 @@
-const User = require('../model/M_user'); 
+const User = require('../model/M_user');
+const Barangay = require('../model/Barangay'); // ✅ import Barangay model
 const generateId = require('../utils/generateId');
+const bcrypt = require('bcryptjs');
 
 const signupUser = async (req, res) => {
   try {
@@ -24,20 +26,31 @@ const signupUser = async (req, res) => {
       return res.status(400).json({ message: 'Email is already registered.' });
     }
 
+    // ✅ Find Barangay (accepts either ObjectId or name)
+    let barangayId = barangay;
+    if (!/^[0-9a-fA-F]{24}$/.test(barangay)) {
+      // If not a valid ObjectId, assume it's a name
+      const barangayDoc = await Barangay.findOne({ name: barangay });
+      if (!barangayDoc) {
+        return res.status(400).json({ message: 'Invalid barangay selected.' });
+      }
+      barangayId = barangayDoc._id;
+    }
+
     // Hash the password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Generate custom userId (optional, if you want formatted IDs)
-    const MuserId = await generateId('user'); 
+    // Generate custom userId
+    const MuserId = await generateId('user');
 
     // Create new user document
     const newUser = new User({
-      MuserId,       // ✅ generated ID
+      MuserId,
       fullName,
       email,
       password: hashedPassword,
-      barangay,
+      barangay: barangayId, // ✅ always stored as ObjectId
     });
 
     await newUser.save();

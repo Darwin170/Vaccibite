@@ -63,6 +63,8 @@ const addAnimalBite = async (req, res) => {
   }
 };
 
+module.exports = { addAnimalBite };
+
 
 
 

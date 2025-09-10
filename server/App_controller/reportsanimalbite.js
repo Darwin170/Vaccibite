@@ -5,6 +5,9 @@ const generateId = require("../utils/generateId");
 
 const addAnimalBite = async (req, res) => {
   try {
+    console.log("➡️ Body:", req.body);
+    console.log("➡️ File:", req.file);
+
     const {
       Name_of_the_barangay_officer,
       barangayId,
@@ -22,15 +25,15 @@ const addAnimalBite = async (req, res) => {
     // Save uploaded file path
     const filePath = req.file ? `/uploads/${req.file.filename}` : null;
 
-    const reportId = await generateId("report");
-
+    const reportId = await generateId("report"); // <-- also log this
+    console.log("Generated Report ID:", reportId);
 
     const newReport = new Report({
       type: 'Animal Bite',
-      barangayId, 
+      barangayId,
       date: new Date(),
       status: 'Pending',
-      filePath, // This will be used for download/view
+      filePath,
       categoryDetails: {
         Name_of_the_barangay_officer,
         barangayId,
@@ -52,15 +55,14 @@ const addAnimalBite = async (req, res) => {
       report: newReport
     });
   } catch (error) {
+    console.error("❌ Error in addAnimalBite:", error);
     res.status(500).json({
       error: 'Failed to report Animal Bite',
+      details: error.message, // show actual error
     });
   }
 };
 
-module.exports = {
-  addAnimalBite
-};
 
 
 

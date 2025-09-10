@@ -2,7 +2,7 @@ const express = require("express");
 const { upload } = require("../middleware/upload"); // use diskStorage middleware
 const { loginUser } = require("../App_controller/userlogin"); 
 const { signupUser } = require("../App_controller/Signup");
-const { upload,addAnimalBite } = require("../App_controller/reportsanimalbite");
+const { addAnimalBite } = require("../App_controller/reportsanimalbite");
 const { addMissinganimal } = require("../App_controller/reportmissinganimal");
 const { addRoamingAnimal } = require("../App_controller/reportroaminganimal");
 const {verify}= require("../App_controller/verify");
@@ -26,6 +26,7 @@ Mrouter.post('/login', loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

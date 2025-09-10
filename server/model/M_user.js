@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   },
   barangay: {
     type: mongoose.Schema.Types.ObjectId,  
-    ref: 'Barangay',                      
+    ref: 'Barangays',                      
     required: true
   }
 
@@ -36,5 +36,6 @@ const userSchema = new mongoose.Schema({
 const M_User = mongoose.model('Mobile_User', userSchema);
 
 module.exports = M_User;
+
 
 

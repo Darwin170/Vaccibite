@@ -9,6 +9,7 @@ const addAnimalBite = async (req, res) => {
     console.log("➡️ File:", req.file);
 
     const {
+      reportId,
       Name_of_the_barangay_officer,
       barangayId,
       Name_Of_the_bitten_Person,
@@ -64,6 +65,7 @@ const addAnimalBite = async (req, res) => {
 };
 
 module.exports = { addAnimalBite };
+
 
 
 

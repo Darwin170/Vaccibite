@@ -524,7 +524,6 @@ function ReportingPage() {
                                             {report.filePath ? (
                                                 <a
                                                   href={report.filePath}
-                                                    download
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
@@ -552,4 +551,5 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
+
 

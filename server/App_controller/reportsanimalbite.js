@@ -1,4 +1,4 @@
-can you apply it here in my code
+
 const Report = require('../model/reportsmodel');
 const generateId = require("../utils/generateId");
 
@@ -66,6 +66,7 @@ const addAnimalBite = async (req, res) => {
 };
 
 module.exports = { addAnimalBite };
+
 
 
 

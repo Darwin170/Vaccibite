@@ -1,8 +1,6 @@
 const Report = require('../model/reportsmodel');
 const generateId = require("../utils/generateId");
 
-
-
 const addAnimalBite = async (req, res) => {
   try {
     console.log("➡️ Body:", req.body);
@@ -22,19 +20,21 @@ const addAnimalBite = async (req, res) => {
       caughtStatus
     } = req.body;
 
-    // Save uploaded file path
-    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
+    // ✅ Use BASE_URL for full file path
+    const filePath = req.file 
+      ? `${process.env.BASE_URL}/uploads/${req.file.filename}` 
+      : null;
 
-    const reportId = await generateId("report"); // <-- also log this
+    const reportId = await generateId("report");
     console.log("Generated Report ID:", reportId);
 
     const newReport = new Report({
-       reportId,
+      reportId,
       type: 'Animal Bite',
       barangayId,
       date: new Date(),
       status: 'Pending',
-      filePath,
+      filePath, // ✅ this will now be https://server/uploads/file.jpg
       categoryDetails: {
         Name_of_the_barangay_officer,
         barangayId,
@@ -51,6 +51,7 @@ const addAnimalBite = async (req, res) => {
     });
 
     await newReport.save();
+
     res.status(201).json({
       message: 'Animal Bite reported successfully',
       report: newReport
@@ -59,19 +60,9 @@ const addAnimalBite = async (req, res) => {
     console.error("❌ Error in addAnimalBite:", error);
     res.status(500).json({
       error: 'Failed to report Animal Bite',
-      details: error.message, // show actual error
+      details: error.message,
     });
   }
 };
 
 module.exports = { addAnimalBite };
-
-
-
-
-
-
-
-
-
-

@@ -521,9 +521,10 @@ function ReportingPage() {
                                             </select>
                                         </td>
                                         <td>
-                                            {report.filePath ? (
+                                             {report.filePath ? (
                                                 <a
-                                                  href={report.filePath}
+                                                    href={report.filePath}
+                                                    download
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
@@ -551,5 +552,6 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
+
 
 

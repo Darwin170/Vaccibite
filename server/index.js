@@ -100,13 +100,11 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 8787;
 
-app.use('uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authroute);
 app.use('/mauth', Mauthroute);
 
-app.get("/", (req, res) => {
-  res.send("Server is running ✅");
-});
+
 
 
 // Connect to DB and start the server
@@ -121,6 +119,7 @@ app.get("/", (req, res) => {
     process.exit(1); // Exit with a failure code
   }
 })();
+
 
 
 

@@ -523,7 +523,7 @@ function ReportingPage() {
                                         <td>
                                             {report.filePath ? (
                                                 <a
-                                                    href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
+                                                  href={report.filePath}
                                                     download
                                                     target="_blank"
                                                     rel="noopener noreferrer"
@@ -552,3 +552,4 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
+

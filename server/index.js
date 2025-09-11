@@ -105,7 +105,9 @@ app.use('/auth', authroute);
 app.use('/mauth', Mauthroute);
 
 
-
+app.get("/", (req, res) => {
+  res.send("Server is running ");
+});
 
 // Connect to DB and start the server
 (async () => {
@@ -119,6 +121,7 @@ app.use('/mauth', Mauthroute);
     process.exit(1); // Exit with a failure code
   }
 })();
+
 
 
 

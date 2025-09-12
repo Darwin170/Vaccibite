@@ -24,7 +24,7 @@ const addAnimalBite = async (req, res) => {
     } = req.body;
 
     // Save uploaded file path
-    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const filePath = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : null;
 
     const reportId = await generateId("report"); // <-- also log this
     console.log("Generated Report ID:", reportId);
@@ -66,6 +66,7 @@ const addAnimalBite = async (req, res) => {
 };
 
 module.exports = { addAnimalBite };
+
 
 
 

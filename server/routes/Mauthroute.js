@@ -18,14 +18,15 @@ Mrouter.get('/:userId/location',getDistrictAndBarangay);
 Mrouter.get('/getnotify/:receiverId', getUserNotifications);
 Mrouter.patch('/readmark/:id', markAsRead);
 Mrouter.post("/send", sendOTP);
-Mrouter.post('/missing', upload.single('file'), addMissinganimal);
-Mrouter.post('/Roaming', upload.single('file'), addRoamingAnimal);
+Mrouter.post('/missing', upload.single('image'), addMissinganimal);
+Mrouter.post('/Roaming', upload.single('image'), addRoamingAnimal);
 Mrouter.post('/a', upload.single('image'), addAnimalBite);
 Mrouter.post('/verification', verify);
 Mrouter.post('/login', loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

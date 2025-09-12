@@ -521,17 +521,20 @@ function ReportingPage() {
                                             </select>
                                         </td>
                                         <td>
-                                             {report.filePath ? (
+                                              {report.filePath ? (
                                                 <a
-                                                    href={report.filePath}
-                                                    download
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
+                                                  href={report.filePath}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  download={report.filePath.split('/').pop()} // optional
                                                 >
-                                                    {report.filePath.split('/').pop()}
+                                                  {report.filePath.split('/').pop()}
                                                 </a>
-                                            ) : 'N/A'}
+                                              ) : (
+                                                'N/A'
+                                              )}
                                         </td>
+
                                         <td>
                                             <button className="view-btn" onClick={() => setSelectedDetails(report)}>👁️ View</button>
                                             <button className="delete-btn" onClick={() => handleDelete(report._id)}>🗑️</button>
@@ -552,6 +555,7 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
+
 
 
 

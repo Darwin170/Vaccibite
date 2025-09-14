@@ -1,8 +1,5 @@
-const multer = require('multer');
-const path = require('path');
 const Report = require('../model/reportsmodel');
-
-
+const generateId = require("../utils/generateId");
 
 const addMissinganimal = async (req, res) => {
   try {
@@ -57,6 +54,7 @@ module.exports = {
   upload,
   addMissinganimal
 };
+
 
 
 

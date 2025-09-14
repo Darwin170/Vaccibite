@@ -51,9 +51,10 @@ const addMissinganimal = async (req, res) => {
 };
 
 module.exports = {
-  upload,
+
   addMissinganimal
 };
+
 
 
 

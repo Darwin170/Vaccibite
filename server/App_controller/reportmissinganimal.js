@@ -19,8 +19,12 @@ const addMissinganimal = async (req, res) => {
       Date,
         Special
     } = req.body;
+  // Save uploaded file path
+    const filePath = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : null;
 
-    const filePath = req.file ? req.file.originalname : null;
+    const reportId = await generateId("report"); // <-- also log this
+    console.log("Generated Report ID:", reportId);
+
 
     const newReport = new Report({
       type: 'Missing Animal',
@@ -53,5 +57,6 @@ module.exports = {
   upload,
   addMissinganimal
 };
+
 
 

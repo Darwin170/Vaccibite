@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-  userId: { 
-    type: String, 
-    required: true 
+  userId: {
+    type: String,
+    required: true
   },
   name: {
     type: String,
@@ -25,14 +25,11 @@ const userSchema = new mongoose.Schema({
     required: [true, "Phone number is required"],
     match: [/^\d{8,11}$/, "Phone number must be between 8 to 11 digits"]
   },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: [8, "Password must be at least 8 characters"]
-  },
   position: {
     type: String,
-    required: [true, "Position is required"]
+    required: [true, "Position is required"],
+    // Use an enum to enforce valid positions
+    enum: ['Super_Admin', 'System_Admin', 'Admin'] 
   },
 }, { timestamps: true });
 

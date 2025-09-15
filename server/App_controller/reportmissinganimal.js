@@ -26,7 +26,7 @@ const addMissinganimal = async (req, res) => {
 
     // ✅ Handle file path safely
     const filePath = req.file 
-      ? `${process.env.BASE_URL.replace(/\/$/, '')}/uploads/${req.file.filename}`
+      ? `${process.env.BASE_URL}/uploads/${req.file.filename}`
       : null;
 
     const reportId = await generateId("report");
@@ -68,3 +68,4 @@ const addMissinganimal = async (req, res) => {
 };
 
 module.exports = { addMissinganimal };
+

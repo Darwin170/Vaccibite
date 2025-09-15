@@ -54,9 +54,10 @@ if (!barangayId || !Name_of_the_animal_missing) {
 };
 
 module.exports = {
-  upload,
+
   addRoamingAnimal
 };
+
 
 
 

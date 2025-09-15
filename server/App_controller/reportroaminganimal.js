@@ -16,16 +16,10 @@ const addRoamingAnimal = async (req, res) => {
         bahavior
     } = req.body;
 
-if (!barangayId || !Name_of_the_animal_missing) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
+ // Save uploaded file path
+    const filePath = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : null;
 
-    // ✅ Handle file path safely
-    const filePath = req.file 
-      ? `${process.env.BASE_URL.replace(/\/$/, '')}/uploads/${req.file.filename}`
-      : null;
-
-    const reportId = await generateId("report");
+    const reportId = await generateId("report"); // <-- also log this
     console.log("Generated Report ID:", reportId);
     const newReport = new Report({
       type: 'Roaming Animal',
@@ -57,6 +51,7 @@ module.exports = {
 
   addRoamingAnimal
 };
+
 
 
 

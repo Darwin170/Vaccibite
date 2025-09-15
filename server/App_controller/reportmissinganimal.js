@@ -15,7 +15,7 @@ const addMissinganimal = async (req, res) => {
       breed,
       size,
       location,
-      Date,   // <-- careful with uppercase, might conflict with JS Date object
+      reportDate,  // ✅ renamed instead of "Date"
       Special
     } = req.body;
 
@@ -40,15 +40,16 @@ const addMissinganimal = async (req, res) => {
       status: 'Pending',
       filePath,
       categoryDetails: {
-        Name_of_the_barangay_officer,
-        animalType,
-        Name_of_the_animal_missing,
-        color,
-        breed,
-        size,
-        location,
-        Date,    // keep original key if schema expects it
-        Special
+      Name_of_the_barangay_officer,
+      barangayId, 
+      animalType,
+      Name_of_the_animal_missing,
+      color,
+      breed,
+      size,
+      location,
+      reportDate,  // ✅ renamed instead of "Date"
+      Special
       }
     });
 
@@ -68,4 +69,5 @@ const addMissinganimal = async (req, res) => {
 };
 
 module.exports = { addMissinganimal };
+
 

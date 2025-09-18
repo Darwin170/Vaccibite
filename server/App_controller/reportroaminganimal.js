@@ -13,7 +13,7 @@ const addRoamingAnimal = async (req, res) => {
       size,
       location,
       Time,
-        bahavior
+      bahavior
     } = req.body;
 
  // Save uploaded file path
@@ -51,6 +51,7 @@ module.exports = {
 
   addRoamingAnimal
 };
+
 
 
 

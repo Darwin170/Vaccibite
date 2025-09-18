@@ -19,6 +19,8 @@ const addAnimalBite = async (req, res) => {
       location,
       location_of_bite,
       street,
+      age,
+      gender,
       severity,
       caughtStatus
     } = req.body;
@@ -46,6 +48,8 @@ const addAnimalBite = async (req, res) => {
         location,
         location_of_bite,
         street,
+        age,
+        gender,
         severity,
         caughtStatus
       }
@@ -66,6 +70,7 @@ const addAnimalBite = async (req, res) => {
 };
 
 module.exports = { addAnimalBite };
+
 
 
 

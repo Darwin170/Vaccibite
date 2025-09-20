@@ -20,11 +20,10 @@ function generateOTP() {
 
 const loginUser = async (req, res) => {
   try {
-     const normalizedEmail = email.trim().toLowerCase();
-    const user = await User.findOne({ email: normalizedEmail });
+    const { email, password } = req.body;
+    console.log("Login request:", req.body);
 
-
-    // Find user
+    const normalizedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) return res.status(400).json({ msg: "No user with this email." });
 
@@ -72,4 +71,5 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+
 

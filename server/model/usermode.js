@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema({
     required: [true, "Phone number is required"],
     match: [/^\d{8,11}$/, "Phone number must be between 8 to 11 digits"]
   },
+  password: {
+    type: String,
+    required: [true, "Password is required"],
+    minlength: [8, "Password must be at least 8 characters"]
+  },
   position: {
     type: String,
     required: [true, "Position is required"],
@@ -44,3 +49,4 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model('UserAccounts', userSchema, 'UserAccounts');
 
 module.exports = User;
+

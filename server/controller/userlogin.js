@@ -88,7 +88,7 @@ const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       token,
       user,
-    });
+    );
     res.json({ msg: "OTP sent to your email. Please verify." });
 
   } catch (error) {
@@ -99,5 +99,6 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+
 
 

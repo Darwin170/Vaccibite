@@ -22,7 +22,7 @@ dotenv.config();
 // Middleware to handle JSON requests
 const app = express();
 const server = http.createServer(app);
-
+app.set("trust proxy", 1);
 // Use morgan for logging HTTP requests
 app.use(morgan('dev')); 
 app.use(express.json());
@@ -121,6 +121,7 @@ app.get("/", (req, res) => {
     process.exit(1); // Exit with a failure code
   }
 })();
+
 
 
 

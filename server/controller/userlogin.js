@@ -43,17 +43,11 @@ const loginUser = async (req, res) => {
       // Generate OTP and expiry
       const otp = generateOTP();
       const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
-    // Generate OTP
-    const otp = generateOTP();
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 min
-      const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 min
+   
 
       // Delete old OTPs for this user
       await OTP.deleteMany({ userId: user._id });
-    // Remove old OTPs
-    await OTP.deleteMany({ userId: user._id });
-
-      // Save new OTP to DB
+  
  
     // Save new OTP
     await OTP.create({ userId: user._id, otp, expiresAt: otpExpiry });
@@ -106,3 +100,4 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+

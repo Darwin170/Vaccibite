@@ -35,8 +35,8 @@ app.use(cors({
   credentials: true,
 }));
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
 
 // Session configuration using MongoStore
 app.use(session({
@@ -121,6 +121,7 @@ app.get("/", (req, res) => {
     process.exit(1); // Exit with a failure code
   }
 })();
+
 
 
 

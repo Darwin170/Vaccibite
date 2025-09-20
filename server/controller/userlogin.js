@@ -22,11 +22,24 @@ const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // 1. Validate input
+    if (!email || !password) {
+      return res.status(400).json({ msg: "Email and password are required." });
+    }
+
     const normalizedEmail = email.toLowerCase();
 
-    // Find user
+    // 2. Find user
     const user = await User.findOne({ email: normalizedEmail });
-    if (!user) return res.status(400).json({ msg: "No user with this email." });
+    if (!user) {
+      return res.status(400).json({ msg: "No user with this email." });
+    }
+
+    // 3. Extra safety check for missing password
+    if (!user.password) {
+      return res.status(500).json({ msg: "This user has no password set." });
+    }
 
     // Reset attempts if time window passed
     if (user.lastAttempt && Date.now() - user.lastAttempt.getTime() > WINDOW_MS) {
@@ -43,7 +56,7 @@ const loginUser = async (req, res) => {
       return res.status(403).json({ msg: "Unauthorized position." });
     }
 
-    // Check password
+    // 4. Compare password safely
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       user.loginAttempts += 1;
@@ -82,7 +95,7 @@ const loginUser = async (req, res) => {
       }
     }
 
-    // Non-admin → JWT login (you said only admins are allowed, but keeping fallback)
+    // Non-admin → JWT login
     const token = jwt.sign(
       { id: user._id, email: user.email, position: user.position },
       process.env.JWT_SECRET,
@@ -100,4 +113,6 @@ const loginUser = async (req, res) => {
   }
 };
 
+
 module.exports = { loginUser };
+

@@ -86,9 +86,8 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, position: user.position },
       process.env.JWT_SECRET,
-
       token,
-      user
+      user,
     });
     res.json({ msg: "OTP sent to your email. Please verify." });
 
@@ -100,4 +99,5 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+
 

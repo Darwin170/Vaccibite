@@ -20,8 +20,9 @@ function generateOTP() {
 
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const normalizedEmail = email.toLowerCase();
+     const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
+
 
     // Find user
     const user = await User.findOne({ email: normalizedEmail });
@@ -71,3 +72,4 @@ const loginUser = async (req, res) => {
 };
 
 module.exports = { loginUser };
+

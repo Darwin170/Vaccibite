@@ -17,7 +17,7 @@ const Mrouter = express.Router();
 
 // These now save files in /uploads and make them downloadable
 Mrouter.post('/resetPassword',resetPassword);
-Mrouter.post ('/sendopt',sendopt);
+Mrouter.post ('/sendopt',sendotp);
 Mrouter.post('/verifyPasswordResetOTP',verifyPasswordResetOTP);
 Mrouter.get('/:userId/location',getDistrictAndBarangay);
 Mrouter.get('/getnotify/:receiverId', getUserNotifications);
@@ -31,6 +31,7 @@ Mrouter.post('/login', loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

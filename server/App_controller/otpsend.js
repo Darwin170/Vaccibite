@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const forgotPassword = async (req, res) => {
+const sendotp = async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -54,4 +54,4 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-module.exports = { forgotPassword };
+module.exports = { sendotp };

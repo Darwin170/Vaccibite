@@ -1,60 +1,69 @@
-/* ActivityLogs.css */
+/* Activitylogs.css */
 
-.container {
-  max-width: 800px;
- 
-  background-color: #f8f9fa;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.Activity {
   font-family: Arial, sans-serif;
-  margin-left:100 ;
+  padding: 20px;
+  color: #333;
 }
 
-.inputGroup {
+/* Page title */
+.Activity h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #222;
+}
+
+
+.controls {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 20px;
 }
 
-.input {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
+.controls input,
+.controls select {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border 0.2s;
 }
 
-.button {
-  padding: 10px 15px;
-  font-size: 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.controls input:focus,
+.controls select:focus {
+  border-color: #2a2a2b;
 }
 
-.table {
+/* 📋 Table styling */
+.tables {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
-  margin-left: 90px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-.tableHeader {
-  background-color: #f1f1f1;
-}
-
-.tableCell {
-  padding: 10px;
-  text-align: left;
-  border: 1px solid #ddd;
-}
-
-.deleteButton {
-  padding: 5px 10px;
-  background-color: #dc3545;
+.tableHeaders {
+  background-color: #464747;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+  padding: 12px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.tableCells {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.tables tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Empty message */
+.tables td[colspan="5"] {
+  font-style: italic;
+  color: #777;
 }

@@ -70,8 +70,15 @@ const OtpVerification = () => {
       navigate("/");
     }
     } catch (err) {
-      setMessage(err.response?.data?.msg || "Verification failed");
-    }
+     if (errorMessage === "No OTP found. Please log in again.") {
+        setMessage("This OTP has expired or was used. Please log in again to receive a new one.");
+        setTimeout(() => {
+          navigate('/login', { replace: true });
+        }, 3000); // ⏱ Redirect after 3 seconds
+      } else {
+        setMessage(errorMessage || "Verification failed.");
+      }
+    }
   };
 
   // ---------------- Resend OTP ----------------

@@ -17,9 +17,11 @@
       const MongoStore = require('connect-mongo');
       
       // Middleware to handle JSON requests
+
       const app = express();
       const server = http.createServer(app);
       app.use(express.json()); 
+      app.set('trust proxy', 1); 
       app.use(xss());
       const corsOptions = {
         origin:  process.env.CLIENT_URL, // Or specify your frontend URL
@@ -106,4 +108,5 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
+
 

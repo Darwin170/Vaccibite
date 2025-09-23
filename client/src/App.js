@@ -1,7 +1,8 @@
 // App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login';
-import SuperiorRoutes from './Pages/Superior';
+import Superadmin from './Pages/Superadmin'
+import SuperiorRoutes from './Pages/Admin';
 import AdminRoutes from './Pages/System_Admin';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './routes/AuthContext';
@@ -21,19 +22,27 @@ function App() {
 
           {/* Protected routes */}
           <Route
-            path="/superior/*"
+            path="/Admin/*"
             element={
-              <PrivateRoute role="Superior_Admin">
+              <PrivateRoute role="Admin">
                 <SuperiorRoutes />
               </PrivateRoute>
             }
           />
 
           <Route
-            path="/admin/*"
+            path="/System_Admin/*"
             element={
               <PrivateRoute role="System_Admin">
                 <AdminRoutes />
+              </PrivateRoute>
+            }
+          />
+        <Route
+            path="/Superadmin/*"
+            element={
+              <PrivateRoute role="Super_Admin">
+                <Superadmin />
               </PrivateRoute>
             }
           />

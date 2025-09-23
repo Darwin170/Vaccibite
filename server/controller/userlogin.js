@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../model/usermode");
 const OTP = require("../model/OPT");
-const ActivityLog = require("../model/activitylog"); // Added this import
+const ActivityLog = require("../model/Activitylogs"); // Added this import
 const nodemailer = require("nodemailer");
 
 // Gmail transporter using App Password
@@ -103,3 +103,4 @@ const loginUser = async (req, res) => {
 
 
 module.exports = { loginUser };
+

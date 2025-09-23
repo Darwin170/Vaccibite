@@ -1,0 +1,163 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Sidebar from "./Sidebar"; // ✅ Make sure Sidebar is imported
+import "./UserManagement.css";
+
+function Superior_Admin() {
+  const [users, setUsers] = useState([]);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [editUserId, setEditUserId] = useState(null);
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    position: "",
+  });
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getUser`);
+      setUsers(res.data);
+    } catch (err) {
+      console.error("Failed to fetch users:", err);
+    }
+  };
+
+
+  const handleUpdateUser = async () => {
+    const { name, email, phone, password, position } = newUser;
+    if (!name || !email || !phone || !password || !position) return;
+
+    try {
+      await axios.put(`${process.env.REACT_APP_API_URL}/auth/updateUser/${editUserId}`, newUser,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      setNewUser({ name: "", email: "", phone: "", password: "", position: "" });
+      setEditUserId(null);
+      setShowAddUserModal(false);
+      fetchUsers();
+    } catch (err) {
+      console.error("Error updating user:", err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteUser/${id}`,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      fetchUsers();
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
+  };
+
+  const handleEdit = (user) => {
+    setEditUserId(user._id);
+    setNewUser({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      password: "", 
+      position: user.position,
+    });
+    setShowAddUserModal(true);
+  };
+
+  return (
+        <div className="User-container">
+      <Sidebar />
+      <div style={{ marginLeft: "250px", padding: "20px" }}>
+        
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Position</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users
+            .filter((user) => user.position === "Admin") 
+            .map((user) => (
+              <tr key={user.userId}>
+                <td>{user.userId}</td>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.phone}</td>
+                <td>{user.position}</td>
+                <td>
+                  <button className="button" onClick={() => handleEdit(user)}>Edit</button>
+                  <button className="delete-button" onClick={() => handleDelete(user._id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+
+        </table>
+
+          
+        {showAddUserModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>{editUserId ? "Edit User" : "Add New User"}</h2>
+              <input
+                type="text"
+                placeholder="Name"
+                value={newUser.name}
+                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={newUser.email}
+                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Phone"
+                value={newUser.phone}
+                onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
+              />
+              <input
+                type="text"
+                placeholder="Position"
+                value={newUser.position}
+                onChange={(e) => setNewUser({ ...newUser, position: e.target.value })}
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={newUser.password}
+                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              />
+              <div className="modal-buttons">
+                <button className="submit-btn" onClick={ handleUpdateUser}>
+                  Update
+                </button>
+                <button className="cancel-btn" onClick={() => setShowAddUserModal(false)}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default Superior_Admin;

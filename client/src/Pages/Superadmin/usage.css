@@ -1,0 +1,37 @@
+/* === Usage.css (scoped for Usage.js) === */
+
+.usage-container {
+  padding: 20px;
+  margin-left: 220px; /* push content away from sidebar */
+  min-height: 100vh;
+  background-color: #f5f6fa;
+}
+
+/* Grid layout for charts */
+.usage-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .usage-chart-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Chart cards */
+.usage-chart-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.usage-chart-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}

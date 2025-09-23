@@ -66,9 +66,20 @@ const OtpVerification = () => {
         navigate("/");
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.msg || "Verification failed.";
+      const status = err.response?.status;
+    if (status === 400) {
+      // The backend sent a 400 Bad Request, so use its error message
+      const errorMessage = err.response?.data?.msg || "Invalid OTP.";
+      setMessage(errorMessage);
+    } else if (status === 404) {
+      const errorMessage = err.response?.data?.msg || "User not found.";
+      setMessage(errorMessage);
+    } else {
+      // A different kind of server error (e.g., 500)
+      const errorMessage = err.response?.data?.msg || "Verification failed due to a server error.";
       setMessage(errorMessage);
     }
+  }
   };
 
   // ---------------- Resend OTP ----------------

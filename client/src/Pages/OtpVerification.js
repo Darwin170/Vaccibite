@@ -9,7 +9,7 @@ const OtpVerification = () => {
   const [message, setMessage] = useState("");
   const [cooldown, setCooldown] = useState(0); // ⏳ Resend cooldown
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { login } = useAuth(); // Destructure 'login' instead of 'setUser'
 
   // Get email from sessionStorage (set during login)
   const email = sessionStorage.getItem("pendingEmail");
@@ -30,56 +30,41 @@ const OtpVerification = () => {
         { withCredentials: true }
       );
       
-      // === CHANGE STARTS HERE ===
-      // A new try...catch block to handle the success response gracefully
-      try {
-        const user = res.data?.user;
-        const token = res.data?.token; // Extract the token here
+      const user = res.data?.user;
+      const token = res.data?.token;
 
-        if (!user || !token) {
-          setMessage("Verification failed: User data or token not found.");
-          return;
-        }
-
-        // Safely get the user's role, and convert to lowercase for consistent comparison
-        const userRole = user.position ? user.position.toLowerCase() : 'user';
-        
-        // Check if setUser is a function before calling it
-        if (typeof setUser === 'function') {
-          setUser(user);
-        }
-
-        // Save in localStorage with the consistent lowercase role
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            username: user.username || user.email,
-            role: userRole,
-          })
-        );
-        localStorage.setItem("token", token); // Save the extracted token
-        
-        sessionStorage.removeItem("pendingEmail");
-        setMessage(res.data.msg);
-        console.log("CLEAR");
-
-        // Redirect by role based on the lowercase role
-        if (userRole === "system_admin") {
-          navigate("/System_Admin/UserManagement", { replace: true });
-        } else if (userRole === "admin") {
-          navigate("/Admin/Dashboard", { replace: true });
-        } else if (userRole === "super_admin") {
-          navigate("/Superadmin/SystemAdmin", { replace: true });
-        } else {
-          navigate("/");
-        }
-
-      } catch (internalError) {
-        console.error("Internal frontend error after successful API call:", internalError);
-        setMessage("Verification successful, but an internal error occurred. Please try navigating manually.");
+      if (!user || !token) {
+        setMessage("Verification failed: User data or token not found.");
+        return;
       }
+
+      // === CHANGE STARTS HERE ===
+      // Use the login function from AuthContext to handle state and localStorage
+      login(user);
+
+      // Save the token separately as AuthContext doesn't manage it
+      localStorage.setItem("token", token);
+      
+      // Removed the unnecessary internal try...catch block
       // === CHANGE ENDS HERE ===
 
+      sessionStorage.removeItem("pendingEmail");
+      setMessage(res.data.msg);
+      console.log("CLEAR");
+
+      // Safely get the user's role, and convert to lowercase for consistent comparison
+      const userRole = user.position ? user.position.toLowerCase() : 'user';
+
+      // Redirect by role based on the lowercase role
+      if (userRole === "system_admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (userRole === "admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (userRole === "super_admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Verification failed.";
       setMessage(errorMessage);

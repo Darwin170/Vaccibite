@@ -1,4 +1,3 @@
-// src/Pages/Login.js
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
@@ -32,7 +31,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-   setIsLocked(false);
+    setIsLocked(false);
     if (!email || !password) {
       setError("Email and password are required.");
       return;
@@ -44,11 +43,14 @@ const Login = () => {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/login`,
         {
-         email: email.trim().toLowerCase(),
-        password,
+          email: normalizedEmail,
+          password,
         },
         { withCredentials: true }
       );
+      
+      // Log the response to help with debugging
+      console.log("API Response:", response.data);
 
       // If OTP is sent, go to OTP verification page
       if (response.data?.msg?.toLowerCase().includes("otp")) {
@@ -62,11 +64,9 @@ const Login = () => {
         const user = response.data.user;
         const token = response.data.token;
 
-
-       localStorage.setItem("token", token);
+        localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
 
-       
         login({
           username: user.username || user.email,
           role: user.position,
@@ -74,7 +74,7 @@ const Login = () => {
           token, // include token
         });
 
-       if (user.position === "System_Admin") {
+        if (user.position === "System_Admin") {
           navigate("/System_Admin/UserManagement", { replace: true });
         } else if (user.position === "Admin") {
           navigate("/Admin/Dashboard", { replace: true });
@@ -83,14 +83,14 @@ const Login = () => {
         } else {
           setError("Account has been deactivated.");
           console.log("User position:", user.position);
-          alert("Position is: " + user.position);
+          // Replaced alert with a state-based error message
         }
       } else {
         setError("Login failed. Please try again.");
       }
     } catch (err) {
-     console.error("Login error:", err);
-      const errorMessage = err.response?.data?.msg || "Login failed. Try again.";
+      console.error("Login error:", err);
+      const errorMessage = err.response?.data?.msg || "Login failed. Try again.";
       setError(errorMessage);
 
       // Check for lockout messages from the server to disable the form
@@ -98,7 +98,6 @@ const Login = () => {
         setIsLocked(true);
       }
     }
-    
   };
 
   return (
@@ -140,5 +139,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

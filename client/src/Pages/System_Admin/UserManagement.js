@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Sidebar"; // ✅ Make sure Sidebar is imported
 import "./UserManagement.css";
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -23,7 +21,7 @@ function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${API_URL}/auth/getUser`);
+      const res = await axios.get(` ${process.env.REACT_APP_API_URL}/auth/getUser`);
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users:", err);
@@ -35,7 +33,12 @@ function UserManagement() {
     if (!name || !email || !phone || !password || !position) return;
 
     try {
-      await axios.post(`${API_URL}/auth/createUser`, newUser);
+      await axios.post(` ${process.env.REACT_APP_API_URL}/auth/createUser`, newUser,
+      {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       setNewUser({ name: "", email: "", phone: "", password: "", position: "" });
       setShowAddUserModal(false);
       fetchUsers();
@@ -49,7 +52,11 @@ function UserManagement() {
     if (!name || !email || !phone || !password || !position) return;
 
     try {
-      await axios.put(`${API_URL}/auth/updateUser/${editUserId}`, newUser);
+      await axios.put(` ${process.env.REACT_APP_API_URL}/auth/updateUser/${editUserId}`, newUser,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       setNewUser({ name: "", email: "", phone: "", password: "", position: "" });
       setEditUserId(null);
       setShowAddUserModal(false);
@@ -62,7 +69,11 @@ function UserManagement() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(`${API_URL}/auth/deleteUser/${id}`);
+      await axios.delete(` ${process.env.REACT_APP_API_URL}/auth/deleteUser/${id}`,{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       fetchUsers();
     } catch (err) {
       console.error("Error deleting user:", err);
@@ -75,14 +86,14 @@ function UserManagement() {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      password: "",
+      password: "", 
       position: user.position,
     });
     setShowAddUserModal(true);
   };
 
   return (
-    <div className="User-container">
+        <div className="User-container">
       <Sidebar />
       <div style={{ marginLeft: "250px", padding: "20px" }}>
         <button
@@ -108,9 +119,11 @@ function UserManagement() {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {users
+            .filter((user) => user.position === "Admin") 
+            .map((user) => (
               <tr key={user._id}>
-                <td>{user._id}</td>
+                <td>{user.userId}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.phone}</td>
@@ -121,9 +134,11 @@ function UserManagement() {
                 </td>
               </tr>
             ))}
-          </tbody>
+        </tbody>
+
         </table>
 
+        {/* Modal */}
         {showAddUserModal && (
           <div className="modal-overlay">
             <div className="modal-content">

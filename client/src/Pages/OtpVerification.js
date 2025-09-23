@@ -1,3 +1,4 @@
+// src/Pages/OtpVerification.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -33,10 +34,6 @@ const OtpVerification = () => {
 
       const { user } = res.data;
 
-      // Safely get the user's role, and convert to lowercase for consistent comparison
-      // This is the key fix for the navigation issue.
-      const userRole = user.position ? user.position.toLowerCase() : 'user';
-
       // Save user globally
       setUser(user);
 
@@ -45,7 +42,7 @@ const OtpVerification = () => {
         "user",
         JSON.stringify({
           username: user.username || user.email,
-          role: userRole,
+          role: user.position,
         })
       );
       localStorage.setItem("token", res.data.token);
@@ -59,20 +56,17 @@ const OtpVerification = () => {
 
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
-      console.log("CLEAR");
-      // Redirect by role based on the lowercase role
-      if (userRole === "system_admin") {
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (userRole === "admin") {
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (userRole === "super_admin") {
-        navigate("/Superadmin/SystemAdmin", { replace: true });
+
+      // Redirect by role
+      if (user.position === "Superior_Admin") {
+        navigate("/superior/dashboard");
+      } else if (user.position === "System_Admin") {
+        navigate("/admin/UserManagement");
       } else {
         navigate("/");
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.msg || "Verification failed.";
-      setMessage(errorMessage);
+      setMessage(err.response?.data?.msg || "Verification failed");
     }
   };
 

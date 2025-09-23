@@ -34,21 +34,21 @@ const OtpVerification = () => {
       const { user } = res.data;
 
       // Safely get the user's role, and convert to lowercase for consistent comparison
+      const userRole = user.position ? user.position.toLowerCase() : 'user';
 
       // Save user globally
       setUser(user);
 
-      // Save in localStorage
+      // Save in localStorage with the consistent lowercase role
       localStorage.setItem(
         "user",
         JSON.stringify({
           username: user.username || user.email,
-          role: user.position,
+          role: userRole,
         })
       );
       localStorage.setItem("token", res.data.token);
       
-      // === CHANGE STARTS HERE ===
       // Log activity in a separate try/catch block
       // This ensures that a logging failure doesn't prevent the user from logging in
       try {
@@ -59,19 +59,17 @@ const OtpVerification = () => {
         );
       } catch (logErr) {
         console.error("Failed to log activity:", logErr);
-        // We can ignore this error since the user is already authenticated
       }
-      // === CHANGE ENDS HERE ===
 
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
       console.log("CLEAR");
       // Redirect by role based on the lowercase role
-      if (user.position === "System_Admin") {
+      if (userRole === "system_admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.position === "Admin") {
+      } else if (userRole === "admin") {
         navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.position === "Super_Admin") {
+      } else if (userRole === "super_admin") {
         navigate("/Superadmin/SystemAdmin", { replace: true });
       } else {
         navigate("/");

@@ -34,9 +34,10 @@ const OtpVerification = () => {
       // A new try...catch block to handle the success response gracefully
       try {
         const user = res.data?.user;
+        const token = res.data?.token; // Extract the token here
 
-        if (!user) {
-          setMessage("Verification failed: User data not found in response.");
+        if (!user || !token) {
+          setMessage("Verification failed: User data or token not found.");
           return;
         }
 
@@ -56,7 +57,7 @@ const OtpVerification = () => {
             role: userRole,
           })
         );
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", token); // Save the extracted token
         
         sessionStorage.removeItem("pendingEmail");
         setMessage(res.data.msg);

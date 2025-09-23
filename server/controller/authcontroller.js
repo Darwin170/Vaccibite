@@ -35,15 +35,11 @@ const verifyOTP = async (req, res) => {
       return res.status(400).json({ msg: "OTP expired. Please login again." });
     }
 
-    // === CHANGE STARTS HERE ===
-    // Validate OTP by converting the database value to a string for a reliable comparison
-    // This handles cases where the database stores OTP as a number or string
-    console.log(`Comparing OTPs: Request OTP = '${otp}', DB OTP = '${otpRecord.otp.toString()}'`);
-    if (otp !== otpRecord.otp.toString()) {
+    // Validate OTP
+    if (parseInt(otp) !== otpRecord.otp) {
       return res.status(400).json({ msg: "Invalid OTP." });
     }
-    // === CHANGE ENDS HERE ===
-    
+
     // OTP is valid — delete it
     try {
       await OTP.deleteOne({ _id: otpRecord._id });

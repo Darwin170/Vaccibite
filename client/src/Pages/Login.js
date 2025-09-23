@@ -14,12 +14,25 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { user, login } = useAuth(); 
+  const [isLocked, setIsLocked] = useState(false);
 
+  useEffect(() => {
+    if (user) {
+      if (user.role === "System_Admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (user.role === "Admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (user.position === "Super_Admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      }
+    }
+  }, [user, navigate]);
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-
+   setIsLocked(false);
     if (!email || !password) {
       setError("Email and password are required.");
       return;
@@ -31,8 +44,8 @@ const Login = () => {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/login`,
         {
-          email: normalizedEmail,
-          password,
+         email: email.trim().toLowerCase(),
+        password,
         },
         { withCredentials: true }
       );
@@ -45,42 +58,47 @@ const Login = () => {
         return;
       }
 
-      // If backend still returns user directly (non-OTP flow)
       if (response.data && response.data.user) {
         const user = response.data.user;
-        setUser(user);
+        const token = response.data.token;
 
-        localStorage.setItem("user", JSON.stringify({
+
+       localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+
+       
+        login({
           username: user.username || user.email,
           role: user.position,
-        }));
+          _id: user._id,
+          token, // include token
+        });
 
-        await logActivity(
-          {
-            userId: user._id,
-            username: user.email,
-            position: user.position,
-          },
-          "Login",
-          "User logged in successfully"
-        );
-
-        if (user.position === "System_Admin") {
-          navigate("/admin/UserManagement");
-        } else if (user.position === "Superior_Admin") {
-          navigate("/superior/Dashboard");
+       if (user.position === "System_Admin") {
+          navigate("/System_Admin/UserManagement", { replace: true });
+        } else if (user.position === "Admin") {
+          navigate("/Admin/Dashboard", { replace: true });
+        } else if (user.position === "Super_Admin") {
+          navigate("/Superadmin/SystemAdmin", { replace: true });
         } else {
-          setError("Unauthorized role.");
-          console.log("User role:", user.position);
-          alert("Role is: " + user.position);
+          setError("Account has been deactivated.");
+          console.log("User position:", user.position);
+          alert("Position is: " + user.position);
         }
       } else {
         setError("Login failed. Please try again.");
       }
     } catch (err) {
-      console.error("Login error:", err);
-      setError(err.response?.data?.msg || "Login failed. Try again.");
+     console.error("Login error:", err);
+      const errorMessage = err.response?.data?.msg || "Login failed. Try again.";
+      setError(errorMessage);
+
+      // Check for lockout messages from the server to disable the form
+      if (errorMessage.includes("Too many login attempts") || errorMessage.includes("Your account has been locked")) {
+        setIsLocked(true);
+      }
     }
+    
   };
 
   return (
@@ -97,6 +115,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLocked}
             />
           </div>
           <div className="input-group">
@@ -106,9 +125,10 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLocked}
             />
           </div>
-          <button type="submit" className="login-button">Login</button>
+          <button type="submit" className="login-button" disabled={isLocked}>Login</button>
         </form>
         <div className="logo-row">
           <img src={Acdclogo} alt="ACDC" className="bottom-logo" />
@@ -120,3 +140,4 @@ const Login = () => {
 };
 
 export default Login;
+

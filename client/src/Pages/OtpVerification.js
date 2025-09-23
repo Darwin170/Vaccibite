@@ -73,7 +73,7 @@ const OtpVerification = () => {
         setMessage(errorMessage || "Verification failed.");
       }
     }
-  };
+ 
 
   // ---------------- Resend OTP ----------------
   const handleResendOtp = async () => {

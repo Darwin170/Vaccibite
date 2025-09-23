@@ -30,21 +30,24 @@ const OtpVerification = () => {
         { withCredentials: true }
       );
       
-      // === CHANGE STARTS HERE ===
-      // Ensure res.data and res.data.user are valid before proceeding
-      if (!res.data || !res.data.user) {
-        setMessage("Verification failed: Unexpected response from server.");
+      const user = res.data?.user;
+
+      if (!user) {
+        setMessage("Verification failed: User data not found in response.");
         return;
       }
-
-      const { user } = res.data;
+      
+      // === CHANGE STARTS HERE ===
+      // Check if setUser is a function before calling it
+      if (typeof setUser === 'function') {
+        setUser(user);
+      } else {
+        console.error("setUser is not a function.");
+      }
       // === CHANGE ENDS HERE ===
 
       // Safely get the user's role, and convert to lowercase for consistent comparison
       const userRole = user.position ? user.position.toLowerCase() : 'user';
-
-      // Save user globally
-      setUser(user);
 
       // Save in localStorage with the consistent lowercase role
       localStorage.setItem(
@@ -56,8 +59,6 @@ const OtpVerification = () => {
       );
       localStorage.setItem("token", res.data.token);
       
-      // Removed logActivity as per user request
-
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
       console.log("CLEAR");

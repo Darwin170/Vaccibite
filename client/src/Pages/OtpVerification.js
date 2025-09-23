@@ -1,33 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./OtpVerification.css";
+import { useAuth } from "../routes/AuthContext";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [cooldown, setCooldown] = useState(0); // ⏳ Resend cooldown
-  const [user, setUser] = useState(null); // Local user state
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   // Get email from sessionStorage (set during login)
   const email = sessionStorage.getItem("pendingEmail");
-
-  // This useEffect will watch for a change in the 'user' state.
-  // This is the correct way to handle redirection after a successful login.
-  useEffect(() => {
-    if (user) {
-      if (user.position === "System_Admin") {
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.position === "Admin") {
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.position === "Super_Admin") {
-        navigate("/Superadmin/SystemAdmin", { replace: true });
-      } else {
-        // Fallback redirection for any other role
-        navigate("/");
-      }
-    }
-  }, [user, navigate]);
 
   // ---------------- Verify OTP ----------------
   const handleVerify = async (e) => {
@@ -44,35 +29,42 @@ const OtpVerification = () => {
         { email, otp },
         { withCredentials: true }
       );
-      
-      const verifiedUser = res.data?.user;
-      const token = res.data?.token;
 
-      if (!verifiedUser || !token) {
-        setMessage("Verification failed: User data or token not found.");
-        return;
-      }
+      const { user } = res.data;
 
-      // Safely get the user's role and convert to lowercase for consistent comparison
-      const userRole = verifiedUser.position ? verifiedUser.position.toLowerCase() : 'user';
-      
-      // Save the user data to the local state, which will trigger the useEffect
-      setUser(verifiedUser);
+      // Safely get the user's role, and convert to lowercase for consistent comparison
+      const userRole = user.position ? user.position.toLowerCase() : 'user';
+
+      // Save user globally
+      setUser(user);
 
       // Save in localStorage with the consistent lowercase role
       localStorage.setItem(
         "user",
         JSON.stringify({
-          username: verifiedUser.username || verifiedUser.email,
+          username: user.username || user.email,
           role: userRole,
         })
       );
-      localStorage.setItem("token", token);
+      localStorage.setItem("token", res.data.token);
       
+      // Log activity in a separate try/catch block
+      // This ensures that a logging failure doesn't prevent the user from logging in
+      
+
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
       console.log("CLEAR");
-
+      // Redirect by role based on the lowercase role
+      if (userRole === "system_admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (userRole === "admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (userRole === "super_admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Verification failed.";
       setMessage(errorMessage);
@@ -110,75 +102,26 @@ const OtpVerification = () => {
   }, [cooldown]);
 
   return (
-    <>
-      <style>
-        {`
-          .otp-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            text-align: center;
-            font-family: sans-serif;
-            background-color: #f0f2f5;
-          }
-          .otp-container h2 {
-            color: #333;
-            margin-bottom: 20px;
-          }
-          .otp-container input {
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 250px;
-          }
-          .otp-container button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-          }
-          .otp-container button[type="submit"] {
-            background-color: #007bff;
-            color: white;
-          }
-          .otp-container button[type="submit"]:hover {
-            background-color: #0056b3;
-          }
-          .otp-container button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-          }
-          .otp-container p {
-            margin-top: 20px;
-            color: #d9534f;
-          }
-        `}
-      </style>
-      <div className="otp-container">
-        <h2>OTP Verification</h2>
-        <form onSubmit={handleVerify}>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
-          <button type="submit">Verify OTP</button>
-        </form>
+    <div className="otp-container">
+      <h2>OTP Verification</h2>
+      <form onSubmit={handleVerify}>
+        <input
+          type="text"
+          placeholder="Enter OTP"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+          required
+        />
+        <button type="submit">Verify OTP</button>
+      </form>
 
-        {/* Resend OTP button */}
-        <button onClick={handleResendOtp} disabled={cooldown > 0}>
-          {cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
-        </button>
+      {/* Resend OTP button */}
+      <button onClick={handleResendOtp} disabled={cooldown > 0}>
+        {cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
+      </button>
 
-        {message && <p>{message}</p>}
-      </div>
-    </>
+      {message && <p>{message}</p>}
+    </div>
   );
 };
 

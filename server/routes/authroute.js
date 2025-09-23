@@ -30,9 +30,13 @@ const {deleteMUser}= require("../controller/deleteMUser");
 const {getEventViews}= require("../controller/event-view");
 const {authMiddleware} = require("../middleware/authMiddleware");
 const {updateMUser}= require ("../controller/updateMuser");
-const {getOngoingReport}=require("../controller/ongoingcout")
+const {getOngoingReport}=require("../controller/ongoingcout");
+const {resendOtp}=require("../controller/resend-OTP");
+const {verifyOTP} =require ("../controller/verifyOTP);
 const router = express.Router();
 
+router.get ("/verify",verifyOTP );
+router.post("/resend-otp", resendOtp ); 
 router.put('/updateMUser:id', authMiddleware,updateMUser);
 router.get ("/event-views", getEventViews);
 router.get ("/resolved-reports", getResolvedReports);   
@@ -67,3 +71,4 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+

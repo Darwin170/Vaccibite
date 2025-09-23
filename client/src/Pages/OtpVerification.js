@@ -9,10 +9,29 @@ const OtpVerification = () => {
   const [message, setMessage] = useState("");
   const [cooldown, setCooldown] = useState(0); // ⏳ Resend cooldown
   const navigate = useNavigate();
-  const { login } = useAuth(); // Destructure 'login' instead of 'setUser'
+  const { user, login } = useAuth(); // Destructure 'user' and 'login'
 
   // Get email from sessionStorage (set during login)
   const email = sessionStorage.getItem("pendingEmail");
+
+  // === NEW CHANGE STARTS HERE ===
+  // Use a useEffect to handle navigation once the user is authenticated
+  useEffect(() => {
+    if (user) {
+      const userRole = user.role ? user.role.toLowerCase() : 'user';
+
+      if (userRole === "system_admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (userRole === "admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (userRole === "super_admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      } else {
+        navigate("/");
+      }
+    }
+  }, [user, navigate]);
+  // === NEW CHANGE ENDS HERE ===
 
   // ---------------- Verify OTP ----------------
   const handleVerify = async (e) => {
@@ -29,7 +48,7 @@ const OtpVerification = () => {
         { email, otp },
         { withCredentials: true }
       );
-      
+
       const user = res.data?.user;
       const token = res.data?.token;
 
@@ -37,34 +56,17 @@ const OtpVerification = () => {
         setMessage("Verification failed: User data or token not found.");
         return;
       }
-
-      // === CHANGE STARTS HERE ===
+      
       // Use the login function from AuthContext to handle state and localStorage
-      login(user);
+      login({ ...user, role: user.position ? user.position.toLowerCase() : 'user' });
 
       // Save the token separately as AuthContext doesn't manage it
       localStorage.setItem("token", token);
       
-      // Removed the unnecessary internal try...catch block
-      // === CHANGE ENDS HERE ===
-
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
       console.log("CLEAR");
 
-      // Safely get the user's role, and convert to lowercase for consistent comparison
-      const userRole = user.position ? user.position.toLowerCase() : 'user';
-
-      // Redirect by role based on the lowercase role
-      if (userRole === "system_admin") {
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (userRole === "admin") {
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (userRole === "super_admin") {
-        navigate("/Superadmin/SystemAdmin", { replace: true });
-      } else {
-        navigate("/");
-      }
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Verification failed.";
       setMessage(errorMessage);

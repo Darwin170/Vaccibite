@@ -55,7 +55,7 @@ const OtpVerification = () => {
       if (user.position === "System_Admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
       } else if (user.position === "Admin") {
-        navigate("/Admin/dashboard", { replace: true });
+        navigate("/Admin/Dashboard", { replace: true });
       } else if (user.position === "Super_Admin") {
         navigate("/Superadmin/System_Admin", { replace: true });
       } else {

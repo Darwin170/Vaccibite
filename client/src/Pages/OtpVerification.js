@@ -30,48 +30,55 @@ const OtpVerification = () => {
         { withCredentials: true }
       );
       
-      const user = res.data?.user;
-
-      if (!user) {
-        setMessage("Verification failed: User data not found in response.");
-        return;
-      }
-      
       // === CHANGE STARTS HERE ===
-      // Check if setUser is a function before calling it
-      if (typeof setUser === 'function') {
-        setUser(user);
-      } else {
-        console.error("setUser is not a function.");
+      // A new try...catch block to handle the success response gracefully
+      try {
+        const user = res.data?.user;
+
+        if (!user) {
+          setMessage("Verification failed: User data not found in response.");
+          return;
+        }
+
+        // Safely get the user's role, and convert to lowercase for consistent comparison
+        const userRole = user.position ? user.position.toLowerCase() : 'user';
+        
+        // Check if setUser is a function before calling it
+        if (typeof setUser === 'function') {
+          setUser(user);
+        }
+
+        // Save in localStorage with the consistent lowercase role
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            username: user.username || user.email,
+            role: userRole,
+          })
+        );
+        localStorage.setItem("token", res.data.token);
+        
+        sessionStorage.removeItem("pendingEmail");
+        setMessage(res.data.msg);
+        console.log("CLEAR");
+
+        // Redirect by role based on the lowercase role
+        if (userRole === "system_admin") {
+          navigate("/System_Admin/UserManagement", { replace: true });
+        } else if (userRole === "admin") {
+          navigate("/Admin/Dashboard", { replace: true });
+        } else if (userRole === "super_admin") {
+          navigate("/Superadmin/SystemAdmin", { replace: true });
+        } else {
+          navigate("/");
+        }
+
+      } catch (internalError) {
+        console.error("Internal frontend error after successful API call:", internalError);
+        setMessage("Verification successful, but an internal error occurred. Please try navigating manually.");
       }
       // === CHANGE ENDS HERE ===
 
-      // Safely get the user's role, and convert to lowercase for consistent comparison
-      const userRole = user.position ? user.position.toLowerCase() : 'user';
-
-      // Save in localStorage with the consistent lowercase role
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          username: user.username || user.email,
-          role: userRole,
-        })
-      );
-      localStorage.setItem("token", res.data.token);
-      
-      sessionStorage.removeItem("pendingEmail");
-      setMessage(res.data.msg);
-      console.log("CLEAR");
-      // Redirect by role based on the lowercase role
-      if (userRole === "system_admin") {
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (userRole === "admin") {
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (userRole === "super_admin") {
-        navigate("/Superadmin/SystemAdmin", { replace: true });
-      } else {
-        navigate("/");
-      }
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Verification failed.";
       setMessage(errorMessage);

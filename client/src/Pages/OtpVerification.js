@@ -58,13 +58,13 @@ const OtpVerification = () => {
       setMessage(res.data.msg);
 
       // Redirect by role
-      if (user.position === "Super_Admin"){
-        navigate("/Superadmin/SystemAdmin");
-      if (user.position === "Admin") {
-        navigate("/Admin/dashboard");
-      } else if (user.position === "System_Admin") {
-        navigate("/System_Admin/UserManagement");
-      } else {
+     if (user.position === "System_Admin") {
+          navigate("/System_Admin/UserManagement", { replace: true });
+        } else if (user.position === "Admin") {
+          navigate("/Admin/Dashboard", { replace: true });
+        } else if (user.position === "Super_Admin") {
+          navigate("/Superadmin/SystemAdmin", { replace: true });
+        }else {
         navigate("/");
       }
     } catch (err) {

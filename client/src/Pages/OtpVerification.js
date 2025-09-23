@@ -60,6 +60,7 @@ const OtpVerification = () => {
       // Redirect by role
       if(user.position ==="Super_Admin"){
         navigate("/Superadmin/System_Admin");
+      }
       else if (user.position === "Admin") {
         navigate("/Admin/dashboard");
       } else if (user.position === "System_Admin") {

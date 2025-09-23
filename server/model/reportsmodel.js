@@ -27,7 +27,7 @@ const reportSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['Pending','Resolved'],
+    enum: ['Pending','Ongoing','Resolved'],
     default: 'Pending'
   },
   filePath: {

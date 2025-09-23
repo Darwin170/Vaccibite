@@ -1,19 +1,19 @@
 const mongoose = require("mongoose");
-// Make sure both user models are required so Mongoose knows about them
-require("../model/usermode");   // Your UserAccounts model
-require("../model/M_user");     // Your M_User model
+require("../model/usermode");   // Assuming this is your UserAccounts model
+require("../model/M_user");     // Assuming this is your Mobile_User model
 
 const activityLog = new mongoose.Schema({
-  // This 'user' field will hold the ObjectId of a user from either collection.
+  // Use 'refPath' to reference a field that holds the model name
   user: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    refPath: 'onModel' // This is the key that makes it dynamic
+    refPath: 'onModel' 
   },
+  // This field will contain the name of the model ('UserAccounts' or 'Mobile_User')
   onModel: {
     type: String,
     required: true,
-    enum: ['UserAccounts', 'Mobile_User'] // Only these values are allowed
+    enum: ['UserAccounts', 'Mobile_User']
   },
   action: {
     type: String,

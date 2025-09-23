@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
-  userId: {
-    type: String,
-    required: true
+  userId: { 
+    type: String, 
+    required: true 
   },
   name: {
     type: String,
@@ -32,9 +32,15 @@ const userSchema = new mongoose.Schema({
   },
   position: {
     type: String,
-    required: [true, "Position is required"],
-    // Use an enum to enforce valid positions
-    enum: ['Super_Admin', 'System_Admin', 'Admin'] 
+    required: [true, "Position is required"]
+  },
+  loginAttempts: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  lockUntil: {
+    type: Number,
   },
 }, { timestamps: true });
 
@@ -49,4 +55,3 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model('UserAccounts', userSchema, 'UserAccounts');
 
 module.exports = User;
-

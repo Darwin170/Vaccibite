@@ -23,16 +23,46 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     console.log("Login request:", req.body);
 
+ 
+
     const normalizedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) return res.status(400).json({ msg: "No user with this email." });
+      const maxAttempts = 5;
+    const lockDuration = 20 * 60 * 1000;
+
+     if (user.lockUntil && user.lockUntil > Date.now()) {
+      const remainingTime = Math.ceil((user.lockUntil - Date.now()) / 1000 / 60);
+      return res.status(429).json({
+        msg: `Too many login attempts. Your account is locked. Please try again in ${remainingTime} minutes.`,
+      });
+    }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ msg: "Invalid password." });
+    if (!isMatch) {
+       user.loginAttempts = (user.loginAttempts || 0) + 1;
+      if (user.loginAttempts >= maxAttempts) {
+        user.lockUntil = Date.now() + lockDuration;
+        user.loginAttempts = 0; // Reset attempts after locking
+        await user.save();
+        return res.status(429).json({
+          msg: `Too many failed login attempts. Your account has been locked for ${lockDuration / 60 / 1000} minutes.`,
+        });
+      }
+       await user.save();
+      return res.status(400).json({
+        msg: `Invalid password. You have ${maxAttempts - user.loginAttempts} attempts remaining.`,
+      });
+    }
+     // On a successful login
+    user.loginAttempts = 0; // Reset counter
+    user.lockUntil = null; // Clear lock
+    await user.save();
+
 
     // If user is Superior_Admin or System_Admin → OTP login
-    if (["Superior_Admin", "System_Admin"].includes(user.position)) {
+    if (["Admin", "System_Admin","Super_Admin"].includes(user.position)) {
       const otp = generateOTP();
       const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
@@ -55,21 +85,35 @@ const loginUser = async (req, res) => {
         return res.status(500).json({ msg: "Failed to send OTP email. Try again later." });
       }
     }
-
+        const newLog = new ActivityLog({
+      user: user._id,
+      onModel: "UserAccounts",
+      action: "User Logged In",
+      details: `User ${user.email} successfully logged in.`,
+    });
+    await newLog.save();
     // Non-admin → login directly with JWT
     const token = jwt.sign(
-      { id: user._id, email: user.email, position: user.position },
+      { id: user._id, role: user.role, onModel: "UserAccounts" },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" } // optional
+      { expiresIn: "1h" }
     );
+    console.log("your token:", token);
+    const { password: _, ...userData } = user._doc;
 
-    return res.json({ msg: "Login successful", token });
+    res.json({
+      msg: "Login successful",
+      token,
+      user: userData,
+    });
   } catch (error) {
     console.error("Login error:", error);
-    return res.status(500).json({ msg: "Server error", error: error.message });
+    res.status(500).json({ msg: "Server error", error });
   }
 };
 
+
 module.exports = { loginUser };
+
 
 

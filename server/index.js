@@ -1,132 +1,106 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
-const authroute = require("./routes/authroute");
-const Mauthroute = require("./routes/Mauthroute");
-const path = require('path');
-const nodemailer = require("nodemailer");
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const MongoStore = require("connect-mongo"); // You need to install connect-mongo if you haven't already
-const http = require("http");
-const { Server } = require("socket.io");
-const xss = require("xss-clean");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const morgan = require('morgan'); // For better logging
+      const express = require("express");
+      const cors = require("cors");
+      const dotenv = require("dotenv");
+      const connectDB = require("./config/db");
+      const authroute = require("./routes/authroute");
+      const Mauthroute = require("./routes/Mauthroute");
+      const path = require('path');
+      const nodemailer = require("nodemailer");
+      const bodyParser = require("body-parser");
+      const session = require("express-session");
+      dotenv.config();
+      const http = require("http");
+      const { Server } = require("socket.io");
+      const xss = require("xss-clean");
+      const helmet = require("helmet");
+      const rateLimit = require("express-rate-limit");
+      
+      // Middleware to handle JSON requests
+      const app = express();
+      const server = http.createServer(app);
+      app.use(express.json()); 
+      app.use(xss());
+      const corsOptions = {
+        origin:  process.env.CLIENT_URL, // Or specify your frontend URL
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true
+      };
+      app.use(cors(corsOptions));
+      app.use(bodyParser.urlencoded({ extended: true }));
+      app.use(bodyParser.json());
+      app.use(helmet());
 
 
-dotenv.config();
+            app.use(session({
+            secret: process.env.JWT_SECRET,
+            resave: false,
+            saveUninitialized: true,
+            cookie: {
+              httpOnly: true,   
+              secure: true,     
+              sameSite: "strict"
+                }
+          }));
 
-// Middleware to handle JSON requests
-const app = express();
-const server = http.createServer(app);
-app.set("trust proxy", 1);
-// Use morgan for logging HTTP requests
-app.use(morgan('dev')); 
-app.use(express.json());
-app.use(xss());
-app.use(helmet());
+          const loginLimiter = rateLimit({
+              windowMs: 15 * 60 * 1000, // 15 minutes
+              max: 5, // 5 attempts per 15 mins
+              message: { msg: "Too many attempts, please try again later." },
+              standardHeaders: true,
+              legacyHeaders: false,
+            });
 
-// CORS configuration for production
-app.use(cors({
-  origin: process.env.CLIENT_URL, // Use an environment variable for the client URL
-  credentials: true,
-}));
+            
+            app.use("/auth/login", loginLimiter);
+            app.use("/auth/resend-otp", loginLimiter);
 
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
+          // Configure Nodemailer transporter
+          const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: process.env.EMAIL_USER,
+              pass: process.env.EMAIL_PASS,
+            },
+          });
 
-// Session configuration using MongoStore
-app.use(session({
-  secret: process.env.SESSION_SECRET || "supersecretkey",
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URL,
-    collectionName: "sessions",
-    ttl: 14 * 24 * 60 * 60 // 14 days
-  }),
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-    sameSite: "lax",
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
-  }
-}));
+          const io = new Server(server, {
+          cors: {
+        origin: "*", // or your Flutter app's URL
+        methods: ["GET", "POST"]
+          }
+          });
 
-// Rate limiting middleware
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { msg: "Too many attempts, please try again later." },
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+              io.on("connection", (socket) => {
+        console.log("A user connected:", socket.id);
 
-app.use("/auth/login", loginLimiter);
-app.use("/auth/resend-otp", loginLimiter);
+        // Join a room for the mobile user
+        socket.on("join", (MuserId) => {
+          socket.join(MuserId); // MuserId is from the mobile user model
+          console.log(`Mobile user ${MuserId} joined their room`);
+        });
 
-// Configure Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+        socket.on("disconnect", () => {
+          console.log("User disconnected:", socket.id);
+        });
+      });
 
-// Socket.IO server setup
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL, // Use environment variable for production
-    methods: ["GET", "POST"]
-  }
-});
+      
+      const PORT = process.env.PORT || 8787;
 
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
-
-  socket.on("statusUpdate", (data) => {
-    console.log("Status updated:", data);
-    io.emit("notification", { message: `Status changed: ${data}` });
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
-
-const PORT = process.env.PORT || 8787;
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/auth', authroute);
-app.use('/mauth', Mauthroute);
-
-
-app.get("/", (req, res) => {
-  res.send("Server is running ");
-});
-
-// Connect to DB and start the server
-(async () => {
-  try {
-    await connectDB();
-    server.listen(PORT, '0.0.0.0', () => { // Listen on all network interfaces
-      console.log(`Server running on http://localhost:${PORT}`);
+      app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+      app.use('/auth', authroute);
+      app.use('/mauth',Mauthroute);
+    app.get("/", (req, res) => {
+      res.send("Server is running ✅");
     });
-  } catch (error) {
-    console.error(`Database connection failed: ${error.message}`);
-    process.exit(1); // Exit with a failure code
-  }
+     (async () => {
+  await connectDB(); 
+  server.listen(PORT, () => {   
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
 })();
-
-
-
-
-
-
-
-
-
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: "Something went wrong!" });
+});

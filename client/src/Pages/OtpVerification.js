@@ -55,31 +55,23 @@ const OtpVerification = () => {
 
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
-    console.log("CLEAR")
+      console.log("CLEAR");
       // Redirect by role
-    const userRole = user.position.toLowerCase();
+      const userRole = user.position.toLowerCase();
 
-    if (userRole === "system_admin") {
-      navigate("/System_Admin/UserManagement", { replace: true });
-    } else if (userRole === "admin") {
-      navigate("/Admin/Dashboard", { replace: true });
-    } else if (userRole === "super_admin") {
-      navigate("/Superadmin/SystemAdmin", { replace: true });
-    } else {
-      navigate("/");
-    }
+      if (userRole === "system_admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (userRole === "admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (userRole === "super_admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      } else {
+        navigate("/");
+      }
     } catch (err) {
-      setMessage(err.response?.data?.msg || "Verification failed");
+      const errorMessage = err.response?.data?.msg || "Verification failed.";
+      setMessage(errorMessage);
     }
-     if (errorMessage === "No OTP found. Please log in again.") {
-        setMessage("This OTP has expired or was used. Please log in again to receive a new one.");
-        setTimeout(() => {
-          navigate('/login', { replace: true });
-        }, 3000); // ⏱ Redirect after 3 seconds
-      } else {
-        setMessage(errorMessage || "Verification failed.");
-      }
-    }
   };
 
   // ---------------- Resend OTP ----------------

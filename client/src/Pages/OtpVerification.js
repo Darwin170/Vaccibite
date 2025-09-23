@@ -13,7 +13,17 @@ const OtpVerification = () => {
 
   // Get email from sessionStorage (set during login)
   const email = sessionStorage.getItem("pendingEmail");
-
+useEffect(() => {
+    if (user) {
+      if (user.role === "System_Admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (user.role === "Admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (user.position === "Super_Admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      }
+    }
+  }, [user, navigate]);
   // ---------------- Verify OTP ----------------
   const handleVerify = async (e) => {
     e.preventDefault();

@@ -10,10 +10,10 @@ const ArchivedReports = () => {
 
   const fetchArchivedReports = async () => {
     try {
-      const archivedRes = await axios.get('http://localhost:8787/auth/archived');
+      const archivedRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/archived`);
       setReports(Array.isArray(archivedRes.data) ? archivedRes.data : []);
 
-      const barangayRes = await axios.get('http://localhost:8787/auth/barangays');
+      const barangayRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/barangays`);
       setBarangays(barangayRes.data);
     } catch (error) {
       console.error('Failed to fetch archived reports:', error);
@@ -146,3 +146,4 @@ const handleDelete = async (reportId) => {
 };
 
 export default ArchivedReports;
+

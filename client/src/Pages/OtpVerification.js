@@ -35,7 +35,6 @@ const OtpVerification = () => {
 
       // Safely get the user's role, with a fallback
       // This protects against a TypeError if 'position' were ever missing
-      const userRole = user.position ? user.position.toLowerCase() : 'user';
 
       // Save user globally
       setUser(user);
@@ -45,7 +44,7 @@ const OtpVerification = () => {
         "user",
         JSON.stringify({
           username: user.username || user.email,
-          role: userRole, // Use the safe userRole
+          role: user.position, // Use the safe userRole
         })
       );
       localStorage.setItem("token", res.data.token);
@@ -62,11 +61,11 @@ const OtpVerification = () => {
       console.log("CLEAR");
       // Redirect by role
       // The role strings must be lowercase to match userRole
-      if (userRole === "system_admin") {
+      if (user.position === "System_Admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (userRole === "admin") {
+      } else if (user.position === "Admin") {
         navigate("/Admin/Dashboard", { replace: true });
-      } else if (userRole === "super_admin") {
+      } else if (user.position === "Super_Admin") {
         navigate("/Superadmin/SystemAdmin", { replace: true });
       } else {
         navigate("/");

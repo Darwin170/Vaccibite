@@ -1,28 +1,55 @@
-// Sidebar.js
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Sidebar.css';
-import AAcdclogo from '../../Assets/Acdclogo.png';
-import AQcvetlogo from '../../Assets/Qcvetlogo.png';
-import Vaccibitelogo from '../../Assets/Vaccibitelogo.png';
-
-
+// src/Pages/System_Admin/Sidebar.js
+import React, { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../routes/AuthContext"; // ✅ import context
+import "./Sidebar.css";
+import Vaccibitelogo from "../../Assets/Vaccibitelogo.png";
+import AAcdclogo from "../../Assets/Acdclogo.png";
+import AQcvetlogo from "../../Assets/Qcvetlogo.png";
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth(); // ✅ from context
+
+  const handleLogout = useCallback(() => {
+    // Clear session
+    logout();
+
+    // Redirect to Login (check your route casing!)
+    navigate("/Login", { replace: true });
+
+    // Prevent back button from re-entering protected routes
+    window.history.pushState(null, "", window.location.href);
+  }, [logout, navigate]);
+
+  useEffect(() => {
+    const handleBackButton = () => {
+      handleLogout();
+    };
+
+    window.addEventListener("popstate", handleBackButton);
+
+    return () => {
+      window.removeEventListener("popstate", handleBackButton);
+    };
+  }, [handleLogout]);
 
   return (
-<div className="app-sidebar">
-    <div className="Vaccibite">
-        <img src={Vaccibitelogo} alt="Vaccibite" width="115" height="115" /></div>
+    <div className="app-sidebar">
+      <div className="Vaccibite">
+        <img src={Vaccibitelogo} alt="Vaccibite" width="115" height="115" />
+      </div>
 
-  <button onClick={() => navigate('/admin/UserManagement')}>User Management</button>
-  <button onClick={() => navigate('/admin/Activitylogs')}>Activity Log</button>
-  <button onClick={() => navigate('/admin/Backup')}>Back-up</button>
-  <button onClick={() => navigate('/admin/Archive')}>Archive</button>
-  <button onClick={() => navigate('/Login')}>Logout</button>
-</div>
+      <button onClick={() => navigate("/System_Admin/UserManagement")}>Admin</button>
+      <button onClick={() => navigate("/System_Admin/MobileUser")}>Mobile User</button>
+      <button onClick={() => navigate("/System_Admin/Activitylogs")}>Activity Log</button>
+      <button onClick={() => navigate("/System_Admin/Backup")}>Back-up</button>
+      <button onClick={() => navigate("/System_Admin/Archive")}>Archive</button>
 
+      <div className="logout">
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+    </div>
   );
 };
 

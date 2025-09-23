@@ -5,135 +5,130 @@ import "./OtpVerification.css";
 import { useAuth } from "../routes/AuthContext";
 
 const OtpVerification = () => {
-  const [otp, setOtp] = useState("");
-  const [message, setMessage] = useState("");
-  const [cooldown, setCooldown] = useState(0); // ⏳ Resend cooldown
-  const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const [otp, setOtp] = useState("");
+  const [message, setMessage] = useState("");
+  const [cooldown, setCooldown] = useState(0); // ⏳ Resend cooldown
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
 
-  // Get email from sessionStorage (set during login)
-  const email = sessionStorage.getItem("pendingEmail");
+  // Get email from sessionStorage (set during login)
+  const email = sessionStorage.getItem("pendingEmail");
 
-  // ---------------- Verify OTP ----------------
-  const handleVerify = async (e) => {
-    e.preventDefault();
+  // ---------------- Verify OTP ----------------
+  const handleVerify = async (e) => {
+    e.preventDefault();
 
-    if (!email) {
-      setMessage("Email not found. Please login again.");
-      return;
-    }
+    if (!email) {
+      setMessage("Email not found. Please login again.");
+      return;
+    }
 
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/verify`,
-        { email, otp },
-        { withCredentials: true }
-      );
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/verify`,
+        { email, otp },
+        { withCredentials: true }
+      );
 
-      const { user } = res.data;
+      const { user } = res.data;
 
-      // Safely get the user's role, and convert to lowercase for consistent comparison
-      const userRole = user.position ? user.position.toLowerCase() : 'user';
+      // Safely get the user's role, and convert to lowercase for consistent comparison
+      const userRole = user.position ? user.position.toLowerCase() : 'user';
 
-      // Save user globally
-      setUser(user);
+      // Save user globally
+      setUser(user);
 
-      // Save in localStorage with the consistent lowercase role
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          username: user.username || user.email,
-          role: user.position,
-        })
-      );
-      localStorage.setItem("token", res.data.token);
-      
-      // Log activity in a separate try/catch block
-      // This ensures that a logging failure doesn't prevent the user from logging in
-      
+      // Save in localStorage with the consistent lowercase role
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          username: user.username || user.email,
+          role: user.position,
+        })
+      );
+      localStorage.setItem("token", res.data.token);
+      
 
-      sessionStorage.removeItem("pendingEmail");
-      setMessage(res.data.msg);
-      console.log("CLEAR");
-      // Redirect by role based on the lowercase role
-      if (user.position === "system_admin") {
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.position === "admin") {
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.position === "super_admin") {
-        navigate("/Superadmin/SystemAdmin", { replace: true });
-      } else {
-        navigate("/");
-      }
-    } catch (err) {
-      const status = err.response?.status;
-    if (status === 400) {
-      // The backend sent a 400 Bad Request, so use its error message
-      const errorMessage = err.response?.data?.msg || "Invalid OTP.";
-      setMessage(errorMessage);
-    } else if (status === 404) {
-      const errorMessage = err.response?.data?.msg || "User not found.";
-      setMessage(errorMessage);
-    } else {
-      // A different kind of server error (e.g., 500)
-      const errorMessage = err.response?.data?.msg || "Verification failed due to a server error.";
-      setMessage(errorMessage);
-    }
-  }
-  };
+      sessionStorage.removeItem("pendingEmail");
+      setMessage(res.data.msg);
+      console.log("CLEAR");
+      // Redirect by role based on the lowercase role
+      if (user.position === "system_admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (user.position === "admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (user.position === "super_admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      // This is the corrected part.
+      const status = err.response?.status;
+      const backendMsg = err.response?.data?.msg;
 
-  // ---------------- Resend OTP ----------------
-  const handleResendOtp = async () => {
-    if (!email) {
-      setMessage("Email not found. Please login again.");
-      return;
-    }
-    if (cooldown > 0) return; // prevent spam
+      if (status === 400 || status === 404) {
+        // Use the specific error message from the backend
+        setMessage(backendMsg || "An error occurred.");
+      } else {
+        // For other errors (e.g., 500), use a generic message
+        setMessage("Verification failed due to a server error.");
+      }
+    }
+  };
 
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/resend-otp`,
-        { email },
-        { withCredentials: true }
-      );
+  // ---------------- Resend OTP ----------------
+  const handleResendOtp = async () => {
+    if (!email) {
+      setMessage("Email not found. Please login again.");
+      return;
+    }
+    if (cooldown > 0) return; // prevent spam
 
-      setMessage(res.data.msg || "A new OTP has been sent.");
-      setCooldown(30); // 30 seconds cooldown
-    } catch (err) {
-      setMessage(err.response?.data?.msg || "Failed to resend OTP.");
-    }
-  };
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/resend-otp`,
+        { email },
+        { withCredentials: true }
+      );
 
-  // ⏳ Cooldown countdown
-  useEffect(() => {
-    if (cooldown > 0) {
-      const timer = setInterval(() => setCooldown((prev) => prev - 1), 1000);
-      return () => clearInterval(timer);
-    }
-  }, [cooldown]);
+      setMessage(res.data.msg || "A new OTP has been sent.");
+      setCooldown(30); // 30 seconds cooldown
+    } catch (err) {
+      setMessage(err.response?.data?.msg || "Failed to resend OTP.");
+    }
+  };
 
-  return (
-    <div className="otp-container">
-      <h2>OTP Verification</h2>
-      <form onSubmit={handleVerify}>
-        <input
-          type="text"
-          placeholder="Enter OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          required
-        />
-        <button type="submit">Verify OTP</button>
-      </form>
+  // ⏳ Cooldown countdown
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setInterval(() => setCooldown((prev) => prev - 1), 1000);
+      return () => clearInterval(timer);
+    }
+  }, [cooldown]);
 
-      {/* Resend OTP button */}
-      <button onClick={handleResendOtp} disabled={cooldown > 0}>
-        {cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
-      </button>
+  return (
+    <div className="otp-container">
+      <h2>OTP Verification</h2>
+      <form onSubmit={handleVerify}>
+        <input
+          type="text"
+          placeholder="Enter OTP"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+          required
+        />
+        <button type="submit">Verify OTP</button>
+      </form>
 
-      {message && <p>{message}</p>}
-    </div>
-  );
+      {/* Resend OTP button */}
+      <button onClick={handleResendOtp} disabled={cooldown > 0}>
+        {cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
+      </button>
+
+      {message && <p>{message}</p>}
+    </div>
+  );
 };
 
 export default OtpVerification;

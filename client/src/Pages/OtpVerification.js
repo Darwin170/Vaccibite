@@ -56,7 +56,7 @@ const OtpVerification = () => {
 
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
-
+    console.log("CLEAR")
       // Redirect by role
      if (user.position === "System_Admin") {
           navigate("/System_Admin/UserManagement", { replace: true });

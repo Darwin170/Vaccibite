@@ -6,20 +6,18 @@ import './Sidebar.css';
 import './ResolutionPage.css';
 
 function ResolutionPage() {
-  const [resolvedReports, setResolvedReports] = useState([]);
+  const [reports, setReports] = useState([]);
   const [barangays, setBarangays] = useState([]);
   const navigate = useNavigate();
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchReportsAndBarangays = async () => {
       try {
-        const res = await axios.get(`${API_URL}/auth/reports`);
-        const resolved = res.data.filter(report => report.status === 'Resolved');
-        setResolvedReports(resolved);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
+        const filteredReports = res.data.filter(report => report.status === 'Resolved' || report.status === 'Ongoing');
+        setReports(filteredReports);
 
-        const barangayRes = await axios.get(`${API_URL}/auth/barangays`);
+        const barangayRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/barangays`);
         setBarangays(barangayRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -27,7 +25,7 @@ function ResolutionPage() {
     };
 
     fetchReportsAndBarangays();
-  }, [API_URL]);
+  }, []);
 
   const getBarangayName = (barangayId) => {
     const barangay = barangays.find((b) => b._id === barangayId);
@@ -37,7 +35,7 @@ function ResolutionPage() {
   const handleViewMap = (barangayId) => {
     const barangay = barangays.find((b) => b._id === barangayId);
     if (barangay) {
-      navigate(`/superior/map?lat=${barangay.latitude}&lng=${barangay.longitude}`);
+      navigate(`/Admin/map?lat=${barangay.latitude}&lng=${barangay.longitude}`);
     } else {
       alert("Barangay location not found.");
     }
@@ -47,8 +45,9 @@ function ResolutionPage() {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div className="resolution-container" style={{ marginLeft: '300px', marginTop: '25px', flex: 1 }}>
-        {resolvedReports.length === 0 ? (
-          <p>No resolved reports available.</p>
+        <h2>Report History</h2>
+        {reports.length === 0 ? (
+          <p>No resolved or investigation reports available.</p>
         ) : (
           <table className="resolved-table">
             <thead>
@@ -57,11 +56,12 @@ function ResolutionPage() {
                 <th>Type</th>
                 <th>Barangay</th>
                 <th>Date</th>
+                <th>Status</th> {/* Added a new column for Status */}
                 <th>File</th>
               </tr>
             </thead>
             <tbody>
-              {resolvedReports.map((report) => (
+              {reports.map((report) => (
                 <tr key={report._id}>
                   <td>{report._id}</td>
                   <td>{report.type}</td>
@@ -74,9 +74,14 @@ function ResolutionPage() {
                   </td>
                   <td>{new Date(report.date).toLocaleDateString()}</td>
                   <td>
+                    <span className={`status-badge ${report.status.toLowerCase()}`}>
+                      {report.status}
+                    </span>
+                  </td>
+                  <td>
                     {report.filePath ? (
                       <a
-                        href={`${API_URL}/${report.filePath}`}
+                        href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
                         download
                         target="_blank"
                         rel="noopener noreferrer"

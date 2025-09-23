@@ -9,6 +9,7 @@ import "./Sidebar.css";
 import "./EventsAndPrograms.css";
 
 
+const API_URL = process.env.REACT_APP_API_URL;
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -41,11 +42,13 @@ const CustomToolbar = ({ label, onNavigate, onView, view }) => (
 const CalendarScheduler = () => {
   const [events, setEvents] = useState([]);
   const [barangays, setBarangays] = useState([]);
+  const [districts, setDistricts] = useState([]);
   const [newEvent, setNewEvent] = useState({
     title: "",
     start: "",
     end: "",
     details: "",
+    district: "",
     barangayId: "",
   });
 
@@ -58,15 +61,21 @@ const CalendarScheduler = () => {
 
   // Fetch barangays with districts
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`)
-      .then(res => setBarangays(res.data))
+    axios.get(`${API_URL}/auth/Barangays`)
+      .then(res => {
+        setBarangays(res.data);
+
+        // extract unique districts and sort alphabetically
+        const uniqueDistricts = [...new Set(res.data.map(b => b.district))].sort();
+        setDistricts(uniqueDistricts);
+      })
       .catch(err => console.error("Error fetching barangays:", err));
   }, []);
 
   // Fetch events from backend
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getAllEvents`);
+      const res = await axios.get(`${API_URL}/auth/getAllEvents`);
       const formatted = res.data.map(ev => ({
         ...ev,
         start: new Date(ev.start),
@@ -91,17 +100,24 @@ const CalendarScheduler = () => {
     }
 
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/auth/createEvent`, {
+      const res = await axios.post(`${API_URL}/auth/createEvent`, {
         title,
         start: new Date(start).toISOString(),
         end: new Date(end).toISOString(),
         details,
         barangayId
-      });
+      },
+                {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                }
+      
+    );
 
       const created = res.data.event;
       setEvents([...events, { ...created, start: new Date(created.start), end: new Date(created.end) }]);
-      setNewEvent({ title: "", start: "", end: "", details: "", barangayId: "" });
+      setNewEvent({ title: "", start: "", end: "", details: "", district: "", barangayId: "" });
       setShowModal(false);
     } catch (err) {
       console.error("Error creating event:", err);
@@ -113,13 +129,18 @@ const CalendarScheduler = () => {
     if (!editedEvent) return;
 
     try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/auth/updateEvent/${editedEvent._id}`, {
+      await axios.put(`${API_URL}/auth/updateEvent/${editedEvent._id}`, {
         title: editedEvent.title,
         start: new Date(editedEvent.start).toISOString(),
         end: new Date(editedEvent.end).toISOString(),
         details: editedEvent.details,
         barangayId: editedEvent.barangayId
-      });
+      },
+                {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                });
 
       setEvents(events.map(ev =>
         ev._id === editedEvent._id
@@ -138,7 +159,14 @@ const CalendarScheduler = () => {
     if (!selectedEvent) return;
 
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteEvents/${selectedEvent._id}`);
+      await axios.delete(`${API_URL}/auth/deleteEvents/${selectedEvent._id}`,
+        
+                {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                }
+      );
       setEvents(events.filter(ev => ev._id !== selectedEvent._id));
       setSelectedEvent(null);
     } catch (err) {
@@ -173,18 +201,33 @@ const CalendarScheduler = () => {
                 className="input"
               />
 
+              {/* District Dropdown */}
+              <label>District:</label>
+              <select
+                value={newEvent.district}
+                onChange={(e) => setNewEvent({ ...newEvent, district: e.target.value, barangayId: "" })}
+                className="input"
+              >
+                <option value="">-- Select District --</option>
+                {districts.map((d, idx) => (
+                  <option key={idx} value={d}>{d}</option>
+                ))}
+              </select>
+
+              {/* Barangay Dropdown */}
               <label>Barangay:</label>
               <select
                 value={newEvent.barangayId}
                 onChange={(e) => setNewEvent({ ...newEvent, barangayId: e.target.value })}
                 className="input"
+                disabled={!newEvent.district}
               >
                 <option value="">-- Select Barangay --</option>
-                {barangays.map((b) => (
-                  <option key={b._id} value={b._id}>
-                    {b.name} 
-                  </option>
-                ))}
+                {barangays
+                  .filter((b) => b.district === newEvent.district)
+                  .map((b) => (
+                    <option key={b._id} value={b._id}>{b.name}</option>
+                  ))}
               </select>
 
               <label>Start:</label>
@@ -217,6 +260,124 @@ const CalendarScheduler = () => {
           </div>
         )}
 
+        {/* Event Details Modal */}
+        {selectedEvent && !showEditModal && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>{selectedEvent.title}</h3>
+              <p><strong>District:</strong> {barangays.find(b => b._id === selectedEvent.barangayId)?.district || "N/A"}</p>
+              <p><strong>Barangay:</strong> {barangays.find(b => b._id === selectedEvent.barangayId)?.name || "N/A"}</p>
+              <p><strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
+              <p><strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
+              <p><strong>Details:</strong> {selectedEvent.details}</p>
+
+              <div className="modal-buttons">
+                <button 
+                  onClick={() => {
+                    setEditedEvent(selectedEvent);
+                    setShowEditModal(true);
+                  }} 
+                  className="edit-button"
+                >
+                  Edit
+                </button>
+                <button onClick={handleDeleteEvent} className="delete-button">Delete</button>
+                <button onClick={() => setSelectedEvent(null)} className="cancel-button">Cancel</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Event Modal */}
+        {showEditModal && editedEvent && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>Edit Event</h3>
+              <input
+                type="text"
+                value={editedEvent.title}
+                onChange={(e) =>
+                  setEditedEvent({ ...editedEvent, title: e.target.value })
+                }
+                className="input"
+              />
+
+              {/* District Dropdown */}
+              <label>District:</label>
+              <select
+                value={editedEvent.district || ""}
+                onChange={(e) => setEditedEvent({ ...editedEvent, district: e.target.value, barangayId: "" })}
+                className="input"
+              >
+                <option value="">-- Select District --</option>
+                {districts.map((d, idx) => (
+                  <option key={idx} value={d}>{d}</option>
+                ))}
+              </select>
+
+              {/* Barangay Dropdown */}
+              <label>Barangay:</label>
+              <select
+                value={editedEvent.barangayId}
+                onChange={(e) =>
+                  setEditedEvent({ ...editedEvent, barangayId: e.target.value })
+                }
+                className="input"
+                disabled={!editedEvent.district}
+              >
+                <option value="">-- Select Barangay --</option>
+                {barangays
+                  .filter((b) => b.district === editedEvent.district)
+                  .map((b) => (
+                    <option key={b._id} value={b._id}>{b.name}</option>
+                  ))}
+              </select>
+
+              <label>Start:</label>
+              <input
+                type="datetime-local"
+                value={formatDateForInput(editedEvent.start)}
+                onChange={(e) =>
+                  setEditedEvent({ ...editedEvent, start: e.target.value })
+                }
+                className="input"
+              />
+              <label>End:</label>
+              <input
+                type="datetime-local"
+                value={formatDateForInput(editedEvent.end)}
+                onChange={(e) =>
+                  setEditedEvent({ ...editedEvent, end: e.target.value })
+                }
+                className="input"
+              />
+              <label>Details:</label>
+              <textarea
+                value={editedEvent.details}
+                onChange={(e) =>
+                  setEditedEvent({ ...editedEvent, details: e.target.value })
+                }
+                className="textarea"
+              />
+
+              <div className="modal-buttons">
+                <button 
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditedEvent(null);
+                  }} 
+                  className="cancel-button"
+                >
+                  Cancel
+                </button>
+                <button onClick={handleUpdateEvent} className="save-button">
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Calendar */}
         <div className="calendar-wrapper">
           <Calendar
@@ -241,9 +402,3 @@ const CalendarScheduler = () => {
 };
 
 export default CalendarScheduler;
-
-
-
-
-
-

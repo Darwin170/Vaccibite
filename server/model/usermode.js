@@ -32,7 +32,8 @@ const userSchema = new mongoose.Schema({
   },
   position: {
     type: String,
-    required: [true, "Position is required"]
+    required: [true, "Position is required"],
+    enum: ['Super_Admin', 'System_Admin', 'Admin'] 
   },
   loginAttempts: {
     type: Number,
@@ -55,3 +56,4 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model('UserAccounts', userSchema, 'UserAccounts');
 
 module.exports = User;
+

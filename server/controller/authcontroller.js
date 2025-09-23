@@ -32,12 +32,11 @@ const verifyOTP = async (req, res) => {
     }
 
     // 4. Validate the OTP
-    if (parseInt(otp) !== otpRecord.otp) {
-      // Delete the OTP record on an invalid attempt for added security
-      await OTP.deleteOne({ _id: otpRecord._id }); 
-      return res.status(400).json({ msg: "Invalid OTP." });
-    }
-
+    if (otp !== otpRecord.otp.toString()) {
+  // Your existing error handling
+  await OTP.deleteOne({ _id: otpRecord._id });
+  return res.status(400).json({ msg: "Invalid OTP." });
+}
     // 5. OTP is valid - delete the record and generate a token
     await OTP.deleteOne({ _id: otpRecord._id });
 
@@ -62,3 +61,4 @@ const verifyOTP = async (req, res) => {
 };
 
 module.exports = { verifyOTP };
+

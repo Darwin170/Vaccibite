@@ -9,7 +9,7 @@ const OtpVerification = () => {
   const [message, setMessage] = useState("");
   const [cooldown, setCooldown] = useState(0); // ⏳ Resend cooldown
   const navigate = useNavigate();
-  const { user, login } = useAuth(); // Destructure 'user' and 'login'
+  const { user } = useAuth(); // Destructure 'user' and 'login'
 
   // Get email from sessionStorage (set during login)
   const email = sessionStorage.getItem("pendingEmail");

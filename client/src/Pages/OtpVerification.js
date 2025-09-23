@@ -29,8 +29,16 @@ const OtpVerification = () => {
         { email, otp },
         { withCredentials: true }
       );
+      
+      // === CHANGE STARTS HERE ===
+      // Ensure res.data and res.data.user are valid before proceeding
+      if (!res.data || !res.data.user) {
+        setMessage("Verification failed: Unexpected response from server.");
+        return;
+      }
 
       const { user } = res.data;
+      // === CHANGE ENDS HERE ===
 
       // Safely get the user's role, and convert to lowercase for consistent comparison
       const userRole = user.position ? user.position.toLowerCase() : 'user';
@@ -48,9 +56,7 @@ const OtpVerification = () => {
       );
       localStorage.setItem("token", res.data.token);
       
-      // Log activity in a separate try/catch block
-      // This ensures that a logging failure doesn't prevent the user from logging in
-      
+      // Removed logActivity as per user request
 
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);

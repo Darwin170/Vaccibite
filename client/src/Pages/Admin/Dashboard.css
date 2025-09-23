@@ -6,8 +6,9 @@
     margin-left: 220px;
     padding: 30px;
     flex-grow: 1;
-    background-color: #6565654b;
+    background-color: #ffffff4b;
     min-height: 100vh;
+    
   }
   
   .dashboard-title {
@@ -49,6 +50,11 @@
   .chart-title {
     font-size: 18px;
     margin-bottom: 16px;
-    color: #333;
+    color: #000000;
+  }
+  .Summary{
+    padding: 10px 20px; 
+    font-size: 1.2rem;
+    font-weight: bold;
   }
   

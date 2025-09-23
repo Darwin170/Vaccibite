@@ -32,8 +32,7 @@ const OtpVerification = () => {
 
       const { user } = res.data;
 
-      // Safely get the user's role, and convert to lowercase for consistent comparison
-      const userRole = user.position ? user.position.toLowerCase() : 'user';
+      
 
       // Save user globally
       setUser(user);
@@ -53,11 +52,11 @@ const OtpVerification = () => {
       setMessage(res.data.msg);
       console.log("CLEAR");
       // Redirect by role based on the lowercase role
-      if (user.position === "system_admin") {
+      if (user.position === "System_Admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.position === "admin") {
+      } else if (user.position === "Admin") {
         navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.position === "super_admin") {
+      } else if (user.position === "Super_Admin") {
         navigate("/Superadmin/SystemAdmin", { replace: true });
       } else {
         navigate("/");

@@ -24,7 +24,7 @@ function App() {
           <Route
             path="/Admin/*"
             element={
-              <PrivateRoute role="Admin">
+              <PrivateRoute role="admin">
                 <SuperiorRoutes />
               </PrivateRoute>
             }
@@ -33,7 +33,7 @@ function App() {
           <Route
             path="/System_Admin/*"
             element={
-              <PrivateRoute role="System_Admin">
+              <PrivateRoute role="system_admin">
                 <AdminRoutes />
               </PrivateRoute>
             }
@@ -41,7 +41,7 @@ function App() {
         <Route
             path="/Superadmin/*"
             element={
-              <PrivateRoute role="Super_Admin">
+              <PrivateRoute role="super_admin">
                 <Superadmin />
               </PrivateRoute>
             }

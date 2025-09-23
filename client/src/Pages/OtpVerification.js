@@ -58,7 +58,7 @@ const OtpVerification = () => {
       }
       
       // Use the login function from AuthContext to handle state and localStorage
-      login({ ...user, role: user.position ? user.position.toLowerCase() : 'user' });
+      
 
       // Save the token separately as AuthContext doesn't manage it
       localStorage.setItem("token", token);

@@ -43,7 +43,7 @@ const OtpVerification = () => {
         "user",
         JSON.stringify({
           username: user.username || user.email,
-          role: userRole,
+          role: user.position,
         })
       );
       localStorage.setItem("token", res.data.token);
@@ -56,11 +56,11 @@ const OtpVerification = () => {
       setMessage(res.data.msg);
       console.log("CLEAR");
       // Redirect by role based on the lowercase role
-      if (userRole === "system_admin") {
+      if (user.position === "system_admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (userRole === "admin") {
+      } else if (user.position === "admin") {
         navigate("/Admin/Dashboard", { replace: true });
-      } else if (userRole === "super_admin") {
+      } else if (user.position === "super_admin") {
         navigate("/Superadmin/SystemAdmin", { replace: true });
       } else {
         navigate("/");

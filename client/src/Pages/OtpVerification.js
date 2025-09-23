@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./OtpVerification.css";
 import { useAuth } from "../routes/AuthContext";
-import { logActivity } from "./System_Admin/Activitylogger";
 
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
@@ -51,15 +50,7 @@ const OtpVerification = () => {
       
       // Log activity in a separate try/catch block
       // This ensures that a logging failure doesn't prevent the user from logging in
-      try {
-        await logActivity(
-          { userId: user._id, username: user.email, position: user.position },
-          "Login",
-          "User logged in via OTP successfully"
-        );
-      } catch (logErr) {
-        console.error("Failed to log activity:", logErr);
-      }
+      
 
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);

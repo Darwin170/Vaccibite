@@ -43,7 +43,7 @@ const OtpVerification = () => {
         "user",
         JSON.stringify({
           username: user.username || user.email,
-          role: userRole,
+          role: user.position,
         })
       );
       localStorage.setItem("token", res.data.token);

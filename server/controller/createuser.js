@@ -1,5 +1,6 @@
 const User = require('../model/usermode');
 const generateId = require('../utils/generateId');
+const ActivityLog = require('../model/Activitylogs'); // Import the ActivityLog model
 
 // Register User
 const createUser = async (req, res) => {
@@ -25,10 +26,20 @@ const createUser = async (req, res) => {
       email,
       phone,
       password, // gets hashed by schema
-      position 
+      position
     });
 
     await newUser.save();
+
+    // Create the activity log here
+    const newLog = new ActivityLog({
+      user: req.user._id, // admin ID
+      onModel: req.userType, // The model name for this user
+      action: 'New User Registered',
+      details: `New user ${newUser.email} registered with position ${newUser.position}.`,
+    });
+
+    await newLog.save();
 
     res.status(201).json({
       message: "User registered successfully",

@@ -1,14 +1,26 @@
-const Report = require('../model/ArchivingReportsmodel'); 
+const ArchivedReport = require('../model/ArchivingReportsmodel'); 
+const ActivityLog = require('../model/Activitylogs'); // Import the ActivityLog model
 
 const deleteArchivedReport = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const deleted = await Report.findByIdAndDelete(id);
+    const report = await ArchivedReport.findById(id);
 
-    if (!deleted) {
+    if (!report) {
       return res.status(404).json({ message: 'Report not found.' });
     }
+      await ArchivedReport.findByIdAndDelete(id);
+
+    // Create the activity log here
+    const newLog = new ActivityLog({
+      user: req.user._id, // admin ID
+      onModel: req.userType,
+      action: 'Archived Report Deleted',
+      details: `Archived report with ID ${id} was permanently deleted.`,
+    });
+
+    await newLog.save();
 
     res.status(200).json({ message: 'Report deleted successfully.' });
   } catch (error) {

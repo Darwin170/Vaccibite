@@ -2,14 +2,15 @@ const ActivityLog = require("../model/Activitylogs");
 
 const createLogs = async (req, res) => {
   try {
-    const { user, action, details } = req.body;
+    const { action, details } = req.body;
 
-    if (!user || !action) {
-      return res.status(400).json({ message: "user and action are required" });
+    if (!req.user?.id || !req.user?.onModel || !action) {
+      return res.status(400).json({ message: "user, onModel, and action are required" });
     }
 
     const newLog = new ActivityLog({
-      user,
+      user: req.user.id,
+      onModel: req.user.onModel,
       action,
       details,
     });
@@ -21,5 +22,4 @@ const createLogs = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-module.exports = createLogs;
+module.exports = { createLogs };

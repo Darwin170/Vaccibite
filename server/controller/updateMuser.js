@@ -1,22 +1,20 @@
-const User = require('../model/usermode');
+const M_User = require('../model/M_user');
 const bcrypt = require('bcryptjs');
 
-// 1. Import the ActivityLog model
 const ActivityLog = require('../model/Activitylogs');
 
-const updateUser = async (req, res) => {
+const updateMUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, password, position } = req.body;
-
-    const updatedData = { name, email, phone, position };
+    const { name, email, phone, password } = req.body;
+    const updatedData = { name, email, phone };
     
-    // Optional: rehash the password if it's provided
+    
     if (password) {
       updatedData.password = await bcrypt.hash(password, await bcrypt.genSalt(10));
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, updatedData, {
+    const updatedUser = await  M_User.findByIdAndUpdate(id, updatedData, {
       new: true,
       runValidators: true,
     });
@@ -42,4 +40,4 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { updateUser };
+module.exports = { updateMUser };

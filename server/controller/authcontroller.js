@@ -1,75 +1,45 @@
-const jwt = require("jsonwebtoken");
-const User = require("../model/usermode");
-const OTP = require("../model/OPT");
+const jwt = require('jsonwebtoken');
+const User = require('../model/usermode');
 
 
 const verifyOTP = async (req, res) => {
+  const { otp } = req.body;
+
+  if (!req.session.otp || !req.session.otpExpiry || !req.session.userId) {
+    return res.status(400).json({ msg: "No OTP found. Please log in again." });
+  }
+
+  if (Date.now() > req.session.otpExpiry) {
+    delete req.session.otp;
+    delete req.session.otpExpiry;
+    delete req.session.userId;
+    return res.status(400).json({ msg: "OTP expired. Please log in again." });
+  }
+
+  if (parseInt(otp) !== req.session.otp) {
+    return res.status(400).json({ msg: "Invalid OTP" });
+  }
+
   try {
-    const { email, otp } = req.body;
-    if (!email || !otp) {
-      return res.status(400).json({ msg: "Email and OTP are required." });
-    }
+    const user = await User.findById(req.session.userId);
+    if (!user) return res.status(404).json({ msg: "User not found" });
 
-    const normalizedEmail = email.trim().toLowerCase();
+    // Create JWT
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    // Find user
-    const user = await User.findOne({ email: normalizedEmail }).select("-password");
-    if (!user) return res.status(404).json({ msg: "User not found." });
+    // Clear OTP
+    delete req.session.otp;
+    delete req.session.otpExpiry;
+    delete req.session.userId;
 
-    // Find OTP record
-    let otpRecord;
-    try {
-      otpRecord = await OTP.findOne({ userId: user._id });
-      console.log("Fetched OTP record:", otpRecord);
-    } catch (err) {
-      console.error("Error fetching OTP from DB:", err);
-      return res.status(500).json({ msg: "Server error fetching OTP." });
-    }
-
-    if (!otpRecord) {
-      return res.status(400).json({ msg: "No OTP found. Please login again." });
-    }
-
-    // Check if OTP expired
-    if (Date.now() > otpRecord.expiresAt.getTime()) {
-      await OTP.deleteOne({ _id: otpRecord._id });
-      return res.status(400).json({ msg: "OTP expired. Please login again." });
-    }
-
-    // Validate OTP
-    if (parseInt(otp) !== otpRecord.otp) {
-      return res.status(400).json({ msg: "Invalid OTP." });
-    }
-
-    // OTP is valid — delete it
-    try {
-      await OTP.deleteOne({ _id: otpRecord._id });
-    } catch (err) {
-      console.error("Failed to delete OTP record:", err);
-    }
-
-    // Create JWT safely
-    let token;
-    try {
-      token = jwt.sign(
-        { id: user._id, email: user.email, position: user.position },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
-    } catch (err) {
-      console.error("JWT creation error:", err);
-      return res.status(500).json({ msg: "Server error generating token." });
-    }
-
-    return res.json({
-      msg: "Login successful!",
-      token,
-      user
-    });
+    res.json({ msg: "Login successful!", token });
 
   } catch (err) {
-    console.error("Unexpected verifyOTP error:", err);
-    return res.status(500).json({ msg: "Server error", error: err.message });
+    res.status(500).json({ msg: "Server error", error: err });
   }
 };
 

@@ -21,12 +21,6 @@ const getPieChartData = async (req, res) => {
       matchQuery.type = incidentType;
     }
 
-    // ✅ FIX: This part now correctly handles the case where both district and barangayId might be present.
-    // The previous logic for district overwrites the barangayId, which is correct
-    // because a user can either filter by a single barangay or a whole district.
-    // However, the `barangayId` filter should come after to ensure it takes precedence
-    // if both are somehow present, or a simple check for `if (barangayId) { ... } else if (district) { ... }` is more robust.
-    // The original order is fine, but the `ObjectId` conversion is the key fix.
     if (district) {
       const barangaysInDistrict = await Barangay.find({ district }).select("_id");
       matchQuery.barangayId = { $in: barangaysInDistrict.map(b => b._id) };

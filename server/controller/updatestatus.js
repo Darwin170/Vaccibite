@@ -1,36 +1,81 @@
-const  Report  = require('../model/reportsmodel'); // Assuming Report is your model
+const Report = require("../model/reportsmodel");
+const ActivityLog = require("../model/Activitylogs");
+const Notification = require("../model/Notification");
+let ioInstance;
 
-const updateReportStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body; // Assuming status is in the request body
-  const file = req.file; // The uploaded file
+// Initialize socket instance
+const initSocket = (io) => {
+  ioInstance = io;
 
-  try {
-    const report = await Report.findById(id);
-    if (!report) {
-      return res.status(404).json({ message: 'Report not found' });
-    }
+  io.on("connection", (socket) => {
+    console.log("A user connected:", socket.id);
 
-    report.status = status;
+    socket.on("join", (MuserId) => {
+      socket.join(MuserId.toString());
+      console.log(`Mobile user ${MuserId} joined their room`);
+    });
 
-   
-    if (file) {
-     
-      const filePath = `uploads/${file.originalname}`;
-      report.filePath = filePath; // Store the file path in the database
-     
-    }
-
-    await report.save();
-    console.log("req.body:", req.body);
-    console.log("req.file:", req.file);
-
-    res.status(200).json({ message: 'Report status updated successfully', report });
-  } catch (error) {
-    console.error('Error updating report status:', error);
-    res.status(500).json({ message: 'Failed to update report status' });
-  }
+    socket.on("disconnect", () => {
+      console.log("User disconnected:", socket.id);
+    });
+  });
 };
 
+// Update report status (admin only)
+const updateReportStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const file = req.file;
 
-module.exports = { updateReportStatus };
+  try {
+    const report = await Report.findById(id);
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    const oldStatus = report.status;
+    const newStatus = status;
+    report.status = newStatus; // Update the status first
+
+    // ✅ Conditional check for file upload
+    if (file) {
+      report.filePath = `uploads/${file.originalname}`;
+    } else if (newStatus !== "Ongoing") { // Check if a file is required
+      // You can add logic here to enforce a file for other statuses
+      // For example: return res.status(400).json({ message: "A file is required for this status change" });
+    }
+    // Note: The previous line `report.filePath = filepath;` was a typo, so it has been corrected.
+
+    await report.save();
+
+    // Log activity (admin action)
+    const newLog = new ActivityLog({
+      user: req.user._id,
+      onModel: req.userType,
+      action: "Report Status Updated",
+      details: `Report ${report._id} updated from '${oldStatus}' to '${newStatus}'`
+    });
+    await newLog.save();
+
+    // --- Create Notification for Mobile User ---
+    if (report.userId) {
+      const notification = await Notification.create({
+        userId: report.userId,
+        title: "Report Status Updated",
+        message: `Your report "${report.type}" status changed from '${oldStatus}' to '${newStatus}'`,
+        read: false
+      });
+
+      // Emit to mobile user via Socket.IO
+      if (ioInstance) {
+        ioInstance.to(report.userId.toString()).emit("newNotification", notification);
+      }
+    }
+
+    res.status(200).json({ message: "Report status updated", report });
+  } catch (error) {
+    console.error("Error updating report status:", error);
+    res.status(500).json({ message: "Failed to update report status" });
+  }
+};
+module.exports = { updateReportStatus, initSocket };

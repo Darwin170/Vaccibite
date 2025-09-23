@@ -1,23 +1,23 @@
-const User = require('../model/usermode'); // Assuming this is your web user model
-const ActivityLog = require('../model/Activitylogs');
+const MUser = require("../model/M_user");
+const ActivityLog = require('../model/Activitylogs'); // Import the ActivityLog model
 
-const deleteUser = async (req, res) => {
+const deleteMUser = async (req, res) => {
   try {
     const { id } = req.params;
    
 
-    const deletedUser = await User.findById(id);
+    const deletedMUser = await MUser.findByIdAndDelete(id);
 
-    if (!deletedUser) {
+    if (!deletedMUser) {
       return res.status(404).json({ message: "User not found" });
     }
-     await User.findByIdAndDelete(id);
+    
     // Create the activity log here
     const newLog = new ActivityLog({
-      user: req.user._id, // admin ID
+       user: req.user._id, // admin ID
       onModel: req.userType,
-      action: 'User Account Deleted',
-      details: `User with ID ${id} was deleted.`,
+      action: 'Mobile User Account Deleted',
+      details: `Mobile user with ID ${id} was deleted.`,
     });
 
     await newLog.save();
@@ -28,5 +28,5 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Failed to delete user" });
   }
 };
-
-module.exports = { deleteUser };
+ 
+module.exports = { deleteMUser };

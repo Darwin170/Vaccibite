@@ -3,12 +3,16 @@ const Barangay = require('../model/barangaymodel');
 const path = require('path');
 const generateId = require('../utils/generateId');
 
+// 1. Import the ActivityLog model
+const ActivityLog = require('../model/Activitylogs');
+
 const createReport = async (req, res) => {
     try {
-        const { type, barangayId, date, status, district, categoryDetails } = req.body;
+        // Add userId and onModel to the request body destructuring
+        const { type, barangayId, date, status, district, categoryDetails, } = req.body;
         const file = req.file;
 
-        if (!type || !barangayId || !date || !status || !district || !file) {
+        if (!type || !barangayId || !date || !status || !district || !file ) {
             return res.status(400).json({ message: 'Please fill all required general fields and upload a file.' });
         }
 
@@ -29,7 +33,7 @@ const createReport = async (req, res) => {
             return res.status(400).json({ message: 'Invalid format for category details.' });
         }
 
-        const reportId = await generateId("report"); 
+        const reportId = await generateId("report");
 
         const newReport = new Report({
             reportId,
@@ -43,6 +47,16 @@ const createReport = async (req, res) => {
         });
 
         await newReport.save();
+
+        // 2. Create the activity log here
+        const newLog = new ActivityLog({
+            user: req.user._id, // admin ID
+            onModel: req.userType,
+            action: 'New Report Created',
+            details: `A new report (ID: ${newReport.reportId}) was created by a user.`,
+        });
+
+        await newLog.save(); // 3. Save the new log
 
         res.status(201).json({
             message: 'Report created successfully.',

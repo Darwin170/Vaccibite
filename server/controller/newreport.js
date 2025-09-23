@@ -7,7 +7,7 @@ const getNewReports = async (req, res) => {
     since.setMinutes(since.getMinutes() - 10); // last 10 mins
 
     const newReportsCount = await Report.countDocuments({
-      createdAt: { $gte: since },
+      date: { $gte: since },
       status: "Pending" 
     });
 

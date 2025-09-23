@@ -25,7 +25,7 @@ const downloadReport = async (req, res) => {
 
     // Category
     doc.fontSize(14).text(`Category: ${report.type}`, { underline: true });
-    doc.moveDown(0.5);
+    doc.moveDown(1.5);
 
     // Dynamic category details
     if (report.categoryDetails && Object.keys(report.categoryDetails).length > 0) {
@@ -38,10 +38,9 @@ const downloadReport = async (req, res) => {
       doc.text("⚠️ No additional details available.");
     }
 
-    // Image if exists
     if (report.filePath) {
       try {
-        doc.addPage();
+        
         doc.fontSize(16).text("Attached Image", { align: "center" });
         doc.moveDown();
 

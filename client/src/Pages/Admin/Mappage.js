@@ -5,7 +5,6 @@ import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
 import Sidebar from './Sidebar';
-
 import './BarangayMap.css';
 import './Sidebar.css';
 
@@ -80,7 +79,7 @@ const MapPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState(null);
 
- 
+    const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -89,8 +88,8 @@ const MapPage = () => {
             try {
                 // Fetch both barangays and reports in parallel for efficiency
                 const [barangayRes, reportsRes] = await Promise.all([
-                    axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`),
-                    axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`)
+                    axios.get(`${API_URL}/auth/Barangays`),
+                    axios.get(`${API_URL}/auth/reports`)
                 ]);
 
                 // Map the reports to include the barangay name for easier filtering and display
@@ -170,7 +169,7 @@ const MapPage = () => {
                                 <option value="">All</option>
                                 <option value="Animal Bite">Animal Bite</option>
                                 <option value="Missing Animal">Missing Animal</option>
-                                <option value="Animal Roaming">Animal Sighting</option>
+                                <option value="Animal Sighting">Animal Sighting</option>
                             </select>
                         </div>
                     </div>
@@ -254,7 +253,7 @@ const MapPage = () => {
                                     <tbody>
                                         {filteredReports.map((report) => (
                                             <tr key={report._id}>
-                                                <td>{report._id}</td>
+                                                <td>{report.reportId}</td>
                                                 <td>{report.type}</td>
                                                 <td>
                                                     {report.barangayName}<br />
@@ -270,7 +269,7 @@ const MapPage = () => {
                                                 <td>
                                                     {report.filePath ? (
                                                         <a
-                                                            href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
+                                                            href={`${API_URL}/${report.filePath}`}
                                                             download
                                                             target="_blank"
                                                             rel="noopener noreferrer"
@@ -295,6 +294,3 @@ const MapPage = () => {
 };
 
 export default MapPage;
-
-
-

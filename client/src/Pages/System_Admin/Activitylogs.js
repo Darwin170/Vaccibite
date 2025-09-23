@@ -3,26 +3,17 @@ import axios from 'axios';
 import './ActivityLogs.css';
 import Sidebar from './Sidebar';
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 const ActivityLogs = () => {
   const [logs, setLogs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('All');
 
   const fetchLogs = async () => {
     try {
-      const response = await axios.get(`${API_URL}/auth/getLogs`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getLogs`);
       setLogs(response.data);
     } catch (error) {
       console.error('Error fetching logs:', error);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${API_URL}/auth/deleteLog/${id}`);
-      fetchLogs(); 
-    } catch (error) {
-      console.error('Error deleting log:', error);
     }
   };
 
@@ -32,41 +23,79 @@ const ActivityLogs = () => {
     return () => clearInterval(interval);
   }, []);
 
+  
+  const filteredLogs = logs.filter((log) => {
+    const userName = log.user?.name?.toLowerCase() || '';
+    const userPosition = log.user?.position || '';
+    const action = log.action?.toLowerCase() || '';
+
+    const matchesSearch =
+      userName.includes(searchTerm.toLowerCase()) ||
+      action.includes(searchTerm.toLowerCase());
+
+    const matchesRole =
+      roleFilter === 'All' || userPosition === roleFilter;
+
+    return matchesSearch && matchesRole;
+  });
+
   return (
-    <div className="User-container">
+    <div className="Activity">
       <Sidebar />
-      <div style={{ marginLeft: "250px", padding: "20px" }}></div>
-      <div className="container">
+      <div style={{ marginLeft: "250px", padding: "20px" }}>
         <h2>Activity Logs</h2>
-        <table className="table">
+
+        
+        <div className="controls" style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+          <input
+            type="text"
+            placeholder="Search by username or action..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '8px', width: '250px', borderRadius: '5px', border: '1px solid #ccc' }}
+          />
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value)}
+            style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
+          >
+            <option value="All">All Roles</option>
+            <option value="Mobile User">Mobile User</option>
+            <option value="Admin">Admin</option>
+            <option value="System_Admin">System Admin</option>
+          </select>
+        </div>
+
+        <table className="tables">
           <thead>
             <tr>
-              <th className="tableHeader">Timestamp</th>
-              <th className="tableHeader">Username</th>
-              <th className="tableHeader">Position</th>
-              <th className="tableHeader">Action</th>
-              <th className="tableHeader">Details</th>
-              <th className="tableHeader">Actions</th>
+              <th className="tableHeaders">Timestamp</th>
+              <th className="tableHeaders">Username</th>
+              <th className="tableHeaders">Position</th>
+              <th className="tableHeaders">Action</th>
+              <th className="tableHeaders">Details</th>
             </tr>
           </thead>
           <tbody>
-            {logs.map((log, index) => (
-              <tr key={index}>
-                <td className="tableCell">{new Date(log.timestamp).toLocaleString()}</td>
-                <td className="tableCell">{log.user?.name || 'N/A'}</td>
-                <td className="tableCell">{log.user?.position || 'N/A'}</td>
-                <td className="tableCell">{log.action}</td>
-                <td className="tableCell">{log.details || 'N/A'}</td>
-                <td className="tableCell">
-                  <button
-                    onClick={() => handleDelete(log._id)}
-                    className="deleteButton"
-                  >
-                    Delete
-                  </button>
+            {filteredLogs.length > 0 ? (
+              filteredLogs.map((log, index) => (
+                <tr key={index}>
+                  <td className="tableCells">
+                    {new Date(log.timestamp).toLocaleString()}
+                  </td>
+                  <td className="tableCells">{log.user?.name || 'N/A'}</td>
+                  <td className="tableCells">{log.user?.position || 'N/A'}</td>
+                  <td className="tableCells">{log.action}</td>
+                  <td className="tableCells">{log.details || 'N/A'}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="tableCells" colSpan="5" style={{ textAlign: 'center' }}>
+                  No matching logs found.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

@@ -32,10 +32,10 @@ const {authMiddleware} = require("../middleware/authMiddleware");
 const {updateMUser}= require ("../controller/updateMuser");
 const {getOngoingReport}=require("../controller/ongoingcout");
 const {resendOtp}=require("../controller/resend-OTP");
-const {verifyOTP} =require ("../controller/verifyOTP);
+
 const router = express.Router();
 
-router.get ("/verify",verifyOTP );
+
 router.post("/resend-otp", resendOtp ); 
 router.put('/updateMUser:id', authMiddleware,updateMUser);
 router.get ("/event-views", getEventViews);
@@ -71,4 +71,5 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 

@@ -33,8 +33,9 @@ const OtpVerification = () => {
 
       const { user } = res.data;
 
-      // Safely get the user's role, with a fallback
-      // This protects against a TypeError if 'position' were ever missing
+      // Safely get the user's role, and convert to lowercase for consistent comparison
+      // This is the key fix for the navigation issue.
+      const userRole = user.position ? user.position.toLowerCase() : 'user';
 
       // Save user globally
       setUser(user);
@@ -44,7 +45,7 @@ const OtpVerification = () => {
         "user",
         JSON.stringify({
           username: user.username || user.email,
-          role: user.position, // Use the safe userRole
+          role: userRole,
         })
       );
       localStorage.setItem("token", res.data.token);
@@ -59,13 +60,12 @@ const OtpVerification = () => {
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
       console.log("CLEAR");
-      // Redirect by role
-      // The role strings must be lowercase to match userRole
-      if (user.position === "System_Admin") {
+      // Redirect by role based on the lowercase role
+      if (userRole === "system_admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.position === "Admin") {
+      } else if (userRole === "admin") {
         navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.position === "Super_Admin") {
+      } else if (userRole === "super_admin") {
         navigate("/Superadmin/SystemAdmin", { replace: true });
       } else {
         navigate("/");

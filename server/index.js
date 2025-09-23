@@ -14,6 +14,7 @@
       const xss = require("xss-clean");
       const helmet = require("helmet");
       const rateLimit = require("express-rate-limit");
+      const MongoStore = require('connect-mongo');
       
       // Middleware to handle JSON requests
       const app = express();
@@ -33,9 +34,10 @@
 
 
             app.use(session({
-            secret: process.env.JWT_SECRET,
+            secret: process.env.SESSION_SECRET,
             resave: false,
             saveUninitialized: true,
+            store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
             cookie: {
               httpOnly: true,   
               secure: true,     
@@ -104,3 +106,4 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something went wrong!" });
 });
+

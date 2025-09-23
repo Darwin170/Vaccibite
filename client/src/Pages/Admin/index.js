@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Dashboard from '../Superior/reportanalytic'; 
-import BarangayMap from '../Superior/Mappage'; 
-import EventsAndProgram from '../Superior/EventsAndPrograms';
-import Resolution from '../Superior/resulotionpage';
-import Report from '../Superior/ReportingSystem';
+import Dashboard from '../Admin/reportanalytic'; 
+import BarangayMap from '../Admin/Mappage'; 
+import EventsAndProgram from '../Admin/EventsAndPrograms';
+import Resolution from '../Admin/resulotionpage';
+import Report from '../Admin/ReportingSystem';
 
 
 export default function AdminRoutes() {

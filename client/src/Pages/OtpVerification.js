@@ -59,11 +59,11 @@ const OtpVerification = () => {
       // Redirect by role
       const userRole = user.position.toLowerCase();
 
-      if (userRole === "system_admin") {
+      if (userRole === "System_Admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (userRole === "admin") {
+      } else if (userRole === "Admin") {
         navigate("/Admin/Dashboard", { replace: true });
-      } else if (userRole === "super_admin") {
+      } else if (userRole === "Super_Admin") {
         navigate("/Superadmin/SystemAdmin", { replace: true });
       } else {
         navigate("/");

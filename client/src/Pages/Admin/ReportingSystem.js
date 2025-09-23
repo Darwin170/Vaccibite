@@ -4,27 +4,29 @@ import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import './Sidebar.css';
 import './ReportingSystem.css';
+import { io } from "socket.io-client";
 
-
+const API_URL = process.env.REACT_APP_API_URL;        
+const socket = io(process.env.REACT_APP_API_URL);
 
 function ReportingPage() {
     const [reports, setReports] = useState([]);
-    const [barangays, setBarangays] = useState([]); // Used for form dropdowns and map location
+    const [barangays, setBarangays] = useState([]); 
     const [typeFilter, setTypeFilter] = useState('');
     const [districtFilter, setDistrictFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [showForm, setShowForm] = useState(false);
-    const [loading, setLoading] = useState(true); // Set to true initially for first fetch
-    const [error, setError] = useState(null); // For handling fetch errors
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null); 
     const [statusUpdateModal, setStatusUpdateModal] = useState(null);
     const [statusUpdateFile, setStatusUpdateFile] = useState(null);
     const [selectedDetails, setSelectedDetails] = useState(null); // For the "View" modal
     const [searchTerm, setSearchTerm] = useState(''); // State for the search bar
 
     const navigate = useNavigate();
-    const fileInputRef = useRef(null); // Ref for clearing the file input
+    const fileInputRef = useRef(null);
 
-    // State for the Add Report form
+    
     const [form, setForm] = useState({
         type: '',
         barangayId: '',
@@ -41,11 +43,11 @@ function ReportingPage() {
             setLoading(true);
             try {
                 // Fetch reports
-                const reportsRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
+                const reportsRes = await axios.get(`${API_URL}/auth/reports`);
                 setReports(reportsRes.data);
 
                 // Fetch barangays
-                const barangaysRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`);
+                const barangaysRes = await axios.get(`${API_URL}/auth/Barangays`);
                 setBarangays(barangaysRes.data);
 
             } catch (err) {
@@ -57,27 +59,24 @@ function ReportingPage() {
         };
 
         fetchAllData();
-    }, []); // Empty dependency array means this runs once on component mount
+    }, []); 
 
-    // --- Form Input Handlers ---
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
 
         setForm((prevForm) => {
             let newForm = { ...prevForm, [name]: value };
 
-            // Special handling for barangayId: auto-set district
             if (name === 'barangayId') {
                 const selectedBarangay = barangays.find(b => b._id === value);
                 if (selectedBarangay) {
                     newForm.district = selectedBarangay.district;
                 } else {
-                    newForm.district = ''; // Reset if no barangay selected or found
+                    newForm.district = '';
                 }
             }
-            // Special handling for district filter: clear barangayId if district changes
-            // This ensures that if a user changes the district, the barangay selection
-            // is cleared as it's no longer valid for the new district.
+            
             if (name === 'district' && prevForm.district !== value) {
                 newForm.barangayId = '';
             }
@@ -126,8 +125,10 @@ function ReportingPage() {
         formData.append('categoryDetails', JSON.stringify(categoryDetails)); // Send as JSON string
 
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/auth/Createreport`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+            await axios.post(`${API_URL}/auth/Createreport`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data',
+                     Authorization: `Bearer ${localStorage.getItem("token")}`,
+                 },
             });
             // Reset form
             setForm({ type: '', barangayId: '', district: '', date: '', status: '', file: null, categoryDetails: {} });
@@ -135,7 +136,7 @@ function ReportingPage() {
             setShowForm(false); // Close the form modal
 
             // Re-fetch reports to update the table with the new entry
-            const updatedReportsRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
+            const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
             setReports(updatedReportsRes.data);
             alert('Report created successfully!');
         } catch (error) {
@@ -145,12 +146,18 @@ function ReportingPage() {
     };
 
     // --- Report Actions ---
-    const handleDelete = async (_id) => {
+    const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this report?')) return;
         try {
-            await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteReport/${_id}`);
+            await axios.delete(`${API_URL}/auth/deleteReport/${id}`,
+                {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                }
+            );
             // Update reports state by filtering out the deleted one
-            setReports((prev) => prev.filter((report) => report._id !== _id));
+            setReports((prev) => prev.filter((report) => report._id !== id));
             alert('Report deleted successfully!');
         } catch (error) {
             console.error('Failed to delete report:', error);
@@ -158,54 +165,87 @@ function ReportingPage() {
         }
     };
 
-    const handleStatusUpdate = async (reportId, newStatus) => {
+    const handleStatusUpdate = async (reportId, newStatus,file) => {
         if (newStatus === 'Resolved') {
             // Open the modal for file upload if status is 'Resolved'
-            setStatusUpdateModal({ reportId, newStatus });
+            setStatusUpdateModal({ reportId, newStatus,file });
         } else {
-            // Update status directly for 'Pending' without file
-            const file = null; // No file needed for "Pending"
+             
+             const file = null; // No file needed for "Pending"
             updateReportStatus(reportId, newStatus, file);
+            
         }
     };
 
-    const updateReportStatus = async (reportId, newStatus, file = null) => {
+   
+            const updateReportStatus = async (reportId, newStatus, file = null) => {
         try {
+            let response;
+
+            if (file) {
+            // If a file is provided → send FormData
             const formData = new FormData();
-            formData.append('status', newStatus);
-            if (file) { // Only append file if it exists
-                formData.append('file', file);
+            formData.append("status", newStatus);
+            
+
+            response = await axios.put(`${API_URL}/auth/updateReportStatus/${reportId}`,{Status: newStatus},
+                {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                }
+            );
+            } else {
+            // If no file → send JSON
+            response = await axios.put(`${API_URL}/auth/updateReportStatus/${reportId}`,{ status: newStatus },
+                {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                }
+            );
             }
+            
 
-            await axios.put(`${process.env.REACT_APP_API_URL}/auth/updateReportStatus/${reportId}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }, // Important for FormData
-            });
+            // Emit socket event
+            socket.emit("reportUpdated", { reportId, status: newStatus });
 
-            // Close modal and clear file state
+            // Reset modal state
             setStatusUpdateModal(null);
             setStatusUpdateFile(null);
 
-            if (newStatus === 'Resolved') {
-                // Navigate to resolution page after successful resolution
-                navigate('/resolution');
-            } else {
-                // Re-fetch reports to update the table if status changed to Pending
-                const updatedReportsRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
-                setReports(updatedReportsRes.data);
-                alert('Report status updated successfully!');
+            if (newStatus === "Resolved") {
+            navigate("/Admin/resolution");
+            } 
+            if(newStatus==="Ongoing"){
+                navigate("/Admin/Report");
+                window.location.reload();
+            }
+            else {
+            const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
+            setReports(updatedReportsRes.data);
+            alert("Report status updated successfully!");
             }
         } catch (error) {
-            console.error('Failed to update report status:', error);
-            alert('Failed to update report status. Please try again.');
+            console.error("Failed to update report status:", error);
+            alert("Failed to update report status. Please try again.");
         }
-    };
+        };
+
+
+
+    const handleDownload = (id) => {
+     window.open(`${API_URL}/auth/${id}/download`, "_blank");
+        };
 
    
     // --- Map View Handler ---
     const handleViewMap = (barangayId) => {
         const barangay = barangays.find((b) => b._id === barangayId);
         if (barangay && barangay.latitude && barangay.longitude) {
-            navigate(`/superior/map?lat=${barangay.latitude}&lng=${barangay.longitude}`);
+            navigate(`/Admin/map?lat=${barangay.latitude}&lng=${barangay.longitude}`);
         } else {
             alert("Barangay location not found or invalid coordinates.");
         }
@@ -243,7 +283,7 @@ function ReportingPage() {
     if (error) {
         return <div className="error-message">{error}</div>;
     }
-
+    
     // --- Render JSX ---
     return (
         <div style={{ display: 'flex' }}>
@@ -288,6 +328,7 @@ function ReportingPage() {
                         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
                             <option value="">All Statuses</option>
                             <option value="Pending">Pending</option>
+                            <option value="ongoing">Ongoing</option>
                             <option value="Resolved">Resolved</option>
                         </select>
                     </div>
@@ -331,6 +372,7 @@ function ReportingPage() {
                             <select name="status" value={form.status} onChange={handleInputChange}>
                                 <option value="">Select Status</option>
                                 <option value="Pending">Pending</option>
+                                 <option value="Ongoing">Ongoing</option>
                                 <option value="Resolved">Resolved</option>
                             </select>
 
@@ -403,7 +445,7 @@ function ReportingPage() {
                                 <p>
                                     <strong>File:</strong>{' '}
                                     <a
-                                        href={`${process.env.REACT_APP_API_URL}/${selectedDetails.filePath}`}
+                                        href={`${API_URL}/${selectedDetails.filePath}`}
                                         download
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -418,34 +460,45 @@ function ReportingPage() {
                                 {/* Render category details based on type */}
                                 {selectedDetails.type === "Animal Bite" && (
                                     <>
-                                        <p><strong>Name of the report:</strong> {selectedDetails.categoryDetails?.name || 'N/A'}</p>
+                                        <p><strong>Name of the report:</strong> {selectedDetails.categoryDetails?.Name_of_the_barangay_officer || 'N/A'}</p>
+                                        <p><strong>Barangay:</strong> {selectedDetails.categoryDetails?.barangayId || 'N/A'}</p>
+                                        <p><strong>Name of the bitten person:</strong> {selectedDetails.categoryDetails?.Name_Of_the_bitten_Person || 'N/A'}</p>
                                         <p><strong>Animal Type:</strong> {selectedDetails.categoryDetails?.animalType || 'N/A'}</p>
                                         <p><strong>Color:</strong> {selectedDetails.categoryDetails?.color || 'N/A'}</p>
                                         <p><strong>Size:</strong> {selectedDetails.categoryDetails?.size || 'N/A'}</p>
                                         <p><strong>Location:</strong> {selectedDetails.categoryDetails?.location || 'N/A'}</p>
+                                        <p><strong>Location of the bite:</strong> {selectedDetails.categoryDetails?.location_of_bite || 'N/A'}</p>
+                                        <p><strong>Street:</strong> {selectedDetails.categoryDetails?.street || 'N/A'}</p>
+                                        <p><strong>Age:</strong> {selectedDetails.categoryDetails?.age || 'N/A'}</p>
+                                        <p><strong>Gender:</strong> {selectedDetails.categoryDetails?.gender || 'N/A'}</p>
                                         <p><strong>Severity:</strong> {selectedDetails.categoryDetails?.severity || 'N/A'}</p>
                                         <p><strong>Caught Status:</strong> {selectedDetails.categoryDetails?.caughtStatus || 'N/A'}</p>
                                     </>
                                 )}
                                 {selectedDetails.type === "Roaming Animals" && (
                                     <>
-                                        <p><strong>Name of the reporter:</strong> {selectedDetails.categoryDetails?.name || 'N/A'}</p>
+                                        <p><strong>Name of the reporter:</strong> {selectedDetails.categoryDetails?.Name_of_the_barangay_officer || 'N/A'}</p>
+                                        <p><strong>Barangay:</strong> {selectedDetails.categoryDetails?.barangayId || 'N/A'}</p>
                                         <p><strong>Animal Type:</strong> {selectedDetails.categoryDetails?.animalType || 'N/A'}</p>
-                                        <p><strong>Color/Breed:</strong> {selectedDetails.categoryDetails?.color_breed || 'N/A'}</p>
+                                        <p><strong>Color:</strong> {selectedDetails.categoryDetails?.color || 'N/A'}</p>
+                                        <p><strong>Breed of the dog:</strong> {selectedDetails.categoryDetails?.breed || 'N/A'}</p>
                                         <p><strong>Size:</strong> {selectedDetails.categoryDetails?.size || 'N/A'}</p>
-                                        <p><strong>Location:</strong> {selectedDetails.categoryDetails?.location || 'N/A'}</p>
-                                        <p><strong>Time:</strong> {selectedDetails.categoryDetails?.time || 'N/A'}</p>
+                                        <p><strong>District:</strong> {selectedDetails.categoryDetails?.location || 'N/A'}</p>
+                                        <p><strong>Time:</strong> {selectedDetails.categoryDetails?.Time || 'N/A'}</p>
                                         <p><strong>Behavior:</strong> {selectedDetails.categoryDetails?.behavior || 'N/A'}</p>
                                     </>
                                 )}
                                 {selectedDetails.type === "Missing Animal" && (
                                     <>
-                                        <p><strong>Name of the animal:</strong> {selectedDetails.categoryDetails?.name || 'N/A'}</p>
+                                        <p><strong>Name of the animal:</strong> {selectedDetails.categoryDetails?.Name_of_the_barangay_officer || 'N/A'}</p>
+                                        <p><strong>Barangay:</strong> {selectedDetails.categoryDetails?.barangayId || 'N/A'}</p>
+                                        <p><strong>Name of the missing animal:</strong> {selectedDetails.categoryDetails?.Name_of_the_animal_missing || 'N/A'}</p>
                                         <p><strong>Animal Type:</strong> {selectedDetails.categoryDetails?.animalType || 'N/A'}</p>
-                                        <p><strong>Color/Breed:</strong> {selectedDetails.categoryDetails?.color_breed || 'N/A'}</p>
+                                        <p><strong>Color:</strong> {selectedDetails.categoryDetails?.color || 'N/A'}</p>
+                                        <p><strong>Breed:</strong> {selectedDetails.categoryDetails?.breed || 'N/A'}</p>
                                         <p><strong>Size:</strong> {selectedDetails.categoryDetails?.size || 'N/A'}</p>
-                                        <p><strong>Location:</strong> {selectedDetails.categoryDetails?.location || 'N/A'}</p>
-                                        <p><strong>Date Missing:</strong> {selectedDetails.categoryDetails?.date || 'N/A'}</p>
+                                        <p><strong>District:</strong> {selectedDetails.categoryDetails?.location || 'N/A'}</p>
+                                        <p><strong>Date Missing:</strong> {selectedDetails.categoryDetails?.reportDate || 'N/A'}</p>
                                         <p><strong>Special:</strong> {selectedDetails.categoryDetails?.special || 'N/A'}</p>
                                     </>
                                 )}
@@ -487,7 +540,7 @@ function ReportingPage() {
                     <table className="reporting-table">
                         <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>report ID</th>
                                 <th>Type</th>
                                 <th>Barangay</th>
                                 <th>District</th>
@@ -498,18 +551,17 @@ function ReportingPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {/* Render filtered reports */}
                             {filteredReports.length > 0 ? (
                                 filteredReports.map((report) => (
                                     <tr key={report._id}>
-                                        <td>{report._id}</td>
+                                        <td>{report.reportId}</td>
                                         <td>{report.type}</td>
                                         <td>
                                             {report.barangayName || 'N/A'}<br />
-                                            {/* Pass report.barangayId to handleViewMap */}
+                                           
                                             <button onClick={() => handleViewMap(report.barangayId)} className="view-map-btn">📍 View on Map</button>
                                         </td>
-                                        <td>{report.district || 'N/A'}</td> {/* Display district here */}
+                                        <td>{report.district || 'N/A'}</td>
                                         <td>{new Date(report.date).toLocaleDateString()}</td>
                                         <td>
                                             <select
@@ -517,27 +569,27 @@ function ReportingPage() {
                                                 onChange={(e) => handleStatusUpdate(report._id, e.target.value)}
                                             >
                                                 <option value="Pending">Pending</option>
+                                                <option value="Ongoing">Ongoing</option>
                                                 <option value="Resolved">Resolved</option>
                                             </select>
                                         </td>
                                         <td>
-                                              {report.filePath ? (
+                                            {report.filePath ? (
                                                 <a
-                                                  href={report.filePath}
-                                                  target="_blank"
-                                                  rel="noopener noreferrer"
-                                                  download={report.filePath.split('/').pop()} // optional
+                                                    href={`${API_URL}/${report.filePath}`}
+                                                    download
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
                                                 >
-                                                  {report.filePath.split('/').pop()}
+                                                    {report.filePath.split('/').pop()}
                                                 </a>
-                                              ) : (
-                                                'N/A'
-                                              )}
+                                            ) : 'N/A'}
                                         </td>
-
                                         <td>
                                             <button className="view-btn" onClick={() => setSelectedDetails(report)}>👁️ View</button>
                                             <button className="delete-btn" onClick={() => handleDelete(report._id)}>🗑️</button>
+                                            <button className="download-btn"  onClick={() => handleDownload(report._id)}>Download PDF</button>
+
                                         </td>
                                     </tr>
                                 ))
@@ -555,7 +607,3 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
-
-
-
-

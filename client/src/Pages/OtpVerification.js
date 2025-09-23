@@ -31,55 +31,46 @@ const OtpVerification = () => {
       );
       
       // === CHANGE STARTS HERE ===
-      // A new try...catch block to handle the success response gracefully
-      try {
-        const user = res.data?.user;
-        const token = res.data?.token; // Extract the token here
-
-        if (!user || !token) {
-          setMessage("Verification failed: User data or token not found.");
-          return;
-        }
-
-        // Safely get the user's role, and convert to lowercase for consistent comparison
-        const userRole = user.position ? user.position.toLowerCase() : 'user';
-        
-        // Check if setUser is a function before calling it
-        if (typeof setUser === 'function') {
-          setUser(user);
-        }
-
-        // Save in localStorage with the consistent lowercase role
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            username: user.username || user.email,
-            role: userRole,
-          })
-        );
-        localStorage.setItem("token", token); // Save the extracted token
-        
-        sessionStorage.removeItem("pendingEmail");
-        setMessage(res.data.msg);
-        console.log("CLEAR");
-
-        // Redirect by role based on the lowercase role
-        if (userRole === "system_admin") {
-          navigate("/System_Admin/UserManagement", { replace: true });
-        } else if (userRole === "admin") {
-          navigate("/Admin/Dashboard", { replace: true });
-        } else if (userRole === "super_admin") {
-          navigate("/Superadmin/SystemAdmin", { replace: true });
-        } else {
-          navigate("/");
-        }
-
-      } catch (internalError) {
-        console.error("Internal frontend error after successful API call:", internalError);
-        setMessage("Verification successful, but an internal error occurred. Please try navigating manually.");
+      // Ensure res.data and res.data.user are valid before proceeding
+      if (!res.data || !res.data.user) {
+        setMessage("Verification failed: Unexpected response from server.");
+        return;
       }
+
+      const { user } = res.data;
       // === CHANGE ENDS HERE ===
 
+      // Safely get the user's role, and convert to lowercase for consistent comparison
+      const userRole = user.position ? user.position.toLowerCase() : 'user';
+
+      // Save user globally
+      setUser(user);
+
+      // Save in localStorage with the consistent lowercase role
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          username: user.username || user.email,
+          role: userRole,
+        })
+      );
+      localStorage.setItem("token", res.data.token);
+      
+      // Removed logActivity as per user request
+
+      sessionStorage.removeItem("pendingEmail");
+      setMessage(res.data.msg);
+      console.log("CLEAR");
+      // Redirect by role based on the lowercase role
+      if (userRole === "system_admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (userRole === "admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (userRole === "super_admin") {
+        navigate("/Superadmin/SystemAdmin", { replace: true });
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       const errorMessage = err.response?.data?.msg || "Verification failed.";
       setMessage(errorMessage);

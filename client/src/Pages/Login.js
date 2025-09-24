@@ -15,18 +15,18 @@ const Login = () => {
   const { user, login } = useAuth();
   const [isLocked, setIsLocked] = useState(false);
 
-  // This useEffect is only for redirecting users who are already logged in.
-  useEffect(() => {
-    if (user) {
-      if (user.role === "System_Admin") {
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.role === "Admin") {
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.role === "Super_Admin") {
-        navigate("/Superadmin/System_Admin", { replace: true });
-      }
-    }
-  }, [user, navigate]);
+  // // This useEffect is only for redirecting users who are already logged in.
+  // useEffect(() => {
+  //   if (user) {
+  //     if (user.role === "System_Admin") {
+  //       navigate("/System_Admin/UserManagement", { replace: true });
+  //     } else if (user.role === "Admin") {
+  //       navigate("/Admin/Dashboard", { replace: true });
+  //     } else if (user.role === "Super_Admin") {
+  //       navigate("/Superadmin/System_Admin", { replace: true });
+  //     }
+  //   }
+  // }, [user, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -129,3 +129,4 @@ const Login = () => {
 };
 
 export default Login;
+

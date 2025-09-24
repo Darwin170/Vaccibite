@@ -57,8 +57,6 @@ const Login = () => {
       if (response.data?.msg?.toLowerCase().includes("otp")) {
         // Store email in sessionStorage for OTP page
         sessionStorage.setItem("pendingEmail", normalizedEmail);
-          localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
         navigate("/otp");
         return;
       }
@@ -142,5 +140,6 @@ const Login = () => {
 };
 
 export default Login;
+
 
 

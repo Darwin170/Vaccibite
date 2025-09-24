@@ -50,11 +50,11 @@ const OtpVerification = () => {
       console.log("CLEAR");
       
      if (role === "System_Admin") {
-  navigate("/System_Admin", { replace: true });
+  navigate("/System_Admin/UserManagement", { replace: true });
             } else if (role === "Admin") {
-              navigate("/Admin", { replace: true });
+              navigate("/Admin/Dashboard", { replace: true });
             } else if (role === "Super_Admin") {
-              navigate("/Superadmin", { replace: true });
+              navigate("/Superadmin/System_Admin", { replace: true });
             } else {
               navigate("/");
             }

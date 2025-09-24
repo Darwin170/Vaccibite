@@ -15,20 +15,7 @@ const Login = () => {
   const { user, login } = useAuth(); 
   const [isLocked, setIsLocked] = useState(false);
 
-  useEffect(() => {
-    // Use the consistent 'user.role' from the AuthContext
-    // to redirect if the user is already logged in.
-    if (user) {
-      if (user.role === "System_Admin") {
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.role === "Admin") {
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.role === "Super_Admin") {
-        navigate("/Superadmin/System_Admin", { replace: true });
-      }
-    }
-  }, [user, navigate]);
-  
+ 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -136,3 +123,4 @@ const Login = () => {
 };
 
 export default Login;
+

@@ -39,7 +39,7 @@ const BackupReports = () => {
         setIsDownloading(true);
         try {
             const response = await axios.get(
-                ` ${process.env.REACT_APP_API_URL}/auth/reports/pdf-backup`,
+                ` ${process.env.REACT_APP_API_URL}/auth/pdf-backup`,
                 { responseType: 'blob' } // Crucial for receiving binary data
             );
             
@@ -127,3 +127,4 @@ const BackupReports = () => {
 };
 
 export default BackupReports;
+

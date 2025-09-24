@@ -4,21 +4,20 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // 👈 ADD THIS LINE
 
-  // Load user from localStorage on app start
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
 
-    // Fix: Check if storedUser is not null AND not the literal string "undefined"
     if (storedUser && storedUser !== "undefined") {
       try {
         setUser(JSON.parse(storedUser));
       } catch (e) {
-        // Handle potential parsing errors by removing invalid data
         console.error("Failed to parse user data from localStorage", e);
         localStorage.removeItem("user");
       }
     }
+    setLoading(false); // 👈 ADD THIS LINE
   }, []);
 
   const login = (userData) => {
@@ -33,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
+      {loading ? <div>Loading...</div> : children} {/* 👈 ADD THIS LINE */}
     </AuthContext.Provider>
   );
 };

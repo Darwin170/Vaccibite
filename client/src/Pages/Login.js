@@ -15,6 +15,7 @@ const Login = () => {
   const { user, login } = useAuth();
   const [isLocked, setIsLocked] = useState(false);
 
+  // This useEffect is only for redirecting users who are already logged in.
   useEffect(() => {
     if (user) {
       if (user.role === "System_Admin") {
@@ -26,7 +27,7 @@ const Login = () => {
       }
     }
   }, [user, navigate]);
-  
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -38,7 +39,6 @@ const Login = () => {
 
     try {
       const normalizedEmail = email.trim().toLowerCase();
-
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/login`,
         {
@@ -47,15 +47,13 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      
+
       const { user, token, msg } = response.data;
 
-      // 1. Always save the token and user data after a successful login response.
+      // 1. Save data to local storage and update AuthContext.
       if (user && token) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
-        
-        // 2. Call the AuthContext login function to update the app state.
         login({
           username: user.username || user.email,
           role: user.position,
@@ -64,14 +62,14 @@ const Login = () => {
         });
       }
 
-      // 3. Now, check for the OTP message and navigate accordingly.
+      // 2. CHECK FOR OTP FIRST. If the message includes "OTP", redirect to OTP page.
       if (msg && msg.toLowerCase().includes("otp")) {
         sessionStorage.setItem("pendingEmail", normalizedEmail);
         navigate("/otp");
-        return;
+        return; // Stop execution here
       }
-      
-      // 4. This block runs for successful logins without OTP.
+
+      // 3. IF NO OTP, THEN REDIRECT TO DASHBOARD.
       if (user.position === "System_Admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
       } else if (user.position === "Admin") {

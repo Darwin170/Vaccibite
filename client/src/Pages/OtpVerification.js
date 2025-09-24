@@ -59,7 +59,7 @@ const OtpVerification = () => {
       } else if (user.position === "Super_Admin") {
         navigate("/Superadmin/System_Admin", { replace: true });
       } else {
-        // navigate("/");
+        navigate("/");
       }
     } catch (err) {
       // This is the corrected part.

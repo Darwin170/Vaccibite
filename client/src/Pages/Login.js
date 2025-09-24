@@ -23,7 +23,7 @@ const Login = () => {
       } else if (user.role === "Admin") {
         navigate("/Admin/Dashboard", { replace: true });
       } else if (user.position === "Super_Admin") {
-        navigate("/Superadmin/SystemAdmin", { replace: true });
+        navigate("/Superadmin/System_Admin", { replace: true });
       }
     }
   }, [user, navigate]);
@@ -139,3 +139,4 @@ const Login = () => {
 };
 
 export default Login;
+

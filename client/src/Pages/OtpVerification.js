@@ -49,19 +49,15 @@ const OtpVerification = () => {
       setMessage(res.data.msg);
       console.log("CLEAR");
       
-      // Corrected navigation logic
-      if (role === "System_Admin") {
-        console.log("Attempt navigate to Useradmin");
-        navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (role === "Admin") {
-        console.log("Attempt navigate to Dashboard");
-        navigate("/Admin/Dashboard", { replace: true });
-      } else if (role === "Super_Admin") {
-        console.log("Attempt navigate to System_Admin");
-        navigate("/Superadmin/System_Admin", { replace: true });
-      } else {
-        navigate("/");
-      }
+     if (role === "System_Admin") {
+  navigate("/System_Admin", { replace: true });
+            } else if (role === "Admin") {
+              navigate("/Admin", { replace: true });
+            } else if (role === "Super_Admin") {
+              navigate("/Superadmin", { replace: true });
+            } else {
+              navigate("/");
+            }
     } catch (err) {
       const status = err.response?.status;
       const backendMsg = err.response?.data?.msg;

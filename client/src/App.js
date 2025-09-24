@@ -1,44 +1,41 @@
 // App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login';
+import SuperiorRoutes from './Pages/Admin/index';
+import AdminRoutes from './Pages/System_Admin';
 import Superadmin from './Pages/Superadmin'
-import AdminRoutes from './Pages/Admin';
-import System_AdminRoutes from './Pages/System_Admin';
 import PrivateRoute from './routes/PrivateRoute';
-import { AuthProvider } from './routes/AuthContext';
-import OtpVerification from './Pages/OtpVerification';
+import { AuthProvider } from './routes/AuthContext'; 
+import OtpVerification from './Pages/OtpVerification';  
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Default route */}
           <Route path="/" element={<Navigate to="/login" replace />} />
 
-          {/* Auth pages */}
           <Route path="/login" element={<Login />} />
           <Route path="/otp" element={<OtpVerification />} />
-
-          {/* Protected routes */}
           <Route
             path="/Admin/*"
             element={
               <PrivateRoute role="Admin">
-                <AdminRoutes />
+                <SuperiorRoutes />
               </PrivateRoute>
             }
           />
+
 
           <Route
             path="/System_Admin/*"
             element={
               <PrivateRoute role="System_Admin">
-                <System_AdminRoutes />
+                <AdminRoutes />
               </PrivateRoute>
             }
           />
-        <Route
+          <Route
             path="/Superadmin/*"
             element={
               <PrivateRoute role="Super_Admin">
@@ -46,9 +43,6 @@ function App() {
               </PrivateRoute>
             }
           />
-
-          {/* Catch-all → redirect to login */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

@@ -55,6 +55,15 @@ const OtpVerification = () => {
 
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
+  if (user.position === "System_Admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (user.position === "Admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (user.position === "Super_Admin") {
+        navigate("/Superadmin/System_Admin", { replace: true });
+      } else {
+        setError("Account has been deactivated or role not recognized.");
+      }
 
     } catch (err) {
       const status = err.response?.status;

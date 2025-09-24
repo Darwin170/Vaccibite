@@ -111,7 +111,7 @@ const OtpVerification = () => {
       <h2>OTP Verification</h2>
       <form onSubmit={handleVerify}>
         <input
-          type="text"
+          type="number"
           placeholder="Enter OTP"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}

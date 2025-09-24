@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './Pages/Login';
 import Superadmin from './Pages/Superadmin'
 import AdminRoutes from './Pages/Admin';
-import System_AdminRoutes from './Pages/System_Admin';
+import SystemAdminRoutes from './Pages/System_Admin';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './routes/AuthContext';
 import OtpVerification from './Pages/OtpVerification';
@@ -17,15 +17,15 @@ function App() {
           <Route path="/" element={<Navigate to="/login" replace />} />
 
           {/* Auth pages */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/otp" element={<OtpVerification />} />
+          <Route path="/login" element={<Login/>} />
+          <Route path="/otp" element={<OtpVerification/>} />
 
           {/* Protected routes */}
           <Route
             path="/Admin/*"
             element={
               <PrivateRoute role="Admin">
-                <AdminRoutes />
+                <AdminRoutes/>
               </PrivateRoute>
             }
           />
@@ -34,7 +34,7 @@ function App() {
             path="/System_Admin/*"
             element={
               <PrivateRoute role="System_Admin">
-                <System_AdminRoutes />
+                <SystemAdminRoutes/>
               </PrivateRoute>
             }
           />
@@ -42,7 +42,7 @@ function App() {
             path="/Superadmin/*"
             element={
               <PrivateRoute role="Super_Admin">
-                <Superadmin />
+                <Superadmin/>
               </PrivateRoute>
             }
           />

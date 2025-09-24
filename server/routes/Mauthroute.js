@@ -13,6 +13,7 @@ const {getDistrictAndBarangay} = require('../App_controller/getdata');
 const {sendotp}= require("../App_controller/otpsend");
 const{verifyPasswordResetOTP }=require("../App_controller/verifyPasswordResetOTP");
 const{resetPassword} =require("../App_controller/resetPassword");
+const {authMiddleware} = require("../middleware/authMiddleware");
 const Mrouter = express.Router();
 
 // These now save files in /uploads and make them downloadable
@@ -23,14 +24,15 @@ Mrouter.get('/:userId/location',getDistrictAndBarangay);
 Mrouter.get('/getnotify/:receiverId', getUserNotifications);
 Mrouter.patch('/readmark/:id', markAsRead);
 Mrouter.post("/send", sendOTP);
-Mrouter.post('/missing', upload.single('image'), addMissinganimal);
-Mrouter.post('/Roaming', upload.single('image'), addRoamingAnimal);
-Mrouter.post('/a', upload.single('image'), addAnimalBite);
+Mrouter.post('/missing', authMiddleware,upload.single('image'), addMissinganimal);
+Mrouter.post('/Roaming',authMiddleware, upload.single('image'), addRoamingAnimal);
+Mrouter.post('/a',authMiddleware, upload.single('image'), addAnimalBite);
 Mrouter.post('/verification', verify);
-Mrouter.post('/login', loginUser);
+Mrouter.post('/login', authMiddleware, loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

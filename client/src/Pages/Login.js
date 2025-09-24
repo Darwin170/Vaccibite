@@ -16,64 +16,65 @@ const Login = () => {
   const [isLocked, setIsLocked] = useState(false);
 
  
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLocked(false);
-    if (!email || !password) {
-      setError("Email and password are required.");
-      return;
-    }
+ const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    setIsLocked(false);
+    if (!email || !password) {
+        setError("Email and password are required.");
+        return;
+    }
 
-    try {
-      const normalizedEmail = email.trim().toLowerCase();
+    try {
+        const normalizedEmail = email.trim().toLowerCase();
 
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/login`,
-        {
-          email: normalizedEmail,
-          password,
-        },
-        { withCredentials: true }
-      );
-      
-      // Check for OTP message and exit early
-      if (response.data?.msg?.toLowerCase().includes("otp")) {
-        sessionStorage.setItem("pendingEmail", normalizedEmail);
-        navigate("/otp");
-        return; // Exit the function here
-      }
+        const response = await axios.post(
+            `${process.env.REACT_APP_API_URL}/auth/login`,
+            {
+                email: normalizedEmail,
+                password,
+            },
+            { withCredentials: true }
+        );
 
-      // This block will only execute if OTP is not required.
-      if (response.data && response.data.user) {
-        const user = response.data.user;
-        const token = response.data.token;
+        // Check if the response contains user and token data
+        if (response.data && response.data.user && response.data.token) {
+            const user = response.data.user;
+            const token = response.data.token;
 
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
+            // Always save the token and user data after a successful login response
+            localStorage.setItem("token", token);
+            localStorage.setItem("user", JSON.stringify(user));
 
-        // Ensure the role passed to AuthContext is consistent
-        login({
-          username: user.username || user.email,
-          role: user.position,
-          _id: user._id,
-          token,
-        });
-        
-        // Use the consistent 'user.position' for all login navigations
-        if (user.position === "System_Admin") {
-          navigate("/System_Admin/UserManagement", { replace: true });
-        } else if (user.position === "Admin") {
-          navigate("/Admin/Dashboard", { replace: true });
-        } else if (user.position === "Super_Admin") {
-          navigate("/Superadmin/System_Admin", { replace: true });
-        } else {
-          setError("Account has been deactivated.");
-        }
-      } else {
-        setError("Login failed. Please try again.");
-      }
-    } catch (err) {
+            // Check for OTP message and exit early
+            if (response.data?.msg?.toLowerCase().includes("otp")) {
+                sessionStorage.setItem("pendingEmail", normalizedEmail);
+                navigate("/otp");
+                return; // Exit the function here
+            }
+
+            // This block will only execute if OTP is not required.
+            // Update AuthContext and navigate
+            login({
+                username: user.username || user.email,
+                role: user.position,
+                _id: user._id,
+                token,
+            });
+
+            if (user.position === "System_Admin") {
+                navigate("/System_Admin/UserManagement", { replace: true });
+            } else if (user.position === "Admin") {
+                navigate("/Admin/Dashboard", { replace: true });
+            } else if (user.position === "Super_Admin") {
+                navigate("/Superadmin/System_Admin", { replace: true });
+            } else {
+                setError("Account has been deactivated.");
+            }
+        } else {
+            setError("Login failed. Please try again.");
+        }
+    } catch (err) {
       console.error("Login error:", err);
       const errorMessage = err.response?.data?.msg || "Login failed. Try again.";
       setError(errorMessage);
@@ -123,4 +124,5 @@ const Login = () => {
 };
 
 export default Login;
+
 

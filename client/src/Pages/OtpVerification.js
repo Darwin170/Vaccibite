@@ -29,15 +29,14 @@ const handleVerify = async (e) => {
         { withCredentials: true }
       );
 
-      // Extract the user and token directly from the response data.
+      // Your backend returns the `user` object and `token` in the response body.
+      // This is the correct way to deconstruct them.
       const { user, token } = res.data;
 
       // Update the AuthContext with the full user object.
-      // This is the correct way to update the state.
       setUser(user);
 
       // Save the complete user object to localStorage.
-      // Do not create a new object; save the one from the backend.
       localStorage.setItem("user", JSON.stringify(user));
 
       // Save the token to localStorage.
@@ -46,9 +45,8 @@ const handleVerify = async (e) => {
       // Remove the temporary email from sessionStorage.
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
-      console.log("CLEAR");
 
-      // Use the user.position property for navigation.
+      // Navigate based on the user's position from the received `user` object.
       if (user.position === "System_Admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
       } else if (user.position === "Admin") {
@@ -58,12 +56,16 @@ const handleVerify = async (e) => {
       } else {
         navigate("/");
       }
+
     } catch (err) {
+      // Log the full error to the console for debugging
+      console.error("Verification error:", err.response || err);
+
       const status = err.response?.status;
       const backendMsg = err.response?.data?.msg;
 
       if (status === 400 || status === 404) {
-        setMessage(backendMsg || "An error occurred.");
+        setMessage(backendMsg || "Invalid OTP or request.");
       } else {
         setMessage("Verification failed due to a server error.");
       }

@@ -7,11 +7,10 @@ import { useAuth } from "../routes/AuthContext";
 const OtpVerification = () => {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
-  const [cooldown, setCooldown] = useState(0); // ⏳ Resend cooldown
+  const [cooldown, setCooldown] = useState(0);
   const navigate = useNavigate();
   const { setUser } = useAuth();
 
-  // Get email from sessionStorage (set during login)
   const email = sessionStorage.getItem("pendingEmail");
 
   // ---------------- Verify OTP ----------------
@@ -32,48 +31,44 @@ const OtpVerification = () => {
 
       const { user } = res.data;
 
-      
-
-      // Save user globally
+      // FIX: Assign the user's role to a local variable
+      const role = user.position; 
+      
       setUser(user);
 
-      // Save in localStorage with the consistent lowercase role
       localStorage.setItem(
         "user",
         JSON.stringify({
           username: user.username || user.email,
-          role: user.position,
+          role: role, // Use the defined 'role' variable
         })
       );
       localStorage.setItem("token", res.data.token);
       
-
       sessionStorage.removeItem("pendingEmail");
       setMessage(res.data.msg);
       console.log("CLEAR");
-      // Redirect by role based on the lowercase role
+      
+      // Corrected navigation logic
       if (role === "System_Admin") {
-        console.log ("Attemp navigate to Useradmin");
+        console.log("Attempt navigate to Useradmin");
         navigate("/System_Admin/UserManagement", { replace: true });
       } else if (role === "Admin") {
-        console.log ("Attemp navigate to Dashboard");
+        console.log("Attempt navigate to Dashboard");
         navigate("/Admin/Dashboard", { replace: true });
       } else if (role === "Super_Admin") {
-        console.log ("Attemp navigate to System_Admin");
+        console.log("Attempt navigate to System_Admin");
         navigate("/Superadmin/System_Admin", { replace: true });
       } else {
         navigate("/");
       }
     } catch (err) {
-      // This is the corrected part.
       const status = err.response?.status;
       const backendMsg = err.response?.data?.msg;
 
       if (status === 400 || status === 404) {
-        // Use the specific error message from the backend
         setMessage(backendMsg || "An error occurred.");
       } else {
-        // For other errors (e.g., 500), use a generic message
         setMessage("Verification failed due to a server error.");
       }
     }
@@ -85,7 +80,7 @@ const OtpVerification = () => {
       setMessage("Email not found. Please login again.");
       return;
     }
-    if (cooldown > 0) return; // prevent spam
+    if (cooldown > 0) return; 
 
     try {
       const res = await axios.post(
@@ -95,7 +90,7 @@ const OtpVerification = () => {
       );
 
       setMessage(res.data.msg || "A new OTP has been sent.");
-      setCooldown(30); // 30 seconds cooldown
+      setCooldown(30); 
     } catch (err) {
       setMessage(err.response?.data?.msg || "Failed to resend OTP.");
     }
@@ -123,7 +118,6 @@ const OtpVerification = () => {
         <button type="submit">Verify OTP</button>
       </form>
 
-      {/* Resend OTP button */}
       <button onClick={handleResendOtp} disabled={cooldown > 0}>
         {cooldown > 0 ? `Resend OTP in ${cooldown}s` : "Resend OTP"}
       </button>

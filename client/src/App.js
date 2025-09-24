@@ -1,4 +1,3 @@
-// App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/Login';
 import Superadmin from './Pages/Superadmin'
@@ -38,7 +37,8 @@ function App() {
               </PrivateRoute>
             }
           />
-        <Route
+
+          <Route
             path="/Superadmin/*"
             element={
               <PrivateRoute role="Super_Admin">
@@ -47,7 +47,7 @@ function App() {
             }
           />
 
-          {/* Catch-all → redirect to login */}
+          {/* Catch-all redirects to login */}
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

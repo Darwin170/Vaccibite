@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../model/usermode");
 const OTP = require("../model/OPT");
-const ActivityLog = require("../model/Activitylogs"); // Added this import
+const ActivityLog = require("../model/Activitylogs");
 const nodemailer = require("nodemailer");
 
 // Gmail transporter using App Password
@@ -27,6 +27,7 @@ const loginUser = async (req, res) => {
     const normalizedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
     if (!user) return res.status(400).json({ msg: "No user with this email." });
+
     const maxAttempts = 5;
     const lockDuration = 20 * 60 * 1000;
 
@@ -43,7 +44,7 @@ const loginUser = async (req, res) => {
       user.loginAttempts = (user.loginAttempts || 0) + 1;
       if (user.loginAttempts >= maxAttempts) {
         user.lockUntil = Date.now() + lockDuration;
-        user.loginAttempts = 0; // Reset attempts after locking
+        user.loginAttempts = 0;
         await user.save();
         return res.status(429).json({
           msg: `Too many failed login attempts. Your account has been locked for ${lockDuration / 60 / 1000} minutes.`,
@@ -54,26 +55,31 @@ const loginUser = async (req, res) => {
         msg: `Invalid password. You have ${maxAttempts - user.loginAttempts} attempts remaining.`,
       });
     }
+
     // On a successful login
-    user.loginAttempts = 0; // Reset counter
-    user.lockUntil = null; // Clear lock
+    user.loginAttempts = 0;
+    user.lockUntil = null;
     await user.save();
+    
+    // Create JWT token
+    const token = jwt.sign(
+      { id: user._id, role: user.position },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-
-    // === CHANGE STARTS HERE ===
+    // Save activity log (moved outside the email block)
     const newLog = new ActivityLog({
       user: user._id,
       onModel: "UserAccounts",
       action: "User Logged In",
       details: `User ${user.email} successfully logged in.`,
     });
-    
-    // This part has been refactored to always send an OTP,
-    // regardless of the user's role.
+    await newLog.save();
+
+    // Generate and save OTP
     const otp = generateOTP();
     const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
-
-    // Delete old OTPs and save new one
     await OTP.deleteMany({ userId: user._id });
     await OTP.create({ userId: user._id, otp, expiresAt: otpExpiry });
 
@@ -86,21 +92,21 @@ const loginUser = async (req, res) => {
         text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
       });
       
-      // Save the log before returning
-      await newLog.save();
+      // Return user data and token along with the OTP message
+      return res.json({ 
+          msg: "OTP sent to your Gmail. Please verify.",
+          token: token,
+          user: user // Return the full user object
+      });
 
-      return res.json({ msg: "OTP sent to your Gmail. Please verify." });
     } catch (err) {
       console.error("Failed to send OTP email:", err);
       return res.status(500).json({ msg: "Failed to send OTP email. Try again later." });
     }
-    // === CHANGE ENDS HERE ===
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ msg: "Server error", error });
   }
 };
 
-
 module.exports = { loginUser };
-

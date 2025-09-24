@@ -13,62 +13,62 @@ const OtpVerification = () => {
 
   const email = sessionStorage.getItem("pendingEmail");
 
-  // ---------------- Verify OTP ----------------
-  const handleVerify = async (e) => {
-    e.preventDefault();
+// ---------------- Verify OTP ----------------
+const handleVerify = async (e) => {
+    e.preventDefault();
 
-    if (!email) {
-      setMessage("Email not found. Please login again.");
-      return;
-    }
+    if (!email) {
+      setMessage("Email not found. Please login again.");
+      return;
+    }
 
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/auth/verify`,
-        { email, otp },
-        { withCredentials: true }
-      );
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/auth/verify`,
+        { email, otp },
+        { withCredentials: true }
+      );
 
-      const { user } = res.data;
+      // Extract the user and token directly from the response data.
+      const { user, token } = res.data;
 
-      // FIX: Assign the user's role to a local variable
-      const role = user.position; 
-      
-      setUser(user);
+      // Update the AuthContext with the full user object.
+      // This is the correct way to update the state.
+      setUser(user);
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          username: user.username || user.email,
-          role: role, // Use the defined 'role' variable
-        })
-      );
-      localStorage.setItem("token", res.data.token);
-      
-      sessionStorage.removeItem("pendingEmail");
-      setMessage(res.data.msg);
-      console.log("CLEAR");
-      
-     if (role === "System_Admin") {
-  navigate("/System_Admin/UserManagement", { replace: true });
-            } else if (role === "Admin") {
-              navigate("/Admin/Dashboard", { replace: true });
-            } else if (role === "Super_Admin") {
-              navigate("/Superadmin/System_Admin", { replace: true });
-            } else {
-              navigate("/");
-            }
-    } catch (err) {
-      const status = err.response?.status;
-      const backendMsg = err.response?.data?.msg;
+      // Save the complete user object to localStorage.
+      // Do not create a new object; save the one from the backend.
+      localStorage.setItem("user", JSON.stringify(user));
 
-      if (status === 400 || status === 404) {
-        setMessage(backendMsg || "An error occurred.");
-      } else {
-        setMessage("Verification failed due to a server error.");
-      }
-    }
-  };
+      // Save the token to localStorage.
+      localStorage.setItem("token", token);
+      
+      // Remove the temporary email from sessionStorage.
+      sessionStorage.removeItem("pendingEmail");
+      setMessage(res.data.msg);
+      console.log("CLEAR");
+
+      // Use the user.position property for navigation.
+      if (user.position === "System_Admin") {
+        navigate("/System_Admin/UserManagement", { replace: true });
+      } else if (user.position === "Admin") {
+        navigate("/Admin/Dashboard", { replace: true });
+      } else if (user.position === "Super_Admin") {
+        navigate("/Superadmin/System_Admin", { replace: true });
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      const status = err.response?.status;
+      const backendMsg = err.response?.data?.msg;
+
+      if (status === 400 || status === 404) {
+        setMessage(backendMsg || "An error occurred.");
+      } else {
+        setMessage("Verification failed due to a server error.");
+      }
+    }
+};
 
   // ---------------- Resend OTP ----------------
   const handleResendOtp = async () => {

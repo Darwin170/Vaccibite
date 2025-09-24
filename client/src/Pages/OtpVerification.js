@@ -52,13 +52,13 @@ const OtpVerification = () => {
       setMessage(res.data.msg);
       console.log("CLEAR");
       // Redirect by role based on the lowercase role
-      if (user.position === "System_Admin") {
+      if (role === "System_Admin") {
         console.log ("Attemp navigate to Useradmin");
         navigate("/System_Admin/UserManagement", { replace: true });
-      } else if (user.position === "Admin") {
+      } else if (role === "Admin") {
         console.log ("Attemp navigate to Dashboard");
         navigate("/Admin/Dashboard", { replace: true });
-      } else if (user.position === "Super_Admin") {
+      } else if (role === "Super_Admin") {
         console.log ("Attemp navigate to System_Admin");
         navigate("/Superadmin/System_Admin", { replace: true });
       } else {

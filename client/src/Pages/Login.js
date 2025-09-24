@@ -48,7 +48,8 @@ const Login = () => {
         },
         { withCredentials: true }
       );
-      
+       const user = response.data.user;
+        const token = response.data.token;
       // Log the response to help with debugging
       console.log("API Response:", response.data);
 
@@ -141,4 +142,5 @@ const Login = () => {
 };
 
 export default Login;
+
 

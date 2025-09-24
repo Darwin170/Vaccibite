@@ -32,7 +32,7 @@ const {authMiddleware} = require("../middleware/authMiddleware");
 const {updateMUser}= require ("../controller/updateMuser");
 const {getOngoingReport}=require("../controller/ongoingcout");
 const {resendOtp}=require("../controller/resend-OTP");
-const {downloadAllReports}= require("../controller/backupPDF");
+const {downloadAllReports}= require("../controller/backupPDf");
 
 const router = express.Router();
 
@@ -72,6 +72,7 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 
 
 

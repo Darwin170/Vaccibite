@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 
-const notificationSchema = new mongoose.Schema({
+const NotificationSchema = new mongoose.Schema({
   userId: { 
     type: mongoose.Schema.Types.ObjectId,
     ref: "M_User",  // Mobile user reference
@@ -17,4 +17,5 @@ const notificationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 module.exports = mongoose.model("Notification", NotificationSchema);
+
 

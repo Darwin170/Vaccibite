@@ -7,9 +7,11 @@ import { dateFnsLocalizer } from "react-big-calendar";
 import Sidebar from "./Sidebar";
 import "./Sidebar.css";
 import "./EventsAndPrograms.css";
-
+import { io } from "socket.io-client";
 
 const API_URL = process.env.REACT_APP_API_URL;
+const socket = io(process.env.REACT_APP_API_URL);
+
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
@@ -402,3 +404,4 @@ const CalendarScheduler = () => {
 };
 
 export default CalendarScheduler;
+

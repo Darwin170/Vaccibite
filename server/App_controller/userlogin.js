@@ -5,13 +5,14 @@ const OTP = require("../model/MOPT");
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // Must be 'true' for port 465
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
-
 const loginUser = async (req, res) => {
     try {
         const { barangay, email, password } = req.body;
@@ -63,3 +64,4 @@ const loginUser = async (req, res) => {
 
 
 module.exports = { loginUser };
+

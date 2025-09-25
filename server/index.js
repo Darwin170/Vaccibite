@@ -57,7 +57,7 @@ app.use("/auth/login", loginLimiter);
 app.use("/auth/resend-otp", loginLimiter);
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: "gmail",
   port: 465,
   secure: true, // Must be 'true' for port 465
   auth: {
@@ -134,4 +134,5 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Something went wrong!" });
 });
+
 

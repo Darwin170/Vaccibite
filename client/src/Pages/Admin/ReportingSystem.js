@@ -178,38 +178,35 @@ function ReportingPage() {
     };
 
    
-            const updateReportStatus = async (reportId, newStatus, file = null) => {
-        try {
-            let response;
+const updateReportStatus = async (reportId, newStatus, file = null) => {
+    try {
+        let response;
+        const url = `${API_URL}/auth/updateReportStatus/${reportId}`;
+        const token = localStorage.getItem("token");
 
-            if (file) {
-            // If a file is provided → send FormData
+        if (file) {
             const formData = new FormData();
             formData.append("status", newStatus);
-            
+            formData.append("file", file); // ✅ Assuming your server expects 'file' as the key
 
-            response = await axios.put(`${API_URL}/auth/updateReportStatus/${reportId}`,{Status: newStatus},
-                {
+            response = await axios.put(url, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${token}`,
                 },
-                }
-            );
-            } else {
-            // If no file → send JSON
-            response = await axios.put(`${API_URL}/auth/updateReportStatus/${reportId}`,{ status: newStatus },
-                {
+            });
+        } else {
+            response = await axios.put(url, { status: newStatus }, {
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${token}`,
                 },
-                }
-            );
-            }
-            
+            });
+        }
 
-            // Emit socket event
+        // Check for a successful HTTP response before proceeding
+        if (response.status === 200 || response.status === 201) {
+            // ✅ Emit socket event only after a successful API call
             socket.emit("reportUpdated", { reportId, status: newStatus });
 
             // Reset modal state
@@ -217,24 +214,25 @@ function ReportingPage() {
             setStatusUpdateFile(null);
 
             if (newStatus === "Resolved") {
-            navigate("/Admin/resolution");
-            } 
-            if(newStatus==="Ongoing"){
+                navigate("/Admin/resolution");
+            } else if (newStatus === "Ongoing") {
                 navigate("/Admin/Report");
                 window.location.reload();
+            } else {
+                const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
+                setReports(updatedReportsRes.data);
+                alert("Report status updated successfully!");
             }
-            else {
-            const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
-            setReports(updatedReportsRes.data);
-            alert("Report status updated successfully!");
-            }
-        } catch (error) {
-            console.error("Failed to update report status:", error);
+        } else {
+            // Handle non-2xx status codes
+            console.error("Server responded with a non-success status:", response.status);
             alert("Failed to update report status. Please try again.");
         }
-        };
-
-
+    } catch (error) {
+        console.error("Failed to update report status:", error);
+        alert("Failed to update report status. Please try again.");
+    }
+};
 
     const handleDownload = (id) => {
      window.open(`${API_URL}/auth/${id}/download`, "_blank");
@@ -607,3 +605,4 @@ function ReportingPage() {
 }
 
 export default ReportingPage;
+

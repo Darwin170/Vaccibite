@@ -574,7 +574,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                         <td>
                                             {report.filePath ? (
                                                 <a
-                                                    href={`${API_URL}/${report.filePath}`}
+                                                    href={`/${report.filePath}`}
                                                     download
                                                     target="_blank"
                                                     rel="noopener noreferrer"

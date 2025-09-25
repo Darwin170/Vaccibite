@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+
 
 const notificationSchema = new mongoose.Schema({
   userId: { 
@@ -15,5 +16,5 @@ const notificationSchema = new mongoose.Schema({
   read: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
+module.exports = mongoose.model("Notification", NotificationSchema);
 
-export default mongoose.model("Notification", notificationSchema);

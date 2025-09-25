@@ -28,10 +28,11 @@ Mrouter.post('/missing', authMiddleware,upload.single('image'), addMissinganimal
 Mrouter.post('/Roaming',authMiddleware, upload.single('image'), addRoamingAnimal);
 Mrouter.post('/a',authMiddleware, upload.single('image'), addAnimalBite);
 Mrouter.post('/verification', verify);
-Mrouter.post('/login', authMiddleware, loginUser);
+Mrouter.post('/login',  loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

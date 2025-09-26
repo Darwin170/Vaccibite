@@ -204,11 +204,6 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
             });
         }
 
-        // Check for a successful HTTP response before proceeding
-        if (response.status === 200 || response.status === 201) {
-            // ✅ Emit socket event only after a successful API call
-            socket.emit("reportUpdated", { reportId, status: newStatus });
-
             // Reset modal state
             setStatusUpdateModal(null);
             setStatusUpdateFile(null);
@@ -605,5 +600,6 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 

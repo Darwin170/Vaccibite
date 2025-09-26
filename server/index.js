@@ -74,38 +74,41 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    // Join a room for the mobile user
+   
     socket.on("join", (MuserId) => {
         socket.join(MuserId);
         console.log(`Mobile user ${MuserId} joined their room`);
     });
 
-    // ➡️ New code block: Listen for status updates from the admin dashboard
-    socket.on("reportUpdated", async ({ reportId, status }) => {
-        try {
-            // Find the report to get the associated MuserId
-            const report = await Report.findOne({ reportId: reportId });
+    
 
-            if (!report) {
-                console.error('Report not found for socket event:', reportId);
-                return;
-            }
+socket.on("reportUpdated", async ({ reportId, status }) => {
+    try {
+ 
+        const report = await Report.findById(reportId);
 
-            const MuserId = report.MuserId;
-
-            // Emit the notification ONLY to the specific user's room
-            io.to(MuserId).emit('reportStatusNotification', {
-                reportId: reportId,
-                newStatus: status,
-                message: `Your report (ID: ${reportId}) status has been updated to ${status}.`
-            });
-
-            console.log(`Notification sent to user ${MuserId} for report ${reportId}`);
-
-        } catch (error) {
-            console.error('Error handling reportUpdated event:', error);
+        if (!report) {
+            console.error('Report not found for socket event (Invalid _id):', reportId);
+            return;
         }
-    });
+
+        
+        const MuserId = report.userId.toString(); 
+        
+
+        io.to(MuserId).emit('reportStatusNotification', {
+        
+            reportId: report._id.toString(),
+            newStatus: status,
+            message: `Your report (ID: ${report._id.toString().substring(0, 8)}...) status has been updated to ${status}.`
+        });
+
+        console.log(`Notification sent to user ${MuserId} for report ${report._id}`);
+
+    } catch (error) {
+        console.error('Error handling reportUpdated event:', error);
+    }
+});
 
     socket.on("disconnect", () => {
         console.log("User disconnected:", socket.id);
@@ -132,6 +135,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Something went wrong!" });
 });
+
 
 
 

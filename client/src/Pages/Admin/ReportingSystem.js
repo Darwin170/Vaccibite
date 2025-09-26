@@ -571,10 +571,10 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                                 <option value="Resolved">Resolved</option>
                                             </select>
                                         </td>
-                                        <td>
+                                       <td>
                                             {report.filePath ? (
                                                 <a
-                                                    href={`/${report.filePath}`}
+                                                    href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
                                                     download
                                                     target="_blank"
                                                     rel="noopener noreferrer"
@@ -605,4 +605,5 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 

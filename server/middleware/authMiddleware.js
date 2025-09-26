@@ -15,7 +15,7 @@ const authMiddleware = async (req, res,next) => {
       req.MuserId = user._id;
       req.userType = "UserAccounts"; // ✅ web user
     } else {
-      mobile_user = await M_User.findById(decoded.id); // ✅ Corrected this line
+      let mobile_user = await M_User.findById(decoded.id);// ✅ Corrected this line
       if (!mobile_user) {
         return res.status(401).json({ message: "Invalid user" });
       }
@@ -35,3 +35,4 @@ const authMiddleware = async (req, res,next) => {
 module.exports = { authMiddleware };
 
 console.log("Find me",authMiddleware);
+

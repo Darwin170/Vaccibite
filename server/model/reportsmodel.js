@@ -38,9 +38,11 @@ const reportSchema = new mongoose.Schema({
   },
    userId: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'M_User' }
+    ref: 'M_User',
+    required: true}
   
 },);
 
 const Report = mongoose.model('Reports', reportSchema, 'Reports');
 module.exports = Report;
+

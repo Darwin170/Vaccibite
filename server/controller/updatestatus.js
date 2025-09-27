@@ -10,9 +10,9 @@ const initSocket = (io) => {
   io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    socket.on("join", (MuserId) => {
-      socket.join(MuserId.toString());
-      console.log(`Mobile user ${MuserId} joined their room`);
+    socket.on("join", (userId) => {
+      socket.join(userId.toString());
+      console.log(`Mobile user ${userId} joined their room`);
     });
 
     socket.on("disconnect", () => {
@@ -79,3 +79,4 @@ const updateReportStatus = async (req, res) => {
   }
 };
 module.exports = { updateReportStatus, initSocket };
+

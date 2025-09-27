@@ -3,12 +3,13 @@ const generateId = require("../utils/generateId");
 
 const addAnimalBite = async (req, res) => {
   try {
-    // ➡️ This line gets the MuserId from your authentication middleware
-    const MuserId = req.MuserId;
+    // ➡️ Safely get the user ID from your authentication middleware.
+    // We use 'userIdFromMiddleware' for clarity, but it holds the same value as req.MuserId.
+    const userIdFromMiddleware = req.MuserId;
 
     console.log("➡️ Body:", req.body);
     console.log("➡️ File:", req.file);
-    console.log("➡️ MuserId from middleware:", MuserId); // Log it for verification
+    console.log("➡️ User ID from middleware:", userIdFromMiddleware); 
 
     const {
       Name_of_the_barangay_officer,
@@ -27,6 +28,7 @@ const addAnimalBite = async (req, res) => {
     } = req.body;
 
     // Save uploaded file path
+    // Note: Ensure process.env.BASE_URL is defined if you use it for the file path
     const filePath = req.file ? `${process.env.BASE_URL}/uploads/${req.file.filename}` : null;
 
     const reportId = await generateId("report");
@@ -34,7 +36,8 @@ const addAnimalBite = async (req, res) => {
 
     const newReport = new Report({
        reportId,
-       MuserId, // ➡️ Add the MuserId to the new report document
+       // 🎯 FIX: Use the key 'userId' to match the Mongoose schema requirement.
+       userId: userIdFromMiddleware, 
       type: 'Animal Bite',
       barangayId,
       date: new Date(),
@@ -64,8 +67,13 @@ const addAnimalBite = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Error in addAnimalBite:", error);
-    res.status(500).json({
-      error: 'Failed to report Animal Bite',
+    // Send back a clearer error message to help the client developer
+    let errorMessage = 'Failed to report Animal Bite';
+    if (error.name === 'ValidationError') {
+      errorMessage = 'Validation failed: Check required fields and data types.';
+    }
+    res.status(400).json({
+      error: errorMessage,
       details: error.message,
     });
   }

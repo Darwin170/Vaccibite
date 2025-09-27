@@ -55,8 +55,9 @@ const drawRow = (doc, y, key, value, keyWidth) => {
 const downloadReport = async (req, res) => {
   try {
     // 🔑 FIX 1: Use .populate() to retrieve the linked Barangay document
+    // We confirm that we need to select the 'name' field from the linked document.
     const report = await Report.findById(req.params.id)
-        .populate({ path: 'barangayId', select: 'name' }) // Assuming 'barangayId' is the reference field and 'name' is the field in the Barangay model
+        .populate({ path: 'barangayId', select: 'name' }) 
         .exec(); 
 
     if (!report) {
@@ -102,13 +103,12 @@ const downloadReport = async (req, res) => {
 
     // 🔑 Barangay Name Logic
     // Access the populated name field safely: report.barangayId.name
-    // If population is successful, report.barangayId is an object.
     const barangayName = report.barangayId && report.barangayId.name 
         ? report.barangayId.name 
         : (report.barangayId ? `ID: ${report.barangayId._id || report.barangayId}` : 'N/A');
     
-    // 🔑 FIX 2: Use the correct variable name (barangayName)
-    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${name}`);
+    // 🔑 FIX 2: Using the correct variable name (barangayName)
+    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${barangayName}`);
     doc.moveDown(1); // Add extra space before table starts
 
     // ------------------------------------
@@ -194,4 +194,3 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
-

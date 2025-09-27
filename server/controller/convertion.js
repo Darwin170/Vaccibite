@@ -19,21 +19,26 @@ const drawRow = (doc, y, key, value, keyWidth) => {
     const valueWidth = docWidth - keyWidth - 20;
 
     // Set font for content
-    doc.fontSize(10).font('Helvetica');
+    doc.fontSize(10);
+    
+    // 🔑 NEW LOGIC: Check if the key is one of the important fields
+    const importantFields = [
+        "Name_of_the_barangay_officer",
+        "Name_Of_the_bitten_Person",
+        "location_of_bite"
+    ];
 
-    // Draw Key (Bold for labels)
-    doc.font('Helvetica-Bold').text(key, keyX, y, { width: keyWidth, align: 'left' });
+    const isImportant = importantFields.includes(key);
+
+    // Set font for the Key (Bold if important, normal otherwise)
+    doc.font(isImportant ? 'Helvetica-Bold' : 'Helvetica')
+       .text(key, keyX, y, { width: keyWidth, align: 'left' });
     
     // Draw Value (Normal font for data)
     doc.font('Helvetica').text(value, valueX, y, { width: valueWidth, align: 'left' });
 
-    // Draw separator line below the row
-    doc.moveTo(keyX, y + 15)
-       .lineTo(doc.page.width - 50, y + 15)
-       .strokeOpacity(0.5).stroke('#aaaaaa'); // Light gray line
-
-    // Return the new Y position
-    return y + 20; 
+    // Return the new Y position (reduced spacing now that the line is gone)
+    return y + 16; 
 };
 
 
@@ -96,7 +101,7 @@ const downloadReport = async (req, res) => {
       const keyColumnWidth = 150;
       let currentY = doc.y;
 
-      // Draw Header Row
+      // Draw Header Row (We keep this bold to distinguish the headers)
       doc.fontSize(11).font('Helvetica-Bold').fillColor('#333333');
       doc.text("Field", 50, currentY, { width: keyColumnWidth });
       doc.text("Value", 50 + keyColumnWidth + 20, currentY, { width: 300 });

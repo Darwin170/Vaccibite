@@ -102,7 +102,7 @@ io.on("connection", (socket) => {
             const userId = report.userId.toString(); 
 
             // Emit the notification to the user's room
-            io.to(MuserId).emit('newNotification', {
+            io.to(userId).emit('newNotification', {
                 // Ensure all fields are correctly converted to simple strings for socket transport
                 reportId: report._id.toString(),
                 newStatus: status,
@@ -141,6 +141,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Something went wrong!" });
 });
+
 
 
 

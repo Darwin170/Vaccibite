@@ -13,7 +13,7 @@ const NotificationSchema = new mongoose.Schema({
   },
   senderId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Assuming Admins are also in the M_User collection
+    ref: "UserAccounts", // Assuming Admins are also in the M_User collection
     required: true // It might be null if the notification is system-generated
   },
   title: { type: String, required: true },
@@ -22,6 +22,7 @@ const NotificationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 module.exports = mongoose.model("Notification", NotificationSchema);
+
 
 
 

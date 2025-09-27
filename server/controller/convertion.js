@@ -1,7 +1,7 @@
 const PDFDocument = require("pdfkit");
 const path = require("path");
 const fs = require("fs"); 
-const Report = require("../model/reportsmodel");
+const Report = require("../model/reportsmodel"); // Assuming this is the Report model
 
 /**
  * Utility function to draw a table row
@@ -32,7 +32,7 @@ const drawRow = (doc, y, key, value, keyWidth) => {
 
     // 🔑 CUSTOM DISPLAY NAMES: Map machine keys to human-readable names
     const displayMap = {
-        "barangayId": "Barangay",
+        "barangayId": "Barangay Id",
         "animalType": "Animal Type",
     };
     
@@ -54,9 +54,10 @@ const drawRow = (doc, y, key, value, keyWidth) => {
 
 const downloadReport = async (req, res) => {
   try {
-    // NOTE: If report.barangayId is used to link to a separate Barangay model, 
-    // you must use .populate('barangayId', 'name') here to get the name.
-    const report = await Report.findById(req.params.id); 
+    // 🔑 FIX 1: Use .populate() to retrieve the linked Barangay document
+    const report = await Report.findById(req.params.id)
+        .populate({ path: 'barangayId', select: 'name' }) // Assuming 'barangayId' is the reference field and 'name' is the field in the Barangay model
+        .exec(); 
 
     if (!report) {
       return res.status(404).send("Report not found");
@@ -99,10 +100,15 @@ const downloadReport = async (req, res) => {
     doc.fontSize(14).font('Helvetica').text(`Category: ${report.type}`); 
     doc.moveDown(0.5);
 
-    // 🔑 NEW: Barangay Name 
-    // This assumes you have a report.barangayName field available after population/fetching.
-    const barangayName = report.barangayName || (report.barangayId ? `ID: ${report.barangayId}` : 'N/A');
-    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${name}`);
+    // 🔑 Barangay Name Logic
+    // Access the populated name field safely: report.barangayId.name
+    // If population is successful, report.barangayId is an object.
+    const barangayName = report.barangayId && report.barangayId.name 
+        ? report.barangayId.name 
+        : (report.barangayId ? `ID: ${report.barangayId._id || report.barangayId}` : 'N/A');
+    
+    // 🔑 FIX 2: Use the correct variable name (barangayName)
+    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${barangayName}`);
     doc.moveDown(1); // Add extra space before table starts
 
     // ------------------------------------

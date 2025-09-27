@@ -41,9 +41,8 @@ const addMissinganimal = async (req, res) => {
     }
 
     // ✅ Handle file path safely
-    const filePath = req.file 
-      ? `${process.env.BASE_URL}/uploads/${req.file.filename}`
-      : null;
+    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
+
 
     const reportId = await generateId("report");
     console.log("Generated Report ID:", reportId);
@@ -87,6 +86,7 @@ const addMissinganimal = async (req, res) => {
   }
 };
 module.exports = { addMissinganimal };
+
 
 
 

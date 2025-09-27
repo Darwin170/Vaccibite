@@ -58,7 +58,7 @@ const updateReportStatus = async (req, res) => {
     await newLog.save();
 
     // --- Create Notification for Mobile User ---
-    if (report.userId) {
+     if (report.userId) {
       const notification = await Notification.create({
         userId: report.userId,
         title: "Report Status Updated",
@@ -68,7 +68,21 @@ const updateReportStatus = async (req, res) => {
 
       // Emit to mobile user via Socket.IO
       if (ioInstance) {
-        ioInstance.to(report.userId.toString()).emit("newNotification", notification);
+        // 1. Convert the Mongoose document to a clean JavaScript object
+        let rawPayload = notification.toObject();
+
+        // 2. Ensure the primary ID is a string (critical for Flutter parsing)
+        // Mongoose _id is an ObjectId object; Flutter expects a String.
+        if (rawPayload._id) {
+            rawPayload._id = rawPayload._id.toString(); 
+        }
+
+        // 3. Emit the clean, string-safe payload
+        console.log("Emitting clean notification payload to room:", report.userId.toString());
+        ioInstance.to(report.userId.toString()).emit(
+          "newNotification", 
+          rawPayload
+        );
       }
     }
 
@@ -79,4 +93,5 @@ const updateReportStatus = async (req, res) => {
   }
 };
 module.exports = { updateReportStatus, initSocket };
+
 

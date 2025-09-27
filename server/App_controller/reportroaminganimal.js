@@ -34,7 +34,7 @@ const addRoamingAnimal = async (req, res) => {
     }
 
  // Save uploaded file path
-   const filePath = req.file ? `/uploads/${req.file.filename}` : null;
+   const filePath = req.file ? `uploads/${req.file.filename}` : null;
 
     const reportId = await generateId("report"); // <-- also log this
     console.log("Generated Report ID:", reportId);
@@ -80,6 +80,7 @@ module.exports = {
 
   addRoamingAnimal
 };
+
 
 
 

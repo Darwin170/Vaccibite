@@ -438,17 +438,19 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                                 <option value="Resolved">Resolved</option>
                                             </select>
                                         </td>
-                                       <td>
-                                            {report.filePath ? (
+                                      <td>
+                                              {report.filePath ? (
                                                 <a
-                                                    href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
-                                                    download
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
+                                                  href={report.filePath}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  download={report.filePath.split('/').pop()} // optional
                                                 >
-                                                    {report.filePath.split('/').pop()}
+                                                  {report.filePath.split('/').pop()}
                                                 </a>
-                                            ) : 'N/A'}
+                                              ) : (
+                                                'N/A'
+                                              )}
                                         </td>
                                         <td>
                                             <button className="view-btn" onClick={() => setSelectedDetails(report)}>👁️ View</button>
@@ -472,6 +474,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

@@ -61,6 +61,7 @@ const updateReportStatus = async (req, res) => {
      if (report.userId) {
       const notification = await Notification.create({
         userId: report.userId,
+        senderId: req.user._id,
         title: "Report Status Updated",
         message: `Your report "${report.type}" status changed from '${oldStatus}' to '${newStatus}'`,
         read: false
@@ -93,5 +94,6 @@ const updateReportStatus = async (req, res) => {
   }
 };
 module.exports = { updateReportStatus, initSocket };
+
 
 

@@ -137,15 +137,23 @@ const downloadReport = async (req, res) => {
       
       doc.fillColor('#000000'); // Reset color for content
         
-      Object.entries(report.categoryDetails).forEach(([key, val]) => {
-          // Check for page break if content is too long
-          if (currentY > doc.page.height - doc.options.margin * 2 - 50) {
-              doc.addPage();
-              currentY = doc.y;
-          }
-          
-          currentY = drawRow(doc, currentY, key, val || "N/A", keyColumnWidth);
-      });
+  Object.entries(report.categoryDetails).forEach(([key, val]) => {
+    // ✅ Replace barangayId with barangayName for display
+    if (key === "barangayId") {
+        val = report.barangayId && report.barangayId.name 
+            ? report.barangayId.name   // show name if populated
+            : "N/A";                   // fallback if missing
+    }
+
+    // Check for page break if content is too long
+    if (currentY > doc.page.height - doc.options.margin * 2 - 50) {
+        doc.addPage();
+        currentY = doc.y;
+    }
+
+    currentY = drawRow(doc, currentY, key, val || "N/A", keyColumnWidth);
+});
+
       doc.moveDown(2); // Spacing after the table ends
     } else {
       doc.text("⚠️ No additional details available.");
@@ -194,4 +202,5 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+
 

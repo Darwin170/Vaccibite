@@ -218,11 +218,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                 setReports(updatedReportsRes.data);
                 alert("Report status updated successfully!");
             }
-        } else {
-            // Handle non-2xx status codes
-            console.error("Server responded with a non-success status:", response.status);
-            alert("Failed to update report status. Please try again.");
-        }
+         
     } catch (error) {
         console.error("Failed to update report status:", error);
         alert("Failed to update report status. Please try again.");
@@ -600,5 +596,6 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 

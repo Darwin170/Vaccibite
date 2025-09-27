@@ -81,7 +81,8 @@ const downloadReport = async (req, res) => {
     doc.moveDown();
 
     // Category
-    doc.fontSize(14).font('Helvetica').text(`Category: ${report.type}`, { underline: true });
+    // REMOVED { underline: true } from the options
+    doc.fontSize(14).font('Helvetica').text(`Category: ${report.type}`); 
     doc.moveDown(1.5);
 
     // ------------------------------------

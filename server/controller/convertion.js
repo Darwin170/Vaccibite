@@ -21,7 +21,7 @@ const drawRow = (doc, y, key, value, keyWidth) => {
     // Set font for content
     doc.fontSize(10);
     
-    // 🔑 NEW LOGIC: Check if the key is one of the important fields
+    // 🔑 IMPORTANT FIELDS LIST: Fields to display as bold
     const importantFields = [
         "Name_of_the_barangay_officer",
         "Name_Of_the_bitten_Person",
@@ -29,9 +29,16 @@ const drawRow = (doc, y, key, value, keyWidth) => {
     ];
 
     const isImportant = importantFields.includes(key);
+
+    // 🔑 CUSTOM DISPLAY NAMES: Map machine keys to human-readable names
+    const displayMap = {
+        "barangayId": "Barangay",
+        "animalType": "Animal Type",
+    };
     
-    // 🔑 CORE CHANGE: Replace underscores with spaces for display
-    const formattedKey = key.replace(/_/g, ' ');
+    // 🔑 CORE CHANGE: Format the key for display
+    let formattedKey = displayMap[key] || key.replace(/_/g, ' ');
+
 
     // Set font for the Key (Bold if important, normal otherwise)
     doc.font(isImportant ? 'Helvetica-Bold' : 'Helvetica')
@@ -47,8 +54,8 @@ const drawRow = (doc, y, key, value, keyWidth) => {
 
 const downloadReport = async (req, res) => {
   try {
-    // NOTE: To populate the report with user data (like name for the PDF), 
-    // you would need to add .populate('userId', 'fullName') here.
+    // NOTE: If report.barangayId is used to link to a separate Barangay model, 
+    // you must use .populate('barangayId', 'name') here to get the name.
     const report = await Report.findById(req.params.id); 
 
     if (!report) {
@@ -89,9 +96,14 @@ const downloadReport = async (req, res) => {
     doc.moveDown();
 
     // Category
-    // REMOVED { underline: true } from the options
     doc.fontSize(14).font('Helvetica').text(`Category: ${report.type}`); 
-    doc.moveDown(1.5);
+    doc.moveDown(0.5);
+
+    // 🔑 NEW: Barangay Name 
+    // This assumes you have a report.barangayName field available after population/fetching.
+    const barangayName = report.barangayName || (report.barangayId ? `ID: ${report.barangayId}` : 'N/A');
+    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${name}`);
+    doc.moveDown(1); // Add extra space before table starts
 
     // ------------------------------------
     // 🔑 START: Dynamic Category Details in Table

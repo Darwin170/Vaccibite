@@ -296,100 +296,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                     </div>
                 </div>
 
-                {/* --- Add Report Form Modal --- */}
-                {showForm && (
-                    <div className="modal-overlay">
-                        <div className="modal-content">
-                            <h2>Submit a New Report</h2>
-
-                            <select name="type" value={form.type} onChange={handleInputChange}>
-                                <option value="">Select Incident Type</option>
-                                <option value="Animal Bite">Animal Bite</option>
-                                <option value="Missing Animal">Missing Animal</option>
-                                <option value="Roaming Animal">Roaming Animal</option>
-                            </select>
-
-                            <select name="district" value={form.district} onChange={handleInputChange}>
-                                <option value="">Select District</option>
-                                {/* Populate with unique districts for the form */}
-                                {Array.from(new Set(barangays.map(b => b.district)))
-                                    .sort()
-                                    .map(districtName => (
-                                        <option key={districtName} value={districtName}>{districtName}</option>
-                                    ))}
-                            </select>
-
-                            <select name="barangayId" value={form.barangayId} onChange={handleInputChange}>
-                                <option value="">Select Barangay</option>
-                                {/* Filter barangays based on selected district */}
-                                {barangays
-                                    .filter((b) => b.district === form.district)
-                                    .map((b) => (
-                                        <option key={b._id} value={b._id}>{b.name}</option>
-                                    ))}
-                            </select>
-
-                            <input type="date" name="date" value={form.date} onChange={handleInputChange} />
-
-                            <select name="status" value={form.status} onChange={handleInputChange}>
-                                <option value="">Select Status</option>
-                                <option value="Pending">Pending</option>
-                                 <option value="Ongoing">Ongoing</option>
-                                <option value="Resolved">Resolved</option>
-                            </select>
-
-                            {/* Dynamic Category Details Input */}
-                            <div className="category-details-section">
-                                <h3>Category Specific Details:</h3>
-                                {form.type === "Animal Bite" && (
-                                    <>
-                                        <input type="text" name="name" placeholder="Name" value={form.categoryDetails.name || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="animalType" placeholder="Animal Type" value={form.categoryDetails.animalType || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="color" placeholder="Color" value={form.categoryDetails.color || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="size" placeholder="Size" value={form.categoryDetails.size || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="location" placeholder="Bite Location" value={form.categoryDetails.location || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="severity" placeholder="Severity" value={form.categoryDetails.severity || ''} onChange={handleCategoryDetailsChange} />
-                                        <select name="caughtStatus" value={form.categoryDetails.caughtStatus || ''} onChange={handleCategoryDetailsChange}>
-                                            <option value="">Caught Status</option>
-                                            <option value="Caught">Caught</option>
-                                            <option value="Not Caught">Not Caught</option>
-                                        </select>
-                                    </>
-                                )}
-                                {form.type === "Roaming Animal" && (
-                                    <>
-                                        <input type="text" name="name" placeholder="Name (if known)" value={form.categoryDetails.name || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="animalType" placeholder="Animal Type" value={form.categoryDetails.animalType || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="color_breed" placeholder="Color/Breed" value={form.categoryDetails.color_breed || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="size" placeholder="Size" value={form.categoryDetails.size || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="location" placeholder="Sighting Location" value={form.categoryDetails.location || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="time" name="time" placeholder="Time of Sighting" value={form.categoryDetails.time || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="behavior" placeholder="Behavior" value={form.categoryDetails.behavior || ''} onChange={handleCategoryDetailsChange} />
-                                    </>
-                                )}
-                                {form.type === "Missing Animal" && (
-                                    <>
-                                        <input type="text" name="name" placeholder="Pet's Name" value={form.categoryDetails.name || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="animalType" placeholder="Animal Type" value={form.categoryDetails.animalType || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="color_breed" placeholder="Color/Breed" value={form.categoryDetails.color_breed || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="size" placeholder="Size" value={form.categoryDetails.size || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="location" placeholder="Last Seen Location" value={form.categoryDetails.location || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="date" name="date" placeholder="Date Missing" value={form.categoryDetails.date || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="special" placeholder="Special Identifying Marks/Details" value={form.categoryDetails.special || ''} onChange={handleCategoryDetailsChange} />
-                                    </>
-                                )}
-                            </div>
-
-                            <input type="file" ref={fileInputRef} onChange={handleFileChange} />
-                            {form.file && <p>Selected file: {form.file.name}</p>}
-
-                            <div className="modal-buttons">
-                                <button className="submit-btn" onClick={handleSubmit}>Submit</button>
-                                <button className="cancel-btn" onClick={() => setShowForm(false)}>Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+              
 
                 {/* --- View Details Modal --- */}
                 {selectedDetails && (
@@ -569,6 +476,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

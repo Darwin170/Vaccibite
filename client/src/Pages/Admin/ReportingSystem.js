@@ -467,11 +467,11 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                     </table>
                 </div>
             </div>
-        </div>
     );
 }
 
 export default ReportingPage;
+
 
 
 

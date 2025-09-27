@@ -3,6 +3,40 @@ const path = require("path");
 const fs = require("fs"); 
 const Report = require("../model/reportsmodel");
 
+/**
+ * Utility function to draw a table row
+ * @param {PDFDocument} doc - The pdfkit document instance
+ * @param {number} y - The starting Y position
+ * @param {string} key - The key/label text
+ * @param {string} value - The value text
+ * @param {number} keyWidth - Width of the key column
+ */
+const drawRow = (doc, y, key, value, keyWidth) => {
+    // Define column coordinates (X positions)
+    const keyX = 50; // Left Margin
+    const valueX = keyX + keyWidth + 20; // Key end + spacing
+    const docWidth = doc.page.width - doc.options.margin * 2;
+    const valueWidth = docWidth - keyWidth - 20;
+
+    // Set font for content
+    doc.fontSize(10).font('Helvetica');
+
+    // Draw Key (Bold for labels)
+    doc.font('Helvetica-Bold').text(key, keyX, y, { width: keyWidth, align: 'left' });
+    
+    // Draw Value (Normal font for data)
+    doc.font('Helvetica').text(value, valueX, y, { width: valueWidth, align: 'left' });
+
+    // Draw separator line below the row
+    doc.moveTo(keyX, y + 15)
+       .lineTo(doc.page.width - 50, y + 15)
+       .strokeOpacity(0.5).stroke('#aaaaaa'); // Light gray line
+
+    // Return the new Y position
+    return y + 20; 
+};
+
+
 const downloadReport = async (req, res) => {
   try {
     // NOTE: To populate the report with user data (like name for the PDF), 
@@ -26,7 +60,7 @@ const downloadReport = async (req, res) => {
     doc.pipe(res);
     
     // --- START: Logo in Header Section ---
-    // 🔑 IMPORTANT: REPLACE THIS PATH WITH THE ACTUAL LOCATION OF YOUR LOGO FILE
+    // 🔑 IMPORTANT: Using your specified logo path
     const logoPath = path.join(__dirname, '..', 'assets', 'Vaccibitelogo.png'); 
 
     if (fs.existsSync(logoPath)) {
@@ -39,26 +73,61 @@ const downloadReport = async (req, res) => {
     }
     // --- END: Logo in Header Section ---
     
+    // 🔑 FONT FAMILY: Set the default font for the document
+    doc.font('Helvetica'); 
+    
     // Report title
-    doc.fontSize(20).text("Incident Report", { align: "center" });
+    doc.fontSize(20).font('Helvetica-Bold').text("Incident Report", { align: "center" });
     doc.moveDown();
 
-    // 🔑 INTEGRATION: Add detailed content
-    
     // Category
-    doc.fontSize(14).text(`Category: ${report.type}`, { underline: true });
+    doc.fontSize(14).font('Helvetica').text(`Category: ${report.type}`, { underline: true });
     doc.moveDown(1.5);
 
-    // Dynamic category details
-    if (report.categoryDetails && Object.keys(report.categoryDetails).length > 0) {
-      doc.fontSize(12).text("Report Details:");
+    // ------------------------------------
+    // 🔑 START: Dynamic Category Details in Table
+    // ------------------------------------
+    
+    if (report.categoryDetails && Object.keys(report.categoryDetails).length > 0) {
+      doc.fontSize(12).text("Report Details Table:");
+      doc.moveDown(0.5);
+        
+      const keyColumnWidth = 150;
+      let currentY = doc.y;
+
+      // Draw Header Row
+      doc.fontSize(11).font('Helvetica-Bold').fillColor('#333333');
+      doc.text("Field", 50, currentY, { width: keyColumnWidth });
+      doc.text("Value", 50 + keyColumnWidth + 20, currentY, { width: 300 });
+      doc.moveDown(0.5);
+      
+      // Draw a solid line under the header
+      doc.moveTo(50, doc.y)
+         .lineTo(doc.page.width - 50, doc.y)
+         .strokeOpacity(1).stroke('#000000');
+      
+      currentY = doc.y + 5;
+      
+      doc.fillColor('#000000'); // Reset color for content
+        
       Object.entries(report.categoryDetails).forEach(([key, val]) => {
-        doc.text(`${key}: ${val || "N/A"}`);
+          // Check for page break if content is too long
+          if (currentY > doc.page.height - doc.options.margin * 2 - 50) {
+              doc.addPage();
+              currentY = doc.y;
+          }
+          
+          currentY = drawRow(doc, currentY, key, val || "N/A", keyColumnWidth);
       });
-      doc.moveDown();
-    } else {
+      doc.moveDown(2); // Spacing after the table ends
+    } else {
       doc.text("⚠️ No additional details available.");
+      doc.moveDown();
     }
+    
+    // ------------------------------------
+    // END: Dynamic Category Details in Table
+    // ------------------------------------
     
     // Attached file handling
     if (report.filePath) {
@@ -68,7 +137,7 @@ const downloadReport = async (req, res) => {
         
         if (fs.existsSync(imagePath)) { // Check file existence before trying to load
             doc.addPage(); // Start image on a new page for clarity
-            doc.fontSize(16).text("Attached Image", { align: "center" });
+            doc.fontSize(16).font('Helvetica-Bold').text("Attached Image", { align: "center" });
             doc.moveDown();
 
             doc.image(imagePath, {

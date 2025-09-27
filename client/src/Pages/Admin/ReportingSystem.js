@@ -251,7 +251,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
         <div style={{ display: 'flex' }}>
             <Sidebar /> {/* Your Sidebar Component */}
             <div className="reporting-container" style={{ marginLeft: '220px', flex: 1 }}>
-
+            <div className="actions-bar">
                 
                     {/* Search Bar Input */}
                     <div className="search-bar-container">
@@ -467,10 +467,12 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                     </table>
                 </div>
             </div>
+        </div>
     );
 }
 
 export default ReportingPage;
+
 
 
 

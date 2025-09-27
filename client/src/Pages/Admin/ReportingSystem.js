@@ -105,45 +105,6 @@ function ReportingPage() {
         setSearchTerm(e.target.value);
     };
 
-    // --- Form Submission ---
-    const handleSubmit = async () => {
-        const { type, barangayId, district, date, status, file, categoryDetails } = form;
-
-        // Basic validation
-        if (!type || !barangayId || !district || !date || !status || !file) {
-            alert('Please fill in all general fields and upload a file.');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('type', type);
-        formData.append('barangayId', barangayId);
-        formData.append('district', district); // Ensure the dynamically set district is sent
-        formData.append('date', date);
-        formData.append('status', status);
-        formData.append('file', file);
-        formData.append('categoryDetails', JSON.stringify(categoryDetails)); // Send as JSON string
-
-        try {
-            await axios.post(`${API_URL}/auth/Createreport`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data',
-                     Authorization: `Bearer ${localStorage.getItem("token")}`,
-                 },
-            });
-            // Reset form
-            setForm({ type: '', barangayId: '', district: '', date: '', status: '', file: null, categoryDetails: {} });
-            if (fileInputRef.current) fileInputRef.current.value = ''; // Clear file input
-            setShowForm(false); // Close the form modal
-
-            // Re-fetch reports to update the table with the new entry
-            const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
-            setReports(updatedReportsRes.data);
-            alert('Report created successfully!');
-        } catch (error) {
-            console.error('Failed to submit report:', error);
-            alert('Failed to submit report. Please try again.');
-        }
-    };
 
     // --- Report Actions ---
     const handleDelete = async (id) => {
@@ -327,29 +288,6 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                     </div>
                 </div>
 
-                {/* --- Add Report Form Modal --- */}
-                {showForm && (
-                    <div className="modal-overlay">
-                        <div className="modal-content">
-                            <h2>Submit a New Report</h2>
-
-                            <select name="type" value={form.type} onChange={handleInputChange}>
-                                <option value="">Select Incident Type</option>
-                                <option value="Animal Bite">Animal Bite</option>
-                                <option value="Missing Animal">Missing Animal</option>
-                                <option value="Roaming Animal">Roaming Animal</option>
-                            </select>
-
-                            <select name="district" value={form.district} onChange={handleInputChange}>
-                                <option value="">Select District</option>
-                                {/* Populate with unique districts for the form */}
-                                {Array.from(new Set(barangays.map(b => b.district)))
-                                    .sort()
-                                    .map(districtName => (
-                                        <option key={districtName} value={districtName}>{districtName}</option>
-                                    ))}
-                            </select>
-
                             <select name="barangayId" value={form.barangayId} onChange={handleInputChange}>
                                 <option value="">Select Barangay</option>
                                 {/* Filter barangays based on selected district */}
@@ -369,47 +307,6 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                 <option value="Resolved">Resolved</option>
                             </select>
 
-                            {/* Dynamic Category Details Input */}
-                            <div className="category-details-section">
-                                <h3>Category Specific Details:</h3>
-                                {form.type === "Animal Bite" && (
-                                    <>
-                                        <input type="text" name="name" placeholder="Name" value={form.categoryDetails.name || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="animalType" placeholder="Animal Type" value={form.categoryDetails.animalType || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="color" placeholder="Color" value={form.categoryDetails.color || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="size" placeholder="Size" value={form.categoryDetails.size || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="location" placeholder="Bite Location" value={form.categoryDetails.location || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="severity" placeholder="Severity" value={form.categoryDetails.severity || ''} onChange={handleCategoryDetailsChange} />
-                                        <select name="caughtStatus" value={form.categoryDetails.caughtStatus || ''} onChange={handleCategoryDetailsChange}>
-                                            <option value="">Caught Status</option>
-                                            <option value="Caught">Caught</option>
-                                            <option value="Not Caught">Not Caught</option>
-                                        </select>
-                                    </>
-                                )}
-                                {form.type === "Roaming Animal" && (
-                                    <>
-                                        <input type="text" name="name" placeholder="Name (if known)" value={form.categoryDetails.name || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="animalType" placeholder="Animal Type" value={form.categoryDetails.animalType || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="color_breed" placeholder="Color/Breed" value={form.categoryDetails.color_breed || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="size" placeholder="Size" value={form.categoryDetails.size || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="location" placeholder="Sighting Location" value={form.categoryDetails.location || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="time" name="time" placeholder="Time of Sighting" value={form.categoryDetails.time || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="behavior" placeholder="Behavior" value={form.categoryDetails.behavior || ''} onChange={handleCategoryDetailsChange} />
-                                    </>
-                                )}
-                                {form.type === "Missing Animal" && (
-                                    <>
-                                        <input type="text" name="name" placeholder="Pet's Name" value={form.categoryDetails.name || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="animalType" placeholder="Animal Type" value={form.categoryDetails.animalType || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="color_breed" placeholder="Color/Breed" value={form.categoryDetails.color_breed || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="size" placeholder="Size" value={form.categoryDetails.size || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="location" placeholder="Last Seen Location" value={form.categoryDetails.location || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="date" name="date" placeholder="Date Missing" value={form.categoryDetails.date || ''} onChange={handleCategoryDetailsChange} />
-                                        <input type="text" name="special" placeholder="Special Identifying Marks/Details" value={form.categoryDetails.special || ''} onChange={handleCategoryDetailsChange} />
-                                    </>
-                                )}
-                            </div>
 
                             <input type="file" ref={fileInputRef} onChange={handleFileChange} />
                             {form.file && <p>Selected file: {form.file.name}</p>}
@@ -600,6 +497,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

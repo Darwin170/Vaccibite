@@ -104,7 +104,9 @@ function ReportingPage() {
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
-   
+
+    const { type, barangayId, district, date, status, file, categoryDetails } = form;
+
         const formData = new FormData();
         formData.append('type', type);
         formData.append('barangayId', barangayId);
@@ -567,6 +569,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

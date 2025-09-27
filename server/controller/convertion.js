@@ -108,7 +108,7 @@ const downloadReport = async (req, res) => {
         : (report.barangayId ? `ID: ${report.barangayId._id || report.barangayId}` : 'N/A');
     
     // 🔑 FIX 2: Use the correct variable name (barangayName)
-    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${barangayName}`);
+    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${name}`);
     doc.moveDown(1); // Add extra space before table starts
 
     // ------------------------------------
@@ -194,3 +194,4 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+

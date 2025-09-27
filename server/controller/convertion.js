@@ -32,7 +32,7 @@ const drawRow = (doc, y, key, value, keyWidth) => {
 
     // 🔑 CUSTOM DISPLAY NAMES: Map machine keys to human-readable names
     const displayMap = {
-        "barangayId": "Barangay Id",
+        "barangayId": "Barangay",
         "animalType": "Animal Type",
     };
     
@@ -194,3 +194,4 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+

@@ -109,7 +109,7 @@ io.on("connection", (socket) => {
                 message: `Your report (ID: ${report._id.toString().substring(0, 8)}...) status has been updated to ${status}.`
             });
 
-            console.log(`Notification sent to user ${MuserId} for report ${report._id}`);
+            console.log(`Notification sent to user ${userId} for report ${report._id}`);
 
         } catch (error) {
             // This catch block will now only handle actual Mongoose/database errors
@@ -141,6 +141,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Something went wrong!" });
 });
+
 
 
 

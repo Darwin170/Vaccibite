@@ -4,7 +4,7 @@ const generateId = require("../utils/generateId");
 
 const addRoamingAnimal = async (req, res) => {
   try {
-     const MuserId = req.MuserId;
+     const userIdFromMiddleware = req.MuserId;
     console.log("➡️ MuserId from middleware:", userIdFromMiddleware);
     console.log("➡️ Body:", req.body);
     console.log("➡️ File:", req.file);
@@ -56,6 +56,7 @@ module.exports = {
 
   addRoamingAnimal
 };
+
 
 
 

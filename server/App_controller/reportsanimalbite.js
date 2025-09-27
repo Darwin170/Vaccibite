@@ -40,7 +40,7 @@ const addAnimalBite = async (req, res) => {
 
 
     // Save uploaded file path
-    const filePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const filePath = req.file ? `uploads/${req.file.filename}` : null;
 
 
     const reportId = await generateId("report");
@@ -95,4 +95,5 @@ const addAnimalBite = async (req, res) => {
 };
 
 module.exports = { addAnimalBite };
+
 

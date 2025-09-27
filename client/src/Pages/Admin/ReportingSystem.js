@@ -252,11 +252,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
             <Sidebar /> {/* Your Sidebar Component */}
             <div className="reporting-container" style={{ marginLeft: '220px', flex: 1 }}>
 
-                <div className="actions-bar">
-                    <button className="add-report-btn" onClick={() => setShowForm(true)}>
-                        + Add Report
-                    </button>
-
+                
                     {/* Search Bar Input */}
                     <div className="search-bar-container">
                         <input
@@ -476,6 +472,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

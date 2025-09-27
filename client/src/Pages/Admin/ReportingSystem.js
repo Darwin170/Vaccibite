@@ -104,17 +104,7 @@ function ReportingPage() {
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
-
-    // --- Form Submission ---
-    const handleSubmit = async () => {
-        const { type, barangayId, district, date, status, file, categoryDetails } = form;
-
-        // Basic validation
-        if (!type || !barangayId || !district || !date || !status || !file) {
-            alert('Please fill in all general fields and upload a file.');
-            return;
-        }
-
+   
         const formData = new FormData();
         formData.append('type', type);
         formData.append('barangayId', barangayId);
@@ -124,26 +114,7 @@ function ReportingPage() {
         formData.append('file', file);
         formData.append('categoryDetails', JSON.stringify(categoryDetails)); // Send as JSON string
 
-        try {
-            await axios.post(`${API_URL}/auth/Createreport`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data',
-                     Authorization: `Bearer ${localStorage.getItem("token")}`,
-                 },
-            });
-            // Reset form
-            setForm({ type: '', barangayId: '', district: '', date: '', status: '', file: null, categoryDetails: {} });
-            if (fileInputRef.current) fileInputRef.current.value = ''; // Clear file input
-            setShowForm(false); // Close the form modal
-
-            // Re-fetch reports to update the table with the new entry
-            const updatedReportsRes = await axios.get(`${API_URL}/auth/reports`);
-            setReports(updatedReportsRes.data);
-            alert('Report created successfully!');
-        } catch (error) {
-            console.error('Failed to submit report:', error);
-            alert('Failed to submit report. Please try again.');
-        }
-    };
+      
 
     // --- Report Actions ---
     const handleDelete = async (id) => {
@@ -596,6 +567,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

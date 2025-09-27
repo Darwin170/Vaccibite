@@ -4,10 +4,10 @@ const generateId = require("../utils/generateId");
 const addMissinganimal = async (req, res) => {
   
   try {
-     const MuserId = req.MuserId;
+     const userIdFromMiddleware = req.MuserId;
     console.log("➡️ Body:", req.body);
     console.log("➡️ File:", req.file);
-    console.log("➡️ MuserId from middleware:", MuserId);
+    console.log("➡️ User ID from middleware:", userIdFromMiddleware); 
     const {
       Name_of_the_barangay_officer,
       barangayId, 
@@ -36,7 +36,7 @@ const addMissinganimal = async (req, res) => {
 
     const newReport = new Report({
       reportId,
-      MuserId, 
+       userId: userIdFromMiddleware, 
       type: 'Missing Animal',
       barangayId,
       date: new Date(),
@@ -72,6 +72,7 @@ const addMissinganimal = async (req, res) => {
 };
 
 module.exports = { addMissinganimal };
+
 
 
 

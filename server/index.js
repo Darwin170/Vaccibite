@@ -75,9 +75,9 @@ io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
    
-    socket.on("join", (MuserId) => {
-        socket.join(MuserId);
-        console.log(`Mobile user ${MuserId} joined their room`);
+    socket.on("join", (userId) => {
+        socket.join(userId);
+        console.log(`Mobile user ${userId} joined their room`);
     });
 
     
@@ -99,7 +99,7 @@ io.on("connection", (socket) => {
             }
             
             // ✅ Safe access: We now know report.userId exists
-            const MuserId = report.userId.toString(); 
+            const userId = report.userId.toString(); 
 
             // Emit the notification to the user's room
             io.to(MuserId).emit('newNotification', {
@@ -141,6 +141,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Something went wrong!" });
 });
+
 
 
 

@@ -7,7 +7,7 @@ const Report = require("../model/reportsmodel");
  * Utility function to draw a table row
  * @param {PDFDocument} doc - The pdfkit document instance
  * @param {number} y - The starting Y position
- * @param {string} key - The key/label text
+ * @param {string} key - The key/label text (before formatting)
  * @param {string} value - The value text
  * @param {number} keyWidth - Width of the key column
  */
@@ -29,10 +29,13 @@ const drawRow = (doc, y, key, value, keyWidth) => {
     ];
 
     const isImportant = importantFields.includes(key);
+    
+    // 🔑 CORE CHANGE: Replace underscores with spaces for display
+    const formattedKey = key.replace(/_/g, ' ');
 
     // Set font for the Key (Bold if important, normal otherwise)
     doc.font(isImportant ? 'Helvetica-Bold' : 'Helvetica')
-       .text(key, keyX, y, { width: keyWidth, align: 'left' });
+       .text(formattedKey, keyX, y, { width: keyWidth, align: 'left' });
     
     // Draw Value (Normal font for data)
     doc.font('Helvetica').text(value, valueX, y, { width: valueWidth, align: 'left' });

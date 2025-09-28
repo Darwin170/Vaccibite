@@ -39,7 +39,7 @@ const updateReportStatus = async (req, res) => {
 
     // ✅ Conditional check for file upload
     if (file) {
-      report.filePath = `uploads/${file.originalname}`;
+      report.filePath = `/uploads/${req.file.filename}`;
     } else if (newStatus !== "Ongoing") { // Check if a file is required
       // You can add logic here to enforce a file for other statuses
       // For example: return res.status(400).json({ message: "A file is required for this status change" });
@@ -94,6 +94,7 @@ const updateReportStatus = async (req, res) => {
   }
 };
 module.exports = { updateReportStatus, initSocket };
+
 
 
 

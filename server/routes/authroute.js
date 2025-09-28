@@ -33,7 +33,7 @@ const {updateMUser}= require ("../controller/updateMuser");
 const {getOngoingReport}=require("../controller/ongoingcout");
 const {resendOtp}=require("../controller/resend-OTP");
 const {downloadAllReports}= require("../controller/backupPDf");
-const { recordUniqueEventView } = require('../controllers/recordUniqueEventView'); 
+const { recordUniqueEventView } = require('../controller/recordUniqueEventView'); 
 
 const router = express.Router();
 
@@ -74,6 +74,7 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 
 
 

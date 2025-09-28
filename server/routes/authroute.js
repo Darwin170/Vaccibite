@@ -33,9 +33,11 @@ const {updateMUser}= require ("../controller/updateMuser");
 const {getOngoingReport}=require("../controller/ongoingcout");
 const {resendOtp}=require("../controller/resend-OTP");
 const {downloadAllReports}= require("../controller/backupPDf");
+const { recordUniqueEventView } = require('../controllers/recordUniqueEventView'); 
 
 const router = express.Router();
 
+router.post('/events/:id/view', authMiddleware, recordUniqueEventView); 
 router.get("/pdf-backup", downloadAllReports);
 router.post("/resend-otp", resendOtp ); 
 router.put('/updateMUser:id', authMiddleware,updateMUser);
@@ -72,6 +74,7 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 
 
 

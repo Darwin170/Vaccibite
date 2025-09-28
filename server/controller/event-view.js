@@ -1,16 +1,21 @@
-const Event = require('../model/evenandprogram'); // Your Event model
+const Event = require('../model/evenandprogram'); 
+
 
 const getEventViews = async (req, res) => {
-  try {
-    // Count total views for all events
-    // Assuming your Event schema has a field "views" that tracks views per event
-    const events = await Event.find({});
-    const totalViews = events.reduce((acc, event) => acc + (event.views || 0), 0);
+    try {
+        // Fetch all events, selecting ONLY the array that contains the unique user IDs
+        const events = await Event.find({}).select('viewedByMobileUsers');
 
-    res.status(200).json({ count: totalViews });
-  } catch (err) {
-    console.error("Error fetching event views:", err);
-    res.status(500).json({ message: "Server error" });
-  }
+        // Calculate the total unique views by summing the length of the array for each event
+        const totalUniqueMobileViews = events.reduce((acc, event) => {
+            return acc + (event.viewedByMobileUsers ? event.viewedByMobileUsers.length : 0);
+        }, 0);
+
+        res.status(200).json({ count: totalUniqueMobileViews });
+    } catch (err) {
+        console.error("Error fetching event views:", err);
+        res.status(500).json({ message: "Server error" });
+    }
 };
-module.exports={getEventViews}
+
+module.exports = { getEventViews };

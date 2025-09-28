@@ -1,7 +1,7 @@
 
 const Event = require('../model/evenandprogram'); 
 
-exports.recordUniqueEventView = async (req, res) => {
+const recordUniqueEventView = async (req, res) => {
     try {
         const eventId = req.params.id; // Get the ID of the event being viewed
         
@@ -35,3 +35,5 @@ exports.recordUniqueEventView = async (req, res) => {
         res.status(500).json({ message: 'Server error occurred while tracking view.' });
     }
 };
+
+module.exports = { recordUniqueEventView };

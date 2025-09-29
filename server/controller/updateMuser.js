@@ -6,8 +6,8 @@ const ActivityLog = require('../model/Activitylogs');
 const updateMUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, password } = req.body;
-    const updatedData = { name, email, phone };
+    const { fullName, email,  password } = req.body;
+    const updatedData = { fullName, email, password };
     
     
     if (password) {
@@ -39,5 +39,6 @@ const updateMUser = async (req, res) => {
     res.status(500).json({ message: "Failed to update user" });
   }
 };
+
 
 module.exports = { updateMUser };

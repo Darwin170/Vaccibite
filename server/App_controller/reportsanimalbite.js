@@ -78,10 +78,10 @@ const addAnimalBite = async (req, res) => {
 
     await newReport.save();
       const newLog = new ActivityLog({
-       user: req.mobile_user._id, // admin ID
+       user:userIdFromMiddleware, // admin ID
       onModel: req.userType, // <-- The model name
       action: 'User send a report',
-      details: `User ${updatedUser.email} have submitted an animal bite report.`,
+      details: `User ${userIdFromMiddleware} have submitted an animal bite report.`,
     });
     
     await newLog.save();
@@ -104,6 +104,7 @@ const addAnimalBite = async (req, res) => {
 };
 
 module.exports = { addAnimalBite };
+
 
 
 

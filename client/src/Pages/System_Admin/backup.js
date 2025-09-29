@@ -6,8 +6,7 @@ import Sidebar from './Sidebar';
 const BackupReports = () => {
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isDownloading, setIsDownloading] = useState(false); // New state for download status
-
+    const [isDownloading, setIsDownloading] = useState(false); 
     useEffect(() => {
         const fetchReports = async () => {
             try {
@@ -34,13 +33,13 @@ const BackupReports = () => {
         URL.revokeObjectURL(url);
     };
 
-    // New handler function for PDF download
+    
     const handlePDFDownload = async () => {
         setIsDownloading(true);
         try {
             const response = await axios.get(
                 ` ${process.env.REACT_APP_API_URL}/auth/pdf-backup`,
-                { responseType: 'blob' } // Crucial for receiving binary data
+                { responseType: 'blob' } 
             );
             
             const blob = new Blob([response.data], { type: 'application/pdf' });
@@ -73,7 +72,7 @@ const BackupReports = () => {
                         <button 
                             className="backup-download-button" 
                             onClick={handlePDFDownload}
-                            disabled={isDownloading} // Disable while downloading
+                            disabled={isDownloading} 
                         >
                            {isDownloading ? 'Downloading...' : '📄 Download PDF'}
                         </button>
@@ -127,4 +126,5 @@ const BackupReports = () => {
 };
 
 export default BackupReports;
+
 

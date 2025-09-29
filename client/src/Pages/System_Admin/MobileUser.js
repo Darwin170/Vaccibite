@@ -41,8 +41,8 @@ function M_user() {
 
 
   const handleUpdateMUser = async () => {
-    const { fullname, email,  password, barangay } = newUser;
-    if (!fullname || !email || !password || !barangay) return;
+    const { fullName, email,  password, barangay } = newUser;
+    if (!fullName || !email || !password || !barangay) return;
 
     try {
       await axios.put(
@@ -53,7 +53,7 @@ function M_user() {
         }
       );
       setNewUser({
-        fullname: "",
+        fullName: "",
         email: "",
         password: "",
         barangay: "",
@@ -85,7 +85,7 @@ function M_user() {
   const handleEdit = (user) => {
     setEditUserId(user.MuserId);
     setNewUser({
-      name: user.fullname,
+      name: user.fullName,
       email: user.email,
       password: "",
       barangay: user.barangay, 
@@ -119,7 +119,7 @@ function M_user() {
             {users.map((user) => (
               <tr key={user._id}>
                 <td>{user.MuserId}</td>
-                <td>{user.fullname}</td>
+                <td>{user.fullName}</td>
                 <td>{user.email}</td>
                 <td>{getBarangayName(user.barangay)}</td> 
                 <td>
@@ -146,7 +146,7 @@ function M_user() {
               <input
                 type="text"
                 placeholder="Name"
-                value={newUser.name}
+                value={newUser.fullName}
                 onChange={(e) =>
                   setNewUser({ ...newUser, name: e.target.value })
                 }
@@ -157,14 +157,6 @@ function M_user() {
                 value={newUser.email}
                 onChange={(e) =>
                   setNewUser({ ...newUser, email: e.target.value })
-                }
-              />
-              <input
-                type="text"
-                placeholder="Phone"
-                value={newUser.phone}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, phone: e.target.value })
                 }
               />
              <select
@@ -212,5 +204,6 @@ function M_user() {
 }
 
 export default M_user;
+
 
 

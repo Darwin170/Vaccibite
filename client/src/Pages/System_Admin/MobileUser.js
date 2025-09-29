@@ -10,7 +10,7 @@ function M_user() {
   const [editUserId, setEditUserId] = useState(null);
 
   const [newUser, setNewUser] = useState({
-    name: "",
+    fullname: "",
     email: "",
     password: "",
     barangay: "",
@@ -41,8 +41,8 @@ function M_user() {
 
 
   const handleUpdateMUser = async () => {
-    const { FullName, email, phone, password, barangay } = newUser;
-    if (!FullName || !email || !phone || !password || !barangay) return;
+    const { fullname, email,  password, barangay } = newUser;
+    if (!fullname || !email || !password || !barangay) return;
 
     try {
       await axios.put(
@@ -53,7 +53,7 @@ function M_user() {
         }
       );
       setNewUser({
-        FullName: "",
+        fullname: "",
         email: "",
         password: "",
         barangay: "",
@@ -85,7 +85,7 @@ function M_user() {
   const handleEdit = (user) => {
     setEditUserId(user.MuserId);
     setNewUser({
-      name: user.fullName,
+      name: user.fullname,
       email: user.email,
       password: "",
       barangay: user.barangay, 
@@ -119,7 +119,7 @@ function M_user() {
             {users.map((user) => (
               <tr key={user._id}>
                 <td>{user.MuserId}</td>
-                <td>{user.fullName}</td>
+                <td>{user.fullname}</td>
                 <td>{user.email}</td>
                 <td>{getBarangayName(user.barangay)}</td> 
                 <td>
@@ -212,4 +212,5 @@ function M_user() {
 }
 
 export default M_user;
+
 

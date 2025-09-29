@@ -15,18 +15,7 @@ const Login = () => {
   const { user, login } = useAuth();
   const [isLocked, setIsLocked] = useState(false);
 
-  // // This useEffect is only for redirecting users who are already logged in.
-  // useEffect(() => {
-  //   if (user) {
-  //     if (user.role === "System_Admin") {
-  //       navigate("/System_Admin/UserManagement", { replace: true });
-  //     } else if (user.role === "Admin") {
-  //       navigate("/Admin/Dashboard", { replace: true });
-  //     } else if (user.role === "Super_Admin") {
-  //       navigate("/Superadmin/System_Admin", { replace: true });
-  //     }
-  //   }
-  // }, [user, navigate]);
+ 
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -50,7 +39,7 @@ const Login = () => {
 
       const { user, token, msg } = response.data;
 
-      // 1. Save data to local storage and update AuthContext.
+
       if (user && token) {
         localStorage.setItem("token", token);
         localStorage.setItem("user", JSON.stringify(user));
@@ -62,14 +51,14 @@ const Login = () => {
         });
       }
 
-      // 2. CHECK FOR OTP FIRST. If the message includes "OTP", redirect to OTP page.
+    
       if (msg && msg.toLowerCase().includes("otp")) {
         sessionStorage.setItem("pendingEmail", normalizedEmail);
         navigate("/otp");
-        return; // Stop execution here
+        return; 
       }
 
-      // 3. IF NO OTP, THEN REDIRECT TO DASHBOARD.
+ 
       if (user.position === "System_Admin") {
         navigate("/System_Admin/UserManagement", { replace: true });
       } else if (user.position === "Admin") {
@@ -129,4 +118,5 @@ const Login = () => {
 };
 
 export default Login;
+
 

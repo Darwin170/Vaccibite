@@ -138,7 +138,7 @@
   overflow-x: auto;
   max-height: 400px; 
   overflow-y: auto;
-  
+  width:70%;
 }
 
 .report-section table {
@@ -315,6 +315,7 @@
   color: #777;
   font-style: italic;
 }
+
 
 
 

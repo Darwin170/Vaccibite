@@ -8,7 +8,7 @@ const ActivityLogs = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
 
-  // ✅ Refactored fetchLogs to be inside useEffect and pass token
+ 
   useEffect(() => {
     const fetchLogs = async () => {
       try {
@@ -20,7 +20,7 @@ const ActivityLogs = () => {
 
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getLogs`, {
           headers: {
-            Authorization: `Bearer ${token}`, // ✅ ADDED: Pass the token in the header
+            Authorization: `Bearer ${token}`, 
           },
         });
         setLogs(response.data);
@@ -32,7 +32,7 @@ const ActivityLogs = () => {
     fetchLogs();
     const interval = setInterval(fetchLogs, 10000);
     return () => clearInterval(interval);
-  }, []); // Empty dependency array means this runs once on mount
+  }, []); 
 
   const filteredLogs = logs.filter((log) => {
     const userName = log.user?.name?.toLowerCase() || '';
@@ -110,5 +110,6 @@ const ActivityLogs = () => {
     </div>
   );
 };
+
 
 export default ActivityLogs;

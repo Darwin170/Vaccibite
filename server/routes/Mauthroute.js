@@ -19,7 +19,7 @@ const Mrouter = express.Router();
 
 
 // These now save files in /uploads and make them downloadable
-router.post('/track/event-page-click', authMiddleware, recordEventPageClick);
+Mrouter.post('/track/event-page-click', authMiddleware, recordEventPageClick);
 Mrouter.post("/resetPassword",resetPassword);
 Mrouter.post ("/sendotp",sendotp);
 Mrouter.post("/verifyPasswordResetOTP",verifyPasswordResetOTP);
@@ -35,6 +35,7 @@ Mrouter.post('/login',  loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

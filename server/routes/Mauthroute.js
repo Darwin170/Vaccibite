@@ -14,9 +14,12 @@ const {sendotp}= require("../App_controller/otpsend");
 const{verifyPasswordResetOTP }=require("../App_controller/verifyPasswordResetOTP");
 const{resetPassword} =require("../App_controller/resetPassword");
 const {authMiddleware} = require("../middleware/authMiddleware");
+const { recordEventPageClick } = require('../controllers/recordEventPageClick'); 
 const Mrouter = express.Router();
 
+
 // These now save files in /uploads and make them downloadable
+router.post('/track/event-page-click', authMiddleware, recordEventPageClick);
 Mrouter.post("/resetPassword",resetPassword);
 Mrouter.post ("/sendotp",sendotp);
 Mrouter.post("/verifyPasswordResetOTP",verifyPasswordResetOTP);
@@ -32,6 +35,7 @@ Mrouter.post('/login',  loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

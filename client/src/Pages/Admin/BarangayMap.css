@@ -160,7 +160,8 @@
   color: #555;
   position: sticky;
   top: 0; 
-  z-index: 10; 
+  z-index: 10;
+  gap:5%;
 }
 
 .report-section table tbody td {
@@ -314,4 +315,5 @@
   color: #777;
   font-style: italic;
 }
+
 

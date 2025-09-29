@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar"; // ✅ Make sure Sidebar is imported
+import Sidebar from "./Sidebar";
 import "./UserManagement.css";
 
 function System_Admin() {
@@ -188,3 +188,4 @@ function System_Admin() {
 }
 
 export default System_Admin;
+

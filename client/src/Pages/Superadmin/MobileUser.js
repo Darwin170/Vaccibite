@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar"; // ✅ Make sure Sidebar is imported
+import Sidebar from "./Sidebar"; 
 import "./UserManagement.css";
 
 function M_user() {
@@ -212,3 +212,4 @@ function M_user() {
 }
 
 export default M_user;
+

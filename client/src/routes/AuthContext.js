@@ -4,7 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // 👈 ADD THIS LINE
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("user");
       }
     }
-    setLoading(false); // 👈 ADD THIS LINE
+    setLoading(false); 
   }, []);
 
   const login = (userData) => {
@@ -32,9 +32,10 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
-      {loading ? <div>Loading...</div> : children} {/* 👈 ADD THIS LINE */}
+      {loading ? <div>Loading...</div> : children} 
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
+

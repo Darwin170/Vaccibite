@@ -8,14 +8,21 @@ import './ResolutionPage.css';
 function ResolutionPage() {
   const [reports, setReports] = useState([]);
   const [barangays, setBarangays] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(''); // New state for search input
+  const [filterStatus, setFilterStatus] = useState('All'); // New state for status dropdown
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchReportsAndBarangays = async () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/reports`);
-        const filteredReports = res.data.filter(report => report.status === 'Resolved' || report.status === 'Ongoing');
-        setReports(filteredReports);
+        
+        // Filter reports to only include 'Resolved' or 'Ongoing' initially, 
+        // as per your original logic
+        const initialFilteredReports = res.data.filter(
+          report => report.status === 'Resolved' || report.status === 'Ongoing'
+        );
+        setReports(initialFilteredReports);
 
         const barangayRes = await axios.get(`${process.env.REACT_APP_API_URL}/auth/barangays`);
         setBarangays(barangayRes.data);
@@ -41,13 +48,58 @@ function ResolutionPage() {
     }
   };
 
+
+  const getFilteredReports = () => {
+    return reports.filter((report) => {
+      const matchesSearch = report.type.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = 
+        filterStatus === 'All' || report.status === filterStatus;
+      
+      return matchesSearch && matchesStatus;
+    });
+  };
+
+  const displayReports = getFilteredReports();
+  const availableStatuses = ['All', 'Resolved', 'Ongoing']; 
+
+
+
   return (
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div className="resolution-container" style={{ marginLeft: '300px', marginTop: '25px', flex: 1 }}>
         <h2>Report History</h2>
-        {reports.length === 0 ? (
-          <p>No resolved or investigation reports available.</p>
+
+ 
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
+          
+
+          <input
+            type="text"
+            placeholder="Search by Report Type..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', flex: 1 }}
+          />
+
+     
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', minWidth: '150px' }}
+          >
+            <option value="All">Filter by Status (All)</option>
+            {availableStatuses.map(status => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
+        </div>
+        
+
+
+        {displayReports.length === 0 ? (
+          <p>No matching resolved or investigation reports found.</p>
         ) : (
           <table className="resolved-table">
             <thead>
@@ -56,12 +108,12 @@ function ResolutionPage() {
                 <th>Type</th>
                 <th>Barangay</th>
                 <th>Date</th>
-                <th>Status</th> {/* Added a new column for Status */}
+                <th>Status</th> 
                 <th>File</th>
               </tr>
             </thead>
             <tbody>
-              {reports.map((report) => (
+              {displayReports.map((report) => (
                 <tr key={report._id}>
                   <td>{report._id}</td>
                   <td>{report.type}</td>

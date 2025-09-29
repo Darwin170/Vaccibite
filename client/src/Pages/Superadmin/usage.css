@@ -1,13 +1,13 @@
-/* === Usage.css (scoped for Usage.js) === */
+
 
 .usage-container {
   padding: 20px;
-  margin-left: 220px; /* push content away from sidebar */
+  margin-left: 220px; 
   min-height: 100vh;
   background-color: #f5f6fa;
 }
 
-/* Grid layout for charts */
+
 .usage-chart-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -20,7 +20,7 @@
   }
 }
 
-/* Chart cards */
+
 .usage-chart-card {
   background: #fff;
   padding: 20px;
@@ -35,3 +35,4 @@
   margin-bottom: 16px;
   color: #333;
 }
+

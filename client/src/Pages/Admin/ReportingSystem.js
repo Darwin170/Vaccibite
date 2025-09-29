@@ -44,8 +44,9 @@ function ReportingPage() {
             try {
                 // Fetch reports
                 const reportsRes = await axios.get(`${API_URL}/auth/reports`);
-                setReports(reportsRes.data);
-
+                const filteredReports = res.data.filter(report => report.status === 'Pending' );
+        setReports(filteredReports);
+                
                 // Fetch barangays
                 const barangaysRes = await axios.get(`${API_URL}/auth/Barangays`);
                 setBarangays(barangaysRes.data);
@@ -440,7 +441,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                       <td>
                                               {report.filePath ? (
                                                 <a
-                                                  href={report.filePath}
+                                                  href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
                                                   target="_blank"
                                                   rel="noopener noreferrer"
                                                   
@@ -473,6 +474,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

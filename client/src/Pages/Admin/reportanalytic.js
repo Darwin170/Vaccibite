@@ -22,7 +22,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [eventViewsCount, setEventViewsCount] = useState(0);
   const [resolvedReportsCount, setResolvedReportsCount] = useState(0);
-  const [ongoingReportsCount, setOngoingReportsCount] = useState(0); // ✅ new state for ongoing reports
+  const [ongoingReportsCount, setOngoingReportsCount] = useState(0); 
   const [startMonth, setStartMonth] = useState('1');
   const [endMonth, setEndMonth] = useState('12');
   const [status, setStatus] = useState('');
@@ -44,7 +44,6 @@ const Dashboard = () => {
     }
   }, [selectedDistrict, locations, selectedBarangay]);
 
-  // Fetch chart data
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -72,7 +71,7 @@ const Dashboard = () => {
     fetchDashboardData();
   }, [startMonth, endMonth, status, incidentType, selectedDistrict, selectedBarangay]);
 
-  // Fetch barangays
+  
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -86,7 +85,7 @@ const Dashboard = () => {
     fetchLocations();
   }, []);
 
-  // Fetch all report counts on an interval
+  
   useEffect(() => {
     const checkNewReports = async () => {
       try {
@@ -122,7 +121,7 @@ const Dashboard = () => {
       }
     };
 
-    const fetchOngoingReports = async () => { // ✅ New function
+    const fetchOngoingReports = async () => { 
       try {
         const params = {
           startMonth,
@@ -147,18 +146,18 @@ const Dashboard = () => {
       }
     };
 
-    // Initial fetch
+  
     checkNewReports();
     fetchReportsLast28Days();
     fetchResolvedReports();
-    fetchOngoingReports(); // ✅ Call the new function
+    fetchOngoingReports(); 
     fetchEventViews();
 
     const interval = setInterval(() => {
       checkNewReports();
       fetchReportsLast28Days();
       fetchResolvedReports();
-      fetchOngoingReports(); // ✅ Add to the interval refresh
+      fetchOngoingReports(); 
       fetchEventViews();
     }, 10000);
 
@@ -201,7 +200,7 @@ const Dashboard = () => {
       <Sidebar />
       <div className="dashboard-container" style={{ marginLeft: '220px', flex: 1 }}>
 
-        {/* 🔔 Notification button */}
+        
         <div style={{ display: "flex", justifyContent: "flex-end", padding: "10px" }}>
           <button
             onClick={() => navigate("/Admin/Report")}
@@ -225,7 +224,7 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* ✅ Filters */}
+       
         <div className="filters">
           <label>
             Start Month:
@@ -298,9 +297,9 @@ const Dashboard = () => {
         <div className="Summary">
           <p>{getSummaryText()}</p>
         </div>
-        {/*  Charts & Stats Grid */}
+       
         <div className="chart-grid">
-          {/* ✅ Reports in Last 28 Days */}
+          
           <div className="chart-card">
             <h2 className="chart-title">📊 Reports in the Last 28 Days</h2>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
@@ -310,7 +309,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Line Chart */}
+          
           <div className="chart-card">
             <h2 className="chart-title">Reports Over Time</h2>
             {lineData.length > 0 ? (
@@ -338,7 +337,7 @@ const Dashboard = () => {
             </div>
           </div>
           
-          {/* Ongoing Reports */}
+         
           <div className="chart-card">
             <h2 className="chart-title">🚨 Ongoing Reports</h2>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
@@ -348,7 +347,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Event Views */}
+         
           <div className="chart-card">
             <h2 className="chart-title">👁️ Event Views</h2>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
@@ -358,7 +357,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Pie Chart */}
+          
           <div className="chart-card">
             <h2 className="chart-title">Reports by Type</h2>
             {pieData.length > 0 ? (
@@ -391,3 +390,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

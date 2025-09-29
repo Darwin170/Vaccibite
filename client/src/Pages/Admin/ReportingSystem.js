@@ -20,8 +20,8 @@ function ReportingPage() {
     const [error, setError] = useState(null); 
     const [statusUpdateModal, setStatusUpdateModal] = useState(null);
     const [statusUpdateFile, setStatusUpdateFile] = useState(null);
-    const [selectedDetails, setSelectedDetails] = useState(null); // For the "View" modal
-    const [searchTerm, setSearchTerm] = useState(''); // State for the search bar
+    const [selectedDetails, setSelectedDetails] = useState(null); 
+    const [searchTerm, setSearchTerm] = useState(''); 
 
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
@@ -37,7 +37,7 @@ function ReportingPage() {
         categoryDetails: {},
     });
 
-    // --- Data Fetching useEffect ---
+  
     useEffect(() => {
         const fetchAllData = async () => {
             setLoading(true);
@@ -100,7 +100,7 @@ function ReportingPage() {
         setForm((prevForm) => ({ ...prevForm, file: e.target.files[0] }));
     };
 
-    // --- Search Bar Handler ---
+   
     const handleSearchChange = (e) => {
         setSearchTerm(e.target.value);
     };
@@ -118,7 +118,7 @@ function ReportingPage() {
 
       
 
-    // --- Report Actions ---
+   
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this report?')) return;
         try {
@@ -129,7 +129,6 @@ function ReportingPage() {
                 },
                 }
             );
-            // Update reports state by filtering out the deleted one
             setReports((prev) => prev.filter((report) => report._id !== id));
             alert('Report deleted successfully!');
         } catch (error) {
@@ -140,11 +139,11 @@ function ReportingPage() {
 
     const handleStatusUpdate = async (reportId, newStatus,file) => {
         if (newStatus === 'Resolved') {
-            // Open the modal for file upload if status is 'Resolved'
+            
             setStatusUpdateModal({ reportId, newStatus,file });
         } else {
              
-             const file = null; // No file needed for "Pending"
+             const file = null; 
             updateReportStatus(reportId, newStatus, file);
             
         }
@@ -160,7 +159,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
         if (file) {
             const formData = new FormData();
             formData.append("status", newStatus);
-            formData.append("file", file); // ✅ Assuming your server expects 'file' as the key
+            formData.append("file", file);
 
             response = await axios.put(url, formData, {
                 headers: {
@@ -177,7 +176,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
             });
         }
 
-            // Reset modal state
+           
             setStatusUpdateModal(null);
             setStatusUpdateFile(null);
 
@@ -203,7 +202,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
         };
 
    
-    // --- Map View Handler ---
+   
     const handleViewMap = (barangayId) => {
         const barangay = barangays.find((b) => b._id === barangayId);
         if (barangay && barangay.latitude && barangay.longitude) {
@@ -213,9 +212,9 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
         }
     };
 
-    // --- Combined Filtering Logic ---
+    
     const filteredReports = reports.filter((report) => {
-        // 1. Apply Search Term Filter (case-insensitive)
+        
         const lowerCaseSearchTerm = searchTerm.toLowerCase();
         const matchesSearchTerm =
             report.type.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -224,20 +223,20 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
             (report.status && report.status.toLowerCase().includes(lowerCaseSearchTerm)) ||
             (report._id && report._id.toLowerCase().includes(lowerCaseSearchTerm)); // Search by ID too
 
-        // 2. Apply Type Filter
+    
         const matchesType = typeFilter === '' || report.type === typeFilter;
 
-        // 3. Apply District Filter
+        
         const matchesDistrict = districtFilter === '' || (report.district && report.district === districtFilter);
 
-        // 4. Apply Status Filter
+      
         const matchesStatus = statusFilter === '' || report.status === statusFilter;
 
-        // A report must satisfy ALL active filters to be displayed
+        
         return matchesSearchTerm && matchesType && matchesDistrict && matchesStatus;
     });
 
-    // --- Loading and Error States ---
+   
     if (loading) {
         return <div className="loading">Loading reports...</div>;
     }
@@ -246,14 +245,14 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
         return <div className="error-message">{error}</div>;
     }
     
-    // --- Render JSX ---
+ 
     return (
         <div style={{ display: 'flex' }}>
-            <Sidebar /> {/* Your Sidebar Component */}
+            <Sidebar /> 
             <div className="reporting-container" style={{ marginLeft: '220px', flex: 1 }}>
             <div className="actions-bar">
                 
-                    {/* Search Bar Input */}
+                   
                     <div className="search-bar-container">
                         <input
                             type="text"
@@ -264,7 +263,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                         />
                     </div>
 
-                    {/* Filter Dropdowns */}
+                   
                     <div className="filters">
                         <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
                             <option value="">All Types</option>
@@ -275,9 +274,9 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 
                         <select value={districtFilter} onChange={(e) => setDistrictFilter(e.target.value)}>
                             <option value="">All Districts</option>
-                            {/* Populate with unique districts from fetched barangays */}
+                            
                             {Array.from(new Set(barangays.map(b => b.district)))
-                                .sort() // Optional: sort districts alphabetically
+                                .sort() 
                                 .map(districtName => (
                                     <option key={districtName} value={districtName}>{districtName}</option>
                                 ))}
@@ -294,7 +293,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 
               
 
-                {/* --- View Details Modal --- */}
+           
                 {selectedDetails && (
                     <div className="modal-overlay">
                         <div className="modal-content">
@@ -322,7 +321,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                             <hr />
                             <h3>Category Details:</h3>
                             <div>
-                                {/* Render category details based on type */}
+                               
                                 {selectedDetails.type === "Animal Bite" && (
                                     <>
                                         <p><strong>Name of the report:</strong> {selectedDetails.categoryDetails?.Name_of_the_barangay_officer || 'N/A'}</p>
@@ -375,7 +374,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                     </div>
                 )}
 
-                {/* --- Status Update Modal --- */}
+              
                 {statusUpdateModal && (
                     <div className="modal-overlay">
                         <div className="modal-content">
@@ -400,7 +399,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                     </div>
                 )}
 
-                {/* --- Reports Table --- */}
+               
                 <div className="table-wrapper">
                     <table className="reporting-table">
                         <thead>
@@ -474,6 +473,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

@@ -14,7 +14,7 @@ const {sendotp}= require("../App_controller/otpsend");
 const{verifyPasswordResetOTP }=require("../App_controller/verifyPasswordResetOTP");
 const{resetPassword} =require("../App_controller/resetPassword");
 const {authMiddleware} = require("../middleware/authMiddleware");
-const { recordEventPageClick } = require('../controller/recordEventPageClick'); 
+const { recordEventPageClick } = require('../App_controller/recordEventPageClick'); 
 const Mrouter = express.Router();
 
 
@@ -35,6 +35,7 @@ Mrouter.post('/login',  loginUser);
 Mrouter.post('/signup', signupUser);
 
 module.exports = Mrouter;
+
 
 
 

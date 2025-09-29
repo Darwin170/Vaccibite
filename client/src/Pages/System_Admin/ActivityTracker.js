@@ -1,4 +1,4 @@
-// ActivityTracker.js
+
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { logActivity } from "./Activitylogger";
@@ -20,3 +20,4 @@ const ActivityTracker = ({ currentUser }) => {
 };
 
 export default ActivityTracker;
+

@@ -444,7 +444,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                                   href={report.filePath}
                                                   target="_blank"
                                                   rel="noopener noreferrer"
-                                                  download={report.filePath.split('/').pop()} // optional
+                                                  
                                                 >
                                                   {report.filePath.split('/').pop()}
                                                 </a>
@@ -474,6 +474,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

@@ -1,4 +1,4 @@
-// src/Pages/System_Admin/Activitylogger.js
+
 import axios from "axios";
 
 export const logActivity = async (action, details) => {
@@ -23,4 +23,5 @@ export const logActivity = async (action, details) => {
   }
 };
 
-export default logActivity; // optional: keeps compatibility with default import
+export default logActivity; 
+

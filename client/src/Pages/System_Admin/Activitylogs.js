@@ -60,7 +60,7 @@ const ActivityLogs = () => {
             style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
           >
             <option value="All">All Roles</option>
-            <option value="Mobile User">Mobile User</option>
+            <option value="mobile">Mobile User</option>
             <option value="Admin">Admin</option>
             <option value="System_Admin">System Admin</option>
           </select>
@@ -104,4 +104,5 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 

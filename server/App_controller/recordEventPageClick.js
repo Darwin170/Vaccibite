@@ -1,5 +1,5 @@
 const Event = require('../model/evenandprogram'); 
-const ClickLog = require('../model/EventPageClickLog');
+const ClickLog = require('../model/EventPageClicklog');
 
 const recordEventPageClick = async (req, res) => {
     try {

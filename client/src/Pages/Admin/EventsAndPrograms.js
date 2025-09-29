@@ -61,20 +61,20 @@ const CalendarScheduler = () => {
   const [currentView, setCurrentView] = useState("month");
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Fetch barangays with districts
+
   useEffect(() => {
     axios.get(`${API_URL}/auth/Barangays`)
       .then(res => {
         setBarangays(res.data);
 
-        // extract unique districts and sort alphabetically
+     
         const uniqueDistricts = [...new Set(res.data.map(b => b.district))].sort();
         setDistricts(uniqueDistricts);
       })
       .catch(err => console.error("Error fetching barangays:", err));
   }, []);
 
-  // Fetch events from backend
+
   const fetchEvents = useCallback(async () => {
     try {
       const res = await axios.get(`${API_URL}/auth/getAllEvents`);
@@ -93,7 +93,7 @@ const CalendarScheduler = () => {
     fetchEvents();
   }, [fetchEvents]);
 
-  // Create new event
+
   const handleAddEvent = async () => {
     const { title, start, end, details, barangayId } = newEvent;
     if (!title || !start || !end || !details || !barangayId) {
@@ -126,7 +126,7 @@ const CalendarScheduler = () => {
     }
   };
 
-  // Update event
+
   const handleUpdateEvent = async () => {
     if (!editedEvent) return;
 
@@ -156,7 +156,7 @@ const CalendarScheduler = () => {
     }
   };
 
-  // Delete event
+  
   const handleDeleteEvent = async () => {
     if (!selectedEvent) return;
 
@@ -176,7 +176,7 @@ const CalendarScheduler = () => {
     }
   };
 
-  // Format for datetime-local input
+  
   const formatDateForInput = (date) => {
     if (!date) return "";
     const dt = new Date(date);
@@ -190,7 +190,7 @@ const CalendarScheduler = () => {
       <div className="reporting-container" style={{ marginLeft: "220px" }}>
         <button className="add-button" onClick={() => setShowModal(true)}>+ Add Event</button>
 
-        {/* Add Event Modal */}
+        
         {showModal && (
           <div className="modal-overlay">
             <div className="modal">
@@ -203,7 +203,7 @@ const CalendarScheduler = () => {
                 className="input"
               />
 
-              {/* District Dropdown */}
+            
               <label>District:</label>
               <select
                 value={newEvent.district}
@@ -216,7 +216,7 @@ const CalendarScheduler = () => {
                 ))}
               </select>
 
-              {/* Barangay Dropdown */}
+              
               <label>Barangay:</label>
               <select
                 value={newEvent.barangayId}
@@ -262,7 +262,6 @@ const CalendarScheduler = () => {
           </div>
         )}
 
-        {/* Event Details Modal */}
         {selectedEvent && !showEditModal && (
           <div className="modal-overlay">
             <div className="modal">
@@ -290,7 +289,7 @@ const CalendarScheduler = () => {
           </div>
         )}
 
-        {/* Edit Event Modal */}
+
         {showEditModal && editedEvent && (
           <div className="modal-overlay">
             <div className="modal">
@@ -304,7 +303,7 @@ const CalendarScheduler = () => {
                 className="input"
               />
 
-              {/* District Dropdown */}
+              
               <label>District:</label>
               <select
                 value={editedEvent.district || ""}
@@ -317,7 +316,6 @@ const CalendarScheduler = () => {
                 ))}
               </select>
 
-              {/* Barangay Dropdown */}
               <label>Barangay:</label>
               <select
                 value={editedEvent.barangayId}
@@ -380,7 +378,7 @@ const CalendarScheduler = () => {
           </div>
         )}
 
-        {/* Calendar */}
+   
         <div className="calendar-wrapper">
           <Calendar
             localizer={localizer}
@@ -404,4 +402,5 @@ const CalendarScheduler = () => {
 };
 
 export default CalendarScheduler;
+
 

@@ -46,7 +46,7 @@ box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1);
   height: 100vh;
   z-index: 1000;
   padding: 0;
-  width: 240px; /* or whatever your sidebar width is */
+  width: 240px; 
   box-sizing: border-box;
 }
 
@@ -71,5 +71,6 @@ box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 0;
   color:#0a0a0a
 }
+
 
   

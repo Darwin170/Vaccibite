@@ -114,7 +114,7 @@ const MapPage = () => {
     const handleViewMap = (barangayId) => {
         const barangay = barangays.find(b => b._id === barangayId);
         if (barangay && !isNaN(barangay.latitude) && !isNaN(barangay.longitude)) {
-            navigate(`/superior/map?lat=${barangay.latitude}&lng=${barangay.longitude}`);
+            navigate(`/Admin/map?lat=${barangay.latitude}&lng=${barangay.longitude}`);
         } else {
             // Using a custom modal or message box is better than alert
             // For now, we'll use a simple alert as a placeholder
@@ -294,3 +294,4 @@ const MapPage = () => {
 };
 
 export default MapPage;
+

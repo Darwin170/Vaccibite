@@ -19,13 +19,28 @@ const drawRow = (doc, y, key, value, keyWidth) => {
     const valueWidth = docWidth - keyWidth - 20;
 
     // Set font for content
-    doc.fontSize(10);
+    doc.fontSize(12);
     
     // 🔑 IMPORTANT FIELDS LIST: Fields to display as bold
     const importantFields = [
         "Name_of_the_barangay_officer",
         "Name_Of_the_bitten_Person",
-        "location_of_bite"
+        "location_of_bite",
+        "barangayId",
+        "animalType",
+        "color",
+        "size",
+        "location",
+        "street",
+        "age",
+        "gender",
+        "severity",
+        "caughtStatus",
+        "breed",
+        "Time",
+        "bahavior",
+        "reportDate",
+        "Special",
     ];
 
     const isImportant = importantFields.includes(key);
@@ -34,6 +49,19 @@ const drawRow = (doc, y, key, value, keyWidth) => {
     const displayMap = {
         "barangayId": "Barangay",
         "animalType": "Animal Type",
+        "color":"Color",
+        "size": "Size",
+        "age":"Age",
+        "gender":"Gender",
+        "severity":"Severity",
+        "caughtStatus":"Caught Status",
+        "bahavior": "Behavior",
+        "breed":"Breed",
+        "reportDate": "Report Date",
+        "location_of_bite" : "Location Of Bite",
+        "street":"Street",
+        "Name_Of_the_bitten_Person": "Name Of The Bitten Person",
+        "Name_of_the_barangay_officer":" Name Of The Barangay Officer"
     };
     
     // 🔑 CORE CHANGE: Format the key for display
@@ -41,11 +69,11 @@ const drawRow = (doc, y, key, value, keyWidth) => {
 
 
     // Set font for the Key (Bold if important, normal otherwise)
-    doc.font(isImportant ? 'Helvetica-Bold' : 'Helvetica')
+    doc.font(isImportant ? 'Verdana-Bold' : 'Verdana')
        .text(formattedKey, keyX, y, { width: keyWidth, align: 'left' });
     
     // Draw Value (Normal font for data)
-    doc.font('Helvetica').text(value, valueX, y, { width: valueWidth, align: 'left' });
+    doc.font('Verdana-Bold').text(value, valueX, y, { width: valueWidth, align: 'left' });
 
     // Return the new Y position (reduced spacing now that the line is gone)
     return y + 16; 
@@ -82,7 +110,7 @@ const downloadReport = async (req, res) => {
 
     if (fs.existsSync(logoPath)) {
         // Place image on the left side, slightly lower than top margin (50)
-        doc.image(logoPath, 50, 40, { width: 60 }); 
+        doc.image(logoPath, 50, 40, { width: 60, height: 80}); 
         doc.moveDown(1.5); // Move down to clear the logo area
     } else {
         doc.moveDown(0.5); // Maintain some top spacing if no logo
@@ -91,14 +119,14 @@ const downloadReport = async (req, res) => {
     // --- END: Logo in Header Section ---
     
     // 🔑 FONT FAMILY: Set the default font for the document
-    doc.font('Helvetica'); 
+    doc.font('Verdana-Bold'); 
     
     // Report title
-    doc.fontSize(20).font('Helvetica-Bold').text("Incident Report", { align: "center" });
+    doc.fontSize(20).font('Aptos-Bold').text("Incident Report", { align: "center" });
     doc.moveDown();
 
     // Category
-    doc.fontSize(14).font('Helvetica').text(`Category: ${report.type}`); 
+    doc.fontSize(12).font('').text(`Category: ${report.type}`); 
     doc.moveDown(0.5);
 
     // 🔑 Barangay Name Logic
@@ -108,7 +136,7 @@ const downloadReport = async (req, res) => {
         : (report.barangayId ? `ID: ${report.barangayId._id || report.barangayId}` : 'N/A');
     
     // 🔑 FIX 2: Using the correct variable name (barangayName)
-    doc.fontSize(14).font('Helvetica-Bold').text(`Barangay: ${barangayName}`);
+    doc.fontSize(12).font('Verdana-Bold').text(`Barangay: ${barangayName}`);
     doc.moveDown(1); // Add extra space before table starts
 
     // ------------------------------------
@@ -202,5 +230,6 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+
 
 

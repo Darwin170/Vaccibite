@@ -12,7 +12,6 @@ import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// Fix for default marker icon issues with Webpack using modern import syntax
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: markerIcon2x,
@@ -20,18 +19,17 @@ L.Icon.Default.mergeOptions({
     shadowUrl: markerShadow,
 });
 
-// A hook to parse URL query parameters
+
 const useQuery = () => new URLSearchParams(useLocation().search);
 
-// A component to handle map size invalidation.
-// This is crucial for fixing the fragmented tile issue after the component is rendered.
+
 const MapInitializer = () => {
     const map = useMap();
     useEffect(() => {
-        // Invalidate the map size after the component mounts to ensure it renders correctly
+      
         map.invalidateSize();
 
-        // Also add a resize listener to handle window resizing
+        
         const handleResize = () => {
             map.invalidateSize();
         };
@@ -42,11 +40,11 @@ const MapInitializer = () => {
     return null;
 };
 
-// A component to fly to a specific location on the map
+
 const FlyToLocation = ({ lat, lng }) => {
     const map = useMap();
     useEffect(() => {
-        // Only fly if coordinates are valid numbers
+       
         if (!isNaN(lat) && !isNaN(lng)) {
             map.flyTo([lat, lng], 16, { animate: true, duration: 1.5 });
         }
@@ -54,7 +52,7 @@ const FlyToLocation = ({ lat, lng }) => {
     return null;
 };
 
-// Function to determine the color of the circle based on report types
+
 const getBarangayColor = (reportsInBarangay) => {
     const hasBite = reportsInBarangay.some(r => r.type === 'Animal Bite');
     const hasMissing = reportsInBarangay.some(r => r.type === 'Missing Animal');
@@ -74,7 +72,7 @@ const MapPage = () => {
 
     const [barangays, setBarangays] = useState([]);
     const [reports, setReports] = useState([]);
-    const [loading, setLoading] = useState(true); // Set to true initially
+    const [loading, setLoading] = useState(true); 
     const [typeFilter, setTypeFilter] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState(null);
@@ -86,13 +84,13 @@ const MapPage = () => {
             setLoading(true);
             setError(null);
             try {
-                // Fetch both barangays and reports in parallel for efficiency
+               
                 const [barangayRes, reportsRes] = await Promise.all([
                     axios.get(`${API_URL}/auth/Barangays`),
                     axios.get(`${API_URL}/auth/reports`)
                 ]);
 
-                // Map the reports to include the barangay name for easier filtering and display
+      
                 const fetchedBarangays = barangayRes.data;
                 const reportsWithBarangayName = reportsRes.data.map(report => {
                     const barangay = fetchedBarangays.find(b => b._id === report.barangayId);
@@ -109,22 +107,21 @@ const MapPage = () => {
             }
         };
         fetchData();
-    }, []); // Empty dependency array to run only once on component mount
+    }, []);
 
     const handleViewMap = (barangayId) => {
         const barangay = barangays.find(b => b._id === barangayId);
         if (barangay && !isNaN(barangay.latitude) && !isNaN(barangay.longitude)) {
             navigate(`/Admin/map?lat=${barangay.latitude}&lng=${barangay.longitude}`);
         } else {
-            // Using a custom modal or message box is better than alert
-            // For now, we'll use a simple alert as a placeholder
+           
             alert("Barangay location not found or invalid coordinates.");
         }
     };
 
     const filteredReports = reports.filter((report) => {
         const lowerCaseSearchTerm = searchTerm.toLowerCase();
-        // Use the pre-populated barangayName for search
+        
         const matchesSearchTerm =
             report._id.toLowerCase().includes(lowerCaseSearchTerm) ||
             report.type.toLowerCase().includes(lowerCaseSearchTerm) ||
@@ -189,9 +186,9 @@ const MapPage = () => {
                             />
 
                             {barangays.map((brgy) => {
-                                // Filter reports for the current barangay
+                                
                                 const reportsInThisBarangay = filteredReports.filter(r => r.barangayId === brgy._id);
-                                if (reportsInThisBarangay.length === 0) return null; // Don't render anything if no reports match filters
+                                if (reportsInThisBarangay.length === 0) return null; 
 
                                 const color = getBarangayColor(reportsInThisBarangay);
 
@@ -294,6 +291,7 @@ const MapPage = () => {
 };
 
 export default MapPage;
+
 
 
 

@@ -9,23 +9,10 @@ const OtpVerification = () => {
   const [message, setMessage] = useState("");
   const [cooldown, setCooldown] = useState(0);
   const navigate = useNavigate();
-  const { user, login } = useAuth(); // Import `login` to update state on successful resend
+  const { user, login } = useAuth(); 
   const email = sessionStorage.getItem("pendingEmail");
 
-  // useEffect(() => {
-  //   // Navigate only after the user object is successfully updated in AuthContext.
-  //   if (user) {
-  //     if (user.role === "System_Admin") {
-  //       navigate("/System_Admin/UserManagement", { replace: true });
-  //     } else if (user.role === "Admin") {
-  //       navigate("/Admin/Dashboard", { replace: true });
-  //     } else if (user.role === "Super_Admin") {
-  //       navigate("/Superadmin/System_Admin", { replace: true });
-  //     } else {
-  //       navigate("/");
-  //     }
-  //   }
-  // }, [user, navigate]);
+  
 
   const handleVerify = async (e) => {
     e.preventDefault();

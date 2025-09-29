@@ -44,7 +44,7 @@ function ReportingPage() {
             try {
                 // Fetch reports
                 const reportsRes = await axios.get(`${API_URL}/auth/reports`);
-                const filteredReports = res.data.filter(report => report.status === 'Pending' );
+                const filteredReports = reportsRes.data.filter(report => report.status === 'Pending' );
         setReports(filteredReports);
                 
                 // Fetch barangays
@@ -474,6 +474,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

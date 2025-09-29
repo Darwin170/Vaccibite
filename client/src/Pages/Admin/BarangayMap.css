@@ -124,7 +124,7 @@
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%; /* Ensure it fills the container */
+  width: flex%; /* Ensure it fills the container */
   box-sizing: border-box;
 }
 
@@ -315,6 +315,7 @@
   color: #777;
   font-style: italic;
 }
+
 
 
 

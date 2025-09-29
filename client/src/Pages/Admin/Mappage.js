@@ -256,7 +256,7 @@ const MapPage = () => {
                                                 <td>{report.reportId}</td>
                                                 <td>{report.type}</td>
                                                 <td>
-                                                    {report.barangayName}<br>
+                                                    {report.barangayName}<br/>
                                                     <button
                                                         onClick={() => handleViewMap(report.barangayId)}
                                                         className="view-map-btn"
@@ -294,6 +294,7 @@ const MapPage = () => {
 };
 
 export default MapPage;
+
 
 
 

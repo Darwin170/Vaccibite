@@ -3,6 +3,7 @@ const User = require('../model/M_user');
 const jwt = require('jsonwebtoken'); 
 const OTP = require("../model/MOPT");
 const nodemailer = require("nodemailer");
+const ActivityLog = require("../model/Activitylogs");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -35,6 +36,13 @@ const loginUser = async (req, res) => {
             { upsert: true, new: true }
         );
 
+        const newLog = new ActivityLog({
+      user: user._id,
+      onModel: "Mobile_User",
+      action: "User Logged In",
+      details: `User ${user.email} successfully logged in.`,
+    });
+    await newLog.save();
         // Send OTP email
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
@@ -62,6 +70,7 @@ const loginUser = async (req, res) => {
 
 
 module.exports = { loginUser };
+
 
 
 

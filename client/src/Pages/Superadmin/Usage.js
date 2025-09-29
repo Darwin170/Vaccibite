@@ -25,7 +25,7 @@ function Usage() {
     try {
       const { data: logs } = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getLogs`);
 
-      // Count usage by position directly from logs
+      
       const counts = {};
       logs.forEach((log) => {
         const position = log.user?.position || "Unknown";
@@ -54,7 +54,7 @@ function Usage() {
         <h1 className="text-2xl font-bold mb-6">Usage by Position</h1>
 
         <div className="usage-chart-grid">
-          {/* Line Graph */}
+        
           <div className="usage-chart-card">
             <h2 className="usage-chart-title">Usage by Position (Line Graph)</h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -76,7 +76,7 @@ function Usage() {
             </ResponsiveContainer>
           </div>
 
-          {/* Pie Chart */}
+       
           <div className="usage-chart-card">
             <h2 className="usage-chart-title">Usage by Position (Pie Chart)</h2>
             <ResponsiveContainer width="100%" height={300}>
@@ -106,3 +106,4 @@ function Usage() {
 }
 
 export default Usage;
+

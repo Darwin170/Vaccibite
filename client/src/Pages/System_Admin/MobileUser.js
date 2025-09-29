@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar"; // ✅ Make sure Sidebar is imported
+import Sidebar from "./Sidebar"; 
 import "./UserManagement.css";
 
 function M_user() {
   const [users, setUsers] = useState([]);
-  const [barangays, setBarangays] = useState([]); // ✅ Barangay list
+  const [barangays, setBarangays] = useState([]); 
   const [showAddMUserModal, setShowAddMUserModal] = useState(false);
   const [editUserId, setEditUserId] = useState(null);
 
@@ -88,12 +88,12 @@ function M_user() {
       name: user.fullName,
       email: user.email,
       password: "",
-      barangay: user.barangay, // assuming this is the barangayId
+      barangay: user.barangay, 
     });
     setShowAddMUserModal(true);
   };
 
-  // ✅ Helper function to get barangay name from its ID
+
   const getBarangayName = (barangayId) => {
     const brgy = barangays.find((b) => b._id === barangayId);
     return brgy ? brgy.name : "Unknown";
@@ -212,3 +212,4 @@ function M_user() {
 }
 
 export default M_user;
+

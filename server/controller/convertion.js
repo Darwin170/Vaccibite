@@ -140,9 +140,9 @@ const downloadReport = async (req, res) => {
 
         if (fs.existsSync(logoPath)) {
             // Place image on the left side, slightly lower than top margin (50)
-            doc.image(logoPath, 50, 40, { width: 80, height: 80}); 
+            doc.image(logoPath, 50, 50, { width: 80, height: 80}); 
             // Reset cursor Y position after image insertion for text to start below
-            doc.y = 130; 
+            doc.y = 100; 
         } else {
             doc.moveDown(0.5); // Maintain some top spacing if no logo
             console.warn("PDF generation warning: Logo image not found at expected path.");
@@ -265,4 +265,5 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+
 

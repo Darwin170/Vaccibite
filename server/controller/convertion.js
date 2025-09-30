@@ -140,7 +140,7 @@ const downloadReport = async (req, res) => {
 
         if (fs.existsSync(logoPath)) {
             // Place image on the left side, slightly lower than top margin (50)
-            doc.image(logoPath, 50, 40, { width: 60, height: 80}); 
+            doc.image(logoPath, 50, 40, { width: 80, height: 80}); 
             // Reset cursor Y position after image insertion for text to start below
             doc.y = 130; 
         } else {
@@ -265,3 +265,4 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+

@@ -32,7 +32,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet());
-
+app.use(helmet.frameguard({ action: 'sameorigin' }));
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -141,6 +141,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ error: "Something went wrong!" });
 });
+
 
 
 

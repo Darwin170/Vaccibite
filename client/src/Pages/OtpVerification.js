@@ -47,7 +47,7 @@ const OtpVerification = () => {
       } else if (user.position === "Admin") {
         navigate("/Admin/Dashboard", { replace: true });
       } else if (user.position === "Super_Admin") {
-        navigate("/Superadmin/System_Admin", { replace: true });
+        navigate("/Superadmin/SystemAdmin", { replace: true });
       } else {
         setMessage("Account has been deactivated or role not recognized.");
       }

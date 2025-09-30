@@ -69,11 +69,11 @@ const drawRow = (doc, y, key, value, keyWidth) => {
 
 
     // Set font for the Key (Bold if important, normal otherwise)
-    doc.font(isImportant ? 'Verdana-Bold' : 'Verdana')
+    doc.font(isImportant ? 'Helvetica-Bold' : 'Helvetica')
        .text(formattedKey, keyX, y, { width: keyWidth, align: 'left' });
     
     // Draw Value (Normal font for data)
-    doc.font('Verdana-Bold').text(value, valueX, y, { width: valueWidth, align: 'left' });
+    doc.font('Helvetica-Bold').text(value, valueX, y, { width: valueWidth, align: 'left' });
 
     // Return the new Y position (reduced spacing now that the line is gone)
     return y + 16; 
@@ -119,10 +119,10 @@ const downloadReport = async (req, res) => {
     // --- END: Logo in Header Section ---
     
     // 🔑 FONT FAMILY: Set the default font for the document
-    doc.font('Verdana-Bold'); 
+    doc.font('Helvetica-Bold'); 
     
     // Report title
-    doc.fontSize(20).font('Aptos-Bold').text("Incident Report", { align: "center" });
+    doc.fontSize(20).font('Helvetica-Bold').text("Incident Report", { align: "center" });
     doc.moveDown();
 
     // Category
@@ -136,7 +136,7 @@ const downloadReport = async (req, res) => {
         : (report.barangayId ? `ID: ${report.barangayId._id || report.barangayId}` : 'N/A');
     
     // 🔑 FIX 2: Using the correct variable name (barangayName)
-    doc.fontSize(12).font('Verdana-Bold').text(`Barangay: ${barangayName}`);
+    doc.fontSize(12).font('Helvetica-Bold').text(`Barangay: ${barangayName}`);
     doc.moveDown(1); // Add extra space before table starts
 
     // ------------------------------------
@@ -230,6 +230,7 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+
 
 
 

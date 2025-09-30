@@ -126,7 +126,7 @@ const downloadReport = async (req, res) => {
     doc.moveDown();
 
     // Category
-    doc.fontSize(12).font('').text(`Category: ${report.type}`); 
+    doc.fontSize(12).font('Helvetica').text(`Category: ${report.type}`); 
     doc.moveDown(0.5);
 
     // 🔑 Barangay Name Logic
@@ -230,6 +230,7 @@ const downloadReport = async (req, res) => {
 };
 
 module.exports = { downloadReport };
+
 
 
 

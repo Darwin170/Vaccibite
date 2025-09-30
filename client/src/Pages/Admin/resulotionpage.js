@@ -115,7 +115,7 @@ function ResolutionPage() {
             <tbody>
               {displayReports.map((report) => (
                 <tr key={report._id}>
-                  <td>{report._id}</td>
+                  <td>{report.reportId}</td>
                   <td>{report.type}</td>
                   <td>
                     {getBarangayName(report.barangayId)}
@@ -155,3 +155,4 @@ function ResolutionPage() {
 }
 
 export default ResolutionPage;
+

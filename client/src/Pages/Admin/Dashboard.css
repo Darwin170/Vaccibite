@@ -46,8 +46,8 @@
   
   .chart-card {
     background-color: #ffffff;
-    padding: 20px;
-    margin-left: 20px;
+    padding: 2px;
+    margin-left: 10px;
   }
   
   .chart-title {
@@ -61,6 +61,7 @@
     font-weight: bold;
   }
   
+
 
 
 

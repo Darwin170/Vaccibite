@@ -299,7 +299,7 @@ const Dashboard = () => {
         </div>
        
         <div className="chart-grid">
-          
+           <div className="NumAnal">
           <div className="chart-card">
             <h2 className="chart-title">📊 Reports in the Last 28 Days</h2>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
@@ -338,6 +338,7 @@ const Dashboard = () => {
               </span>
             </div>
           </div>
+                </div>
 
           <div className="chart-card">
             <h2 className="chart-title">Reports Over Time</h2>
@@ -389,6 +390,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

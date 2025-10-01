@@ -303,7 +303,7 @@ const Dashboard = () => {
           <div className="chart-card">
             <h2 className="chart-title">📊 Reports in the Last 28 Days</h2>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
-              <span style={{ fontSize: "2rem", fontWeight: "bold", color: "#2563eb" }}>
+              <span style={{ fontSize: "90px", fontWeight: "bold", color: "#2563eb" }}>
                 {reportsLast28Days}
               </span>
             </div>
@@ -390,4 +390,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 

@@ -50,7 +50,7 @@ const ActivityLogs = () => {
 
   return (
     <div className="Activity">
-      <Sidebar />
+      <Sidebar/>
       <div style={{ marginLeft: "250px", padding: "20px" }}>
         <h2>Activity Logs</h2>
 
@@ -86,8 +86,8 @@ const ActivityLogs = () => {
           </thead>
           <tbody>
             {filteredLogs.length > 0 ? (
-              filteredLogs.map((log, index) => (
-                <tr key={index}>
+              filteredLogs.map((log) => (
+                <tr key={log._id || log.timestamp}>
                   <td className="tableCells">
                     {new Date(log.timestamp).toLocaleString()}
                 </td>
@@ -113,3 +113,4 @@ const ActivityLogs = () => {
 
 
 export default ActivityLogs;
+

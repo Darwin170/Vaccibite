@@ -27,7 +27,13 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,  
     ref: 'Barangays',                      
     required: true
-  }
+  },
+   position: {
+        type: String,
+        enum: ['Barangay Presentative'], // Ensures the only possible role is 'mobile'
+        default: 'mobile',
+    }
+},
 
 }, {
   timestamps: true
@@ -36,4 +42,5 @@ const userSchema = new mongoose.Schema({
 const M_User = mongoose.model('Mobile_User', userSchema);
 
 module.exports = M_User;
+
 

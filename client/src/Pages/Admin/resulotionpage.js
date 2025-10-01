@@ -72,7 +72,7 @@ function ResolutionPage() {
         <h2>Report History</h2>
 
  
-        <<div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
           
           <input
             type="text"
@@ -156,6 +156,7 @@ function ResolutionPage() {
 }
 
 export default ResolutionPage;
+
 
 
 

@@ -83,16 +83,20 @@ function ResolutionPage() {
             style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', flex: 1 }}
           />
 
-     
+     <label htmlFor="status-filter">Filter by Status:</label>
+          
           <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', minWidth: '150px' }}
+             {/* 2. Add an 'id' attribute matching the label's 'for' attribute */}
+             id="status-filter"
+             value={filterStatus}
+             onChange={(e) => setFilterStatus(e.target.value)}
+             style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', minWidth: '150px' }}
           >
-            <option value="All">Filter by Status (All)</option>
-            {availableStatuses.map(status => (
-              <option key={status} value={status}>{status}</option>
-            ))}
+             {/* 3. Update the default option to be less redundant with the new label */}
+             <option value="All">All</option>
+             {availableStatuses.map(status => (
+                <option key={status} value={status}>{status}</option>
+             ))}
           </select>
         </div>
         
@@ -155,4 +159,5 @@ function ResolutionPage() {
 }
 
 export default ResolutionPage;
+
 

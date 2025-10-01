@@ -72,33 +72,30 @@ function ResolutionPage() {
         <h2>Report History</h2>
 
  
-        <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
-          
+        <<div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
+          
+          <input
+            type="text"
+            placeholder="Search by Report Type..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', flex: 1 }}
+          />
 
-          <input
-            type="text"
-            placeholder="Search by Report Type..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', flex: 1 }}
-          />
-
-     <label htmlFor="status-filter">Filter by Status:</label>
-          
-          <select
-             {/* 2. Add an 'id' attribute matching the label's 'for' attribute */}
-             id="status-filter"
-             value={filterStatus}
-             onChange={(e) => setFilterStatus(e.target.value)}
-             style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', minWidth: '150px' }}
-          >
-             {/* 3. Update the default option to be less redundant with the new label */}
-             <option value="All">All</option>
-             {availableStatuses.map(status => (
-                <option key={status} value={status}>{status}</option>
-             ))}
-          </select>
-        </div>
+          <label htmlFor="status-filter">Filter by Status:</label>
+          
+          <select
+             id="status-filter"
+             value={filterStatus}
+             onChange={(e) => setFilterStatus(e.target.value)}
+             style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', minWidth: '150px' }}
+          >
+             <option value="All">All</option>
+             {availableStatuses.map(status => (
+                <option key={status} value={status}>{status}</option>
+             ))}
+          </select>
+        </div>
         
 
 
@@ -159,5 +156,6 @@ function ResolutionPage() {
 }
 
 export default ResolutionPage;
+
 
 

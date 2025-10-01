@@ -4,7 +4,7 @@
   
   .dashboard-container {
     margin-left: 220px;
-    padding: 100px;
+    padding: 30px;
     flex-grow: 1;
     background-color: #ffffff4b;
     min-height: 100vh;
@@ -58,4 +58,5 @@
     font-weight: bold;
   }
   
+
 

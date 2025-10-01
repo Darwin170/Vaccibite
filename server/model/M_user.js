@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
         enum: ['Barangay Presentative'], // Ensures the only possible role is 'mobile'
         default: 'mobile',
     }
-},
+
 
 }, {
   timestamps: true
@@ -42,5 +42,6 @@ const userSchema = new mongoose.Schema({
 const M_User = mongoose.model('Mobile_User', userSchema);
 
 module.exports = M_User;
+
 
 

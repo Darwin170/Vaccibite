@@ -30,13 +30,14 @@
 
 .resolved-table th {
   background-color: #ffffff;
-  border: 1px;
+  border-radius: 3px;
   color: #2d3748;
   font-weight: 600;
 }
 
 .resolved-table tr:hover {
-  background-color: #f1f5f9;
+  background-color: #ffffff;
+  border: 3px;
 }
 
 .view-map-btn {
@@ -68,4 +69,5 @@ p {
   text-align: center;
   color: #718096;
 }
+
 

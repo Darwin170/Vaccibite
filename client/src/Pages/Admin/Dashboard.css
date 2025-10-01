@@ -49,7 +49,11 @@
   .chart-card {
     background-color: #ffffff;
     padding: 60px;
+    padding-top:20px;
+    padding-bottom:20px;
+    border-radius:10px;
     margin-left: 10px;
+    
   }
   
   .chart-title {
@@ -63,6 +67,7 @@
     font-weight: bold;
   }
   
+
 
 
 

@@ -29,7 +29,8 @@
 }
 
 .resolved-table th {
-  background-color: #edf2f7;
+  background-color: #ffffff;
+  border: 1px;
   color: #2d3748;
   font-weight: 600;
 }
@@ -67,3 +68,4 @@ p {
   text-align: center;
   color: #718096;
 }
+

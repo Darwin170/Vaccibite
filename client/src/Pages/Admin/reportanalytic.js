@@ -298,7 +298,7 @@ const Dashboard = () => {
           <p>{getSummaryText()}</p>
         </div>
        
-        <div className="chart-grid">
+        
            <div className="NumAnal">
           <div className="chart-card">
             <h2 className="chart-title">📊 Reports in the Last 28 Days</h2>
@@ -339,7 +339,7 @@ const Dashboard = () => {
             </div>
           </div>
                 </div>
-
+<div className="chart-grid">
           <div className="chart-card">
             <h2 className="chart-title">Reports Over Time</h2>
             {lineData.length > 0 ? (
@@ -390,6 +390,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

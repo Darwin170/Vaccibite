@@ -3,114 +3,131 @@ import axios from 'axios';
 import './Activitylogs.css';
 import Sidebar from './Sidebar';
 
+const roleOptions = [
+    { value: 'All', label: 'All Roles' },
+    { value: 'Mobile User', label: 'Mobile User' },
+    { value: 'Admin', label: 'Admin' },
+    { value: 'System_Admin', label: 'System Admin' },
+];
+
 const ActivityLogs = () => {
-  const [logs, setLogs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState('All');
+    const [logs, setLogs] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [roleFilter, setRoleFilter] = useState('All');
+    const [isLoading, setIsLoading] = useState(true); 
+    const [error, setError] = useState(null);       
 
- 
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No token found. User is not authenticated.');
-          return;
-        }
+    useEffect(() => {
+        const fetchLogs = async () => {
+            setIsLoading(true); 
+            setError(null);
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('No token found. User is not authenticated.');
+                    setError('Authentication token missing. Please log in.');
+                    setIsLoading(false);
+                    return;
+                }
 
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getLogs`, {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-        });
-        setLogs(response.data);
-      } catch (error) {
-        console.error('Error fetching logs:', error);
-      }
-    };
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getLogs`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setLogs(response.data);
+            } catch (err) {
+                console.error('Error fetching logs:', err);
+             
+                setError('Failed to fetch activity logs. Check your network or server status.');
+            } finally {
+                setIsLoading(false); 
+            }
+        };
 
-    fetchLogs();
-    const interval = setInterval(fetchLogs, 10000);
-    return () => clearInterval(interval);
-  }, []); 
+        fetchLogs();
+        const interval = setInterval(fetchLogs, 10000);
+        return () => clearInterval(interval);
+    }, []);
 
-  const filteredLogs = logs.filter((log) => {
-    const userName = log.user?.name?.toLowerCase() || '';
-    const userPosition = log.user?.position || '';
-    const action = log.action?.toLowerCase() || '';
+    const filteredLogs = logs.filter((log) => {
+        const userName = log.user?.name?.toLowerCase() || '';
+        const userPosition = log.user?.position || '';
+        const action = log.action?.toLowerCase() || '';
 
-    const matchesSearch =
-      userName.includes(searchTerm.toLowerCase()) ||
-      action.includes(searchTerm.toLowerCase());
+        const matchesSearch =
+            userName.includes(searchTerm.toLowerCase()) ||
+            action.includes(searchTerm.toLowerCase());
 
-    const matchesRole = roleFilter === 'All' || userPosition === roleFilter;
+        const matchesRole = roleFilter === 'All' || userPosition === roleFilter;
 
-    return matchesSearch && matchesRole;
-  });
+        return matchesSearch && matchesRole;
+    });
 
-  return (
-    <div className="Activity">
-      <Sidebar/>
-      <div style={{ marginLeft: "250px", padding: "20px" }}>
-        <h2>Activity Logs</h2>
+    return (
+        <div className="Activity">
+            <Sidebar /><div style={{ marginLeft: "250px", padding: "20px" }}>
+                <h2>Activity Logs</h2>
+                {error && <p style={{ color: 'red', marginBottom: '15px' }}>Error: {error}</p>}
 
-        <div className="controls" style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
-          <input
-            type="text"
-            placeholder="Search by username or action..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ padding: '8px', width: '250px', borderRadius: '5px', border: '1px solid #ccc' }}
-          />
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
-          >
-            <option value="All">All Roles</option>
-            <option value="Mobile User">Mobile User</option>
-            <option value="Admin">Admin</option>
-            <option value="System_Admin">System Admin</option>
-          </select>
-        </div>
+                {isLoading ? (
+                    <p>Loading activity logs...</p>
+                ) : (
+                    <>
+                        <div className="controls" style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+                            <input
+                                type="text"
+                                placeholder="Search by username or action..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ padding: '8px', width: '250px', borderRadius: '5px', border: '1px solid #ccc' }}
+                            />
+                            <select
+                                value={roleFilter}
+                                onChange={(e) => setRoleFilter(e.target.value)}
+                                style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
+                            >
+                                {roleOptions.map((option) => (
+                                    <option key={option.value} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
-        <table className="tables">
-          <thead>
-            <tr>
-              <th className="tableHeaders">Timestamp</th>
-              <th className="tableHeaders">Username</th>
-              <th className="tableHeaders">Position</th>
-              <th className="tableHeaders">Action</th>
-              <th className="tableHeaders">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLogs.length > 0 ? (
-              filteredLogs.map((log) => (
-                <tr key={log._id || log.timestamp}>
-                  <td className="tableCells">
-                    {new Date(log.timestamp).toLocaleString()}
-                </td>
-                <td className="tableCells">{log.user?.name || 'N/A'}</td>
-                <td className="tableCells">{log.user?.position || 'N/A'}</td>
-                <td className="tableCells">{log.action}</td>
-                <td className="tableCells">{log.details || 'N/A'}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td className="tableCells" colSpan="5" style={{ textAlign: 'center' }}>
-                No matching logs found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      </div>
-    </div>
-  );
+                        <table className="tables">
+                            <thead>
+                                <tr>
+                                    <th className="tableHeaders">Timestamp</th>
+                                    <th className="tableHeaders">Username</th>
+                                    <th className="tableHeaders">Position</th>
+                                    <th className="tableHeaders">Action</th>
+                                    <th className="tableHeaders">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredLogs.length > 0 ? (
+                                    filteredLogs.map((log, index) => (
+                                        <tr key={log.timestamp || index}> 
+                                            <td className="tableCells">
+                                                {new Date(log.timestamp).toLocaleString()}
+                                            </td><td className="tableCells">{log.user?.name || 'N/A'}</td><td className="tableCells">{log.user?.position || 'N/A'}</td><td className="tableCells">{log.action}</td><td className="tableCells">{log.details || 'N/A'}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td className="tableCells" colSpan="5" style={{ textAlign: 'center' }}>
+                                            No matching logs found.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </>
+                )}
+            </div>
+        </div>
+    );
 };
 
-
 export default ActivityLogs;
-

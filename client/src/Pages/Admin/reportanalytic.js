@@ -311,24 +311,6 @@ const Dashboard = () => {
 
           
           <div className="chart-card">
-            <h2 className="chart-title">Reports Over Time</h2>
-            {lineData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={lineData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="count" stroke="#02010cff" />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <p style={{ textAlign: 'center', padding: '1rem' }}>No data available</p>
-            )}
-          </div>
-          
-          <div className="chart-card">
             <h2 className="chart-title">✅ Reports Resolved</h2>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
               <span style={{ fontSize: "85px", fontWeight: "bold", color: "#16a34a" }}>
@@ -357,7 +339,24 @@ const Dashboard = () => {
             </div>
           </div>
 
-          
+          <div className="chart-card">
+            <h2 className="chart-title">Reports Over Time</h2>
+            {lineData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={lineData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="count" stroke="#02010cff" />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <p style={{ textAlign: 'center', padding: '1rem' }}>No data available</p>
+            )}
+          </div>
+            
           <div className="chart-card">
             <h2 className="chart-title">Reports by Type</h2>
             {pieData.length > 0 ? (
@@ -390,6 +389,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

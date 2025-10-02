@@ -47,6 +47,7 @@ body {
     left: 220px; 
     box-sizing: border-box;
     margin-left:12.5px;
+    border-radius:10px;
 }
 
 /* Add Report Button */
@@ -126,9 +127,11 @@ body {
 
 /* Table Wrapper */
 .table-wrapper {
+   margin-bottom: 30px;
     overflow-x: auto;
-    padding: 0 20px;
-    margin-bottom: 30px;
+    padding: 20px;
+    margin-left: 30px;
+}
 }
 
 /* Reporting Table */
@@ -249,6 +252,7 @@ body {
 /* Modal and Responsive styles follow... (omitted here for brevity, assume they are correct) */
 
 /* ... modal-overlay, modal-content, modal-buttons, @media queries, etc. ... */
+
 
 
 

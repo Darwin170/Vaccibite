@@ -444,15 +444,16 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                         <td>{report.district || 'N/A'}</td>
                                         <td>{new Date(report.date).toLocaleDateString()}</td>
                                         <td>
-                                            <select
-                                                value={report.status}
-                                                onChange={(e) => handleStatusUpdate(report._id, e.target.value)}
-                                            >
-                                                <option value="Pending">Pending</option>
-                                                <option value="Ongoing">Ongoing</option>
-                                                <option value="Resolved">Resolved</option>
-                                            </select>
-                                        </td>
+                                                <select
+                                                    aria-label={`Update status for report ${report._id}`}
+                                                    value={report.status}
+                                                    onChange={(e) => handleStatusUpdate(report._id, e.target.value)}
+                                                >
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Ongoing">Ongoing</option>
+                                                    <option value="Resolved">Resolved</option>
+                                                </select>
+                                            </td>
                                       <td>
                                               {report.filePath ? (
                                                 <a
@@ -489,6 +490,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

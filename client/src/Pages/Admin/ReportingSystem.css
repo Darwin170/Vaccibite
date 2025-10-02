@@ -13,6 +13,8 @@ body {
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: auto;
     /* The margin-left is handled directly in the React component's inline style
        for interaction with the sidebar. If the sidebar becomes dynamic,
        consider using CSS Grid or Flexbox on the parent of Sidebar and ReportingPage. */
@@ -149,6 +151,7 @@ body {
     text-transform: uppercase; /* Uppercase headers */
     font-size: 0.85em;
     letter-spacing: 0.5px;
+      position: sticky;
 }
 
 .reporting-table tr:nth-child(even) {
@@ -519,3 +522,4 @@ body {
         padding: 10px 15px;
     }
 }
+

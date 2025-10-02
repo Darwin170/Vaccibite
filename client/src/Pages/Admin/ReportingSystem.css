@@ -141,6 +141,9 @@ body {
     text-align: left;
     vertical-align: middle; /* Center content vertically */
     font-size: 0.95em; /* Slightly larger font for readability */
+        position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 .reporting-table th {
@@ -150,9 +153,6 @@ body {
     text-transform: uppercase; /* Uppercase headers */
     font-size: 0.85em;
     letter-spacing: 0.5px;
-      position: sticky;
-    top: 0;
-    z-index: 2;
 }
 
 .reporting-table tr:nth-child(even) {
@@ -523,6 +523,7 @@ body {
         padding: 10px 15px;
     }
 }
+
 
 
 

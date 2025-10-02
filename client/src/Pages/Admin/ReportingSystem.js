@@ -265,15 +265,25 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                     </div>
 
                    
-                    <div className="filters">
-                        <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+                   <div className="filters">
+                        <label htmlFor="report-type-filter">Filter by Report Type:</label>
+                        <select 
+                            id="report-type-filter" 
+                            value={typeFilter} 
+                            onChange={(e) => setTypeFilter(e.target.value)}
+                        >
                             <option value="id">All Types</option>
                             <option value="Animal Bite">Animal Bite</option>
                             <option value="Missing Animal">Missing Animal</option>
                             <option value="Roaming Animal">Roaming Animal</option>
                         </select>
-
-                        <select value={districtFilter} onChange={(e) => setDistrictFilter(e.target.value)}>
+                    
+                        <label htmlFor="district-filter">Filter by District:</label>
+                        <select 
+                            id="district-filter" 
+                            value={districtFilter} 
+                            onChange={(e) => setDistrictFilter(e.target.value)}
+                        >
                             <option value="id">All Districts</option>
                             
                             {Array.from(new Set(barangays.map(b => b.district)))
@@ -282,8 +292,13 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                     <option key={districtName} value={districtName}>{districtName}</option>
                                 ))}
                         </select>
-
-                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                    
+                        <label htmlFor="status-filter">Filter by Status:</label>
+                        <select 
+                            id="status-filter" 
+                            value={statusFilter} 
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                        >
                             <option value="id">All Statuses</option>
                             <option value="Pending">Pending</option>
                             <option value="ongoing">Ongoing</option>
@@ -474,6 +489,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

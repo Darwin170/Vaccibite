@@ -43,12 +43,8 @@ body {
     z-index: 10; /* High z-index to ensure it sits above the table header */
     background-color: #f8f9fa; /* IMPORTANT: Use a solid background to prevent content bleed-through */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
-    
-    /* Since your React component adds style={{ marginLeft: '220px', flex: 1 }} 
-       to the parent .reporting-container, we need to explicitly define the sticky element's
-       left and width to match the content area, assuming the sidebar is 220px wide and fixed. */
+
     left: 220px; 
-    width: calc(100% - 220px); 
     box-sizing: border-box;
     margin-left:12.5px;
 }
@@ -90,6 +86,7 @@ body {
     font-size: 1em;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom:30px;
 }
 
 .search-input:focus {
@@ -252,5 +249,6 @@ body {
 /* Modal and Responsive styles follow... (omitted here for brevity, assume they are correct) */
 
 /* ... modal-overlay, modal-content, modal-buttons, @media queries, etc. ... */
+
 
 

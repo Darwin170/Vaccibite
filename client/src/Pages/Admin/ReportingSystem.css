@@ -13,8 +13,6 @@ body {
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
-    overflow-x: auto;
-    overflow-y: auto;
     /* The margin-left is handled directly in the React component's inline style
        for interaction with the sidebar. If the sidebar becomes dynamic,
        consider using CSS Grid or Flexbox on the parent of Sidebar and ReportingPage. */
@@ -522,4 +520,5 @@ body {
         padding: 10px 15px;
     }
 }
+
 

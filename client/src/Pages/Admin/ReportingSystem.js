@@ -267,14 +267,14 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                    
                     <div className="filters">
                         <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-                            <option value="">All Types</option>
+                            <option value="id">All Types</option>
                             <option value="Animal Bite">Animal Bite</option>
                             <option value="Missing Animal">Missing Animal</option>
                             <option value="Roaming Animal">Roaming Animal</option>
                         </select>
 
                         <select value={districtFilter} onChange={(e) => setDistrictFilter(e.target.value)}>
-                            <option value="">All Districts</option>
+                            <option value="id">All Districts</option>
                             
                             {Array.from(new Set(barangays.map(b => b.district)))
                                 .sort() 
@@ -284,7 +284,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                         </select>
 
                         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                            <option value="">All Statuses</option>
+                            <option value="id">All Statuses</option>
                             <option value="Pending">Pending</option>
                             <option value="ongoing">Ongoing</option>
                             <option value="Resolved">Resolved</option>
@@ -474,6 +474,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

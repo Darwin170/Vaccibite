@@ -163,12 +163,6 @@ body {
     text-transform: uppercase;
     font-size: 0.85em;
     letter-spacing: 0.5px;
-    
-    /* === STICKY PROPERTIES with Offset === */
-    position: sticky;
-    /* This value MUST be equal to the height of the sticky .actions-bar (approx 60px) */
-    top: 60px; 
-    z-index: 5; /* Lower than actions-bar (10) but higher than table body (0) */
 }
 
 .reporting-table tr:nth-child(even) {
@@ -257,3 +251,4 @@ body {
 /* Modal and Responsive styles follow... (omitted here for brevity, assume they are correct) */
 
 /* ... modal-overlay, modal-content, modal-buttons, @media queries, etc. ... */
+

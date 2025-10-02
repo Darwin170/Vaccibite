@@ -89,6 +89,14 @@ const Dashboard = () => {
   useEffect(() => {
     const checkNewReports = async () => {
       try {
+        const params = {
+          startMonth,
+          endMonth,
+          status,
+          incidentType,
+          district: selectedDistrict,
+          barangayId: selectedBarangay,
+        };
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/new-report`);
         setNewReportsCount(res.data.count || 0);
       } catch (error) {
@@ -103,7 +111,8 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching last 28 days reports:", error);
       }
-    };
+      fetchReportsLast28Days();
+    };[startMonth, endMonth, status, incidentType, selectedDistrict, selectedBarangay]);
 
     const fetchResolvedReports = async () => {
       try {
@@ -119,7 +128,8 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching resolved reports:", error);
       }
-    };
+      fetchResolvedReports();
+    };[startMonth, endMonth, status, incidentType, selectedDistrict, selectedBarangay]);
 
     const fetchOngoingReports = async () => { 
       try {
@@ -135,7 +145,8 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching ongoing reports:", error);
       }
-    };
+      fetchOngoingReports();
+    }; [startMonth, endMonth, status, incidentType, selectedDistrict, selectedBarangay]);
 
     const fetchEventViews = async () => {
       try {
@@ -390,6 +401,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

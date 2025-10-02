@@ -50,6 +50,7 @@ body {
     left: 220px; 
     width: calc(100% - 220px); 
     box-sizing: border-box;
+    margin-left:12.5px;
 }
 
 /* Add Report Button */
@@ -251,4 +252,5 @@ body {
 /* Modal and Responsive styles follow... (omitted here for brevity, assume they are correct) */
 
 /* ... modal-overlay, modal-content, modal-buttons, @media queries, etc. ... */
+
 

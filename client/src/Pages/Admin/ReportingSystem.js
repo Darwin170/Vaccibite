@@ -266,45 +266,48 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 
                    
                    <div className="filters">
-                        <label htmlFor="report-type-filter">Filter by Report Type:</label>
-                        <select 
-                            id="report-type-filter" 
-                            value={typeFilter} 
-                            onChange={(e) => setTypeFilter(e.target.value)}
-                        >
-                            <option value="id">All Types</option>
-                            <option value="Animal Bite">Animal Bite</option>
-                            <option value="Missing Animal">Missing Animal</option>
-                            <option value="Roaming Animal">Roaming Animal</option>
-                        </select>
-                    
-                        <label htmlFor="district-filter">Filter by District:</label>
-                        <select 
-                            id="district-filter" 
-                            value={districtFilter} 
-                            onChange={(e) => setDistrictFilter(e.target.value)}
-                        >
-                            <option value="id">All Districts</option>
-                            
-                            {Array.from(new Set(barangays.map(b => b.district)))
-                                .sort() 
-                                .map(districtName => (
-                                    <option key={districtName} value={districtName}>{districtName}</option>
-                                ))}
-                        </select>
-                    
-                        <label htmlFor="status-filter">Filter by Status:</label>
-                        <select 
-                            id="status-filter" 
-                            value={statusFilter} 
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                        >
-                            <option value="id">All Statuses</option>
-                            <option value="Pending">Pending</option>
-                            <option value="ongoing">Ongoing</option>
-                            <option value="Resolved">Resolved</option>
-                        </select>
-                    </div>
+                            {/* 1. Report Type Filter */}
+                            <select
+                                id="report-type-filter"
+                                value={typeFilter}
+                                onChange={(e) => setTypeFilter(e.target.value)}
+                                aria-label="Filter by Report Type" // 👈 Added aria-label for accessibility
+                            >
+                                <option value="id">All Types</option>
+                                <option value="Animal Bite">Animal Bite</option>
+                                <option value="Missing Animal">Missing Animal</option>
+                                <option value="Roaming Animal">Roaming Animal</option>
+                            </select>
+                        
+                            {/* 2. District Filter */}
+                            <select
+                                id="district-filter"
+                                value={districtFilter}
+                                onChange={(e) => setDistrictFilter(e.target.value)}
+                                aria-label="Filter by District" // 👈 Added aria-label for accessibility
+                            >
+                                <option value="id">All Districts</option>
+                        
+                                {Array.from(new Set(barangays.map(b => b.district)))
+                                    .sort()
+                                    .map(districtName => (
+                                        <option key={districtName} value={districtName}>{districtName}</option>
+                                    ))}
+                            </select>
+                        
+                            {/* 3. Status Filter */}
+                            <select
+                                id="status-filter"
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                aria-label="Filter by Status" // 👈 Added aria-label for accessibility
+                            >
+                                <option value="id">All Statuses</option>
+                                <option value="Pending">Pending</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+                        </div>
                 </div>
 
               
@@ -490,6 +493,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

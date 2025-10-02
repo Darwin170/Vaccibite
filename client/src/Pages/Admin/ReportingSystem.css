@@ -131,6 +131,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Stronger, more modern shadow */
     border-radius: 8px; /* Rounded corners for the table */
     overflow: hidden; /* Ensures rounded corners apply to content */
+    border-radius: 8px;
 }
 
 .reporting-table th,
@@ -150,6 +151,8 @@ body {
     font-size: 0.85em;
     letter-spacing: 0.5px;
       position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 .reporting-table tr:nth-child(even) {
@@ -520,5 +523,6 @@ body {
         padding: 10px 15px;
     }
 }
+
 
 

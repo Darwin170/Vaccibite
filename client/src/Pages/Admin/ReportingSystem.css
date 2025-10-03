@@ -249,9 +249,13 @@ body {
     transform: translateY(-1px);
 }
 
-/* Modal and Responsive styles follow... (omitted here for brevity, assume they are correct) */
-
-/* ... modal-overlay, modal-content, modal-buttons, @media queries, etc. ... */
+modal-content-area {
+    max-height: 80vh; /* Adjust this value if needed, but important for tall content */
+    overflow-y: auto; 
+    overflow-x: hidden; /* Recommended to prevent horizontal scroll bars */
+    
+    padding: 20px; /* Ensure content padding is inside the scrollable area */
+}
 
 
 

@@ -47,3 +47,7 @@
   margin-top: 15px;
   color: #333;
 }
+.otp-container form, 
+.otp-container > button {
+  width: 100%;
+}

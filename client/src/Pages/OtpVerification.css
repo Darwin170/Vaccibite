@@ -51,4 +51,8 @@
 .otp-container form, 
 .otp-container > button {
   width: 100%;
+  max-width: 250px;
+}
+.otp-container form button[type="submit"] {
+  width: 100%;
 }

@@ -25,10 +25,17 @@ const createEvent = async (req, res) => {
         });
 
         await newEvent.save();
-
-        // Create an activity log
+            if (io) {
+           
+            io.emit('new-event', { 
+                type: 'NOTIFICATION',
+                title: 'New Event Alert! 🎉',
+                message: `The barangay has posted a new event: "${newEvent.title}"`,
+                event: newEvent 
+            });
+        }
         const newLog = new ActivityLog({
-            user: req.user._id, // admin ID
+            user: req.user._id, 
             onModel: req.userType, 
             action: 'Event Created',
             details: `A new event "${title}" was created.`,
@@ -90,3 +97,4 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+

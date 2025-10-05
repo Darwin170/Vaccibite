@@ -365,6 +365,7 @@ const Dashboard = () => {
                                         ))}
                                     </Pie>
                                     <Tooltip />
+                                    <Legend />
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
@@ -378,3 +379,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

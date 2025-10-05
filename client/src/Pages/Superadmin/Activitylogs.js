@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 
 const roleOptions = [
     { value: 'All', label: 'All Roles' },
-    { value: 'Mobile User', label: 'Mobile User' },
+    { value: 'Mobile User', label: 'Barangay Representative' },
     { value: 'Admin', label: 'Admin' },
     { value: 'System_Admin', label: 'System Admin' },
 ];
@@ -130,4 +130,5 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 

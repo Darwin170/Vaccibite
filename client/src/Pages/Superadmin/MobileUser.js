@@ -146,7 +146,7 @@ function M_user() {
               <input
                 type="text"
                 placeholder="Name"
-                value={newUser.name}
+                value={newUser.fullName}
                 onChange={(e) =>
                   setNewUser({ ...newUser, name: e.target.value })
                 }
@@ -205,6 +205,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

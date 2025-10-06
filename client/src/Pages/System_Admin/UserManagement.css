@@ -77,7 +77,7 @@
   z-index: 999;
 }
 
-.modal-contentMob {
+.modal-content {
   background: #fff;
   padding: 2rem;
   border-radius: 8px;
@@ -130,6 +130,7 @@
 .cancel-btn:hover {
   background-color: #4b5563;
 }
+
 
 
 

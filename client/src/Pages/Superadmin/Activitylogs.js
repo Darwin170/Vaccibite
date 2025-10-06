@@ -51,12 +51,9 @@ const ActivityLogs = () => {
 
    const filteredLogs = logs.filter((log) => {
     const userPosition = log.user?.position || '';
+        
     
-   
-        return false; 
-    }
 
-    // 2. EXISTING SEARCH AND ROLE FILTER LOGIC
     const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();
     const action = log.action?.toLowerCase() || '';
 
@@ -137,6 +134,7 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 
 

@@ -357,7 +357,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                         <p><strong>Caught Status:</strong> {selectedDetails.categoryDetails?.caughtStatus || 'N/A'}</p>
                                     </>
                                 )}
-                                {selectedDetails.type === "Roaming Animals" && (
+                                {selectedDetails.type === "Roaming Animal" && (
                                     <>
                                         <p><strong>Name of the reporter:</strong> {selectedDetails.categoryDetails?.Name_of_the_barangay_officer || 'N/A'}</p>
                                         <p><strong>Barangay:</strong> {selectedDetails.categoryDetails?.barangayId || 'N/A'}</p>
@@ -492,6 +492,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

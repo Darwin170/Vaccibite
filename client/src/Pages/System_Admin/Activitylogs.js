@@ -87,7 +87,7 @@ const ActivityLogs = () => {
               filteredLogs.map((log, index) => (
                 <tr key={index}>
                   <td className="tableCells">
-                    {new Date(log.timestamp).toLocaleString()}
+                    {new Date(log.timestamp).toLocaleString()}</td> 
                  <td className="tableCells">{log.user?.fullName || log.user?.name || 'N/A'}</td>
                   <td className="tableCells">{log.user?.position || 'N/A'}</td>
                   <td className="tableCells">{log.action}</td>
@@ -99,7 +99,6 @@ const ActivityLogs = () => {
                 <td className="tableCells" colSpan="5" style={{ textAlign: 'center' }}>
                   No matching logs found.
                 </td>
-                </td>
               </tr>
             )}
           </tbody>
@@ -110,6 +109,7 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 
 

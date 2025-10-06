@@ -148,7 +148,7 @@ function M_user() {
                 placeholder="Name"
                 value={newUser.fullName}
                 onChange={(e) =>
-                  setNewUser({ ...newUser, name: e.target.value })
+                  setNewUser({ ...newUser, fullName: e.target.value })
                 }
               />
               <input
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

@@ -334,8 +334,8 @@ const Dashboard = () => {
                             <ResponsiveContainer width="100%" height={250}>
                                 <LineChart data={lineData}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="month" />
-                                    <YAxis />
+                                    <XAxis dataKey="month"  stroke="#000"/>
+                                    <YAxis /  stroke="#000">
                                     <Tooltip />
                                     <Legend />
                                     <Line type="monotone" dataKey="count" stroke="#02010cff" />
@@ -379,5 +379,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 

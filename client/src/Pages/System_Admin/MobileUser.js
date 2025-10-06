@@ -23,7 +23,7 @@ function M_user() {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(` ${process.env.REACT_APP_API_URL}/auth/getMobileUser`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getMobileUser`);
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users:", err);
@@ -32,7 +32,7 @@ function M_user() {
 
   const fetchBarangays = async () => {
     try {
-      const res = await axios.get(` ${process.env.REACT_APP_API_URL}/auth/Barangays`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`);
       setBarangays(res.data);
     } catch (err) {
       console.error("Failed to fetch barangays:", err);
@@ -46,7 +46,7 @@ function M_user() {
 
     try {
       await axios.put(
-        ` ${process.env.REACT_APP_API_URL}/auth/updateMUser/${editUserId}`,
+        `${process.env.REACT_APP_API_URL}/auth/updateMUser/${editUserId}`,
         newUser,{
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -69,7 +69,7 @@ function M_user() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(` ${process.env.REACT_APP_API_URL}/auth/deleteMUser/${id}`,{
+      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteMUser/${id}`,{
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

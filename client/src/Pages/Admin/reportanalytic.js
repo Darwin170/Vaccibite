@@ -11,10 +11,10 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const CATEGORY_COLORS = {
-  "Roaming Animal": "#ffc658",
-  "Animal Bite": "#990000",
-  "Missing Animal": "#08A045",
-  // Add other categories here
+    "Roaming Animal": "#ffc658",
+    "Animal Bite": "#990000",
+    "Missing Animal": "#08A045",
+    // Add other categories here
 };
 
 const Dashboard = () => {
@@ -365,15 +365,18 @@ const Dashboard = () => {
                                         outerRadius={80}
                                         label
                                     >
-                                        const color = CATEGORY_COLORS[entry.name] || '#ccc';
+                                        {/* CORRECTED: Switched to block function (using {}) and added 'return' */}
+                                        {pieData.map((entry, index) => {
+                                            const color = CATEGORY_COLORS[entry.name] || '#ccc';
 
-                                        return (
-                                    <Cell 
-                                            key={`cell-${index}`} 
-                                    fill={color} 
+                                            return (
+                                                <Cell 
+                                                    key={`cell-${index}`} 
+                                                    fill={color}         
                                                 />
-                                                );
-                                        ))}
+                                            );
+                                        })}
+                                        {/* ------------------------------------------------------------------- */}
                                     </Pie>
                                     <Tooltip />
                                     <Legend />
@@ -390,11 +393,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-
-
-
-
-

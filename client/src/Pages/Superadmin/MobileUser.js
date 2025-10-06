@@ -41,8 +41,8 @@ function M_user() {
 
 
   const handleUpdateMUser = async () => {
-    const { FullName, email, phone, password, barangay } = newUser;
-    if (!FullName || !email || !phone || !password || !barangay) return;
+    const { fullName, email, phone, password, barangay } = newUser;
+    if (!fullName || !email || !phone || !password || !barangay) return;
 
     try {
       await axios.put(
@@ -85,7 +85,7 @@ function M_user() {
   const handleEdit = (user) => {
     setEditUserId(user.MuserId);
     setNewUser({
-      name: user.fullName,
+      fullName: user.fullName,
       email: user.email,
       password: "",
       barangay: user.barangay, // assuming this is the barangayId
@@ -159,14 +159,7 @@ function M_user() {
                   setNewUser({ ...newUser, email: e.target.value })
                 }
               />
-              <input
-                type="text"
-                placeholder="Phone"
-                value={newUser.phone}
-                onChange={(e) =>
-                  setNewUser({ ...newUser, phone: e.target.value })
-                }
-              />
+           
              <select
                 value={newUser.barangay}
                 onChange={(e) =>
@@ -212,4 +205,5 @@ function M_user() {
 }
 
 export default M_user;
+
 

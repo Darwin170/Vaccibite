@@ -7,7 +7,12 @@ const getUserNotifications = async (req, res) => {
       return res.status(400).json({ error: "receiverId is required" });
     }
 
-    const notifications = await Notification.find({  userId: receiverId })
+    const notifications = await Notification.find({   $or: [
+              
+                { userId: receiverId },
+               
+                { isBroadcast: true } 
+            ] })
       .sort({ createdAt: -1 })
       .populate('senderId', 'name email'); // optional, to get sender info
 
@@ -19,6 +24,7 @@ const getUserNotifications = async (req, res) => {
 };
 
 module.exports = { getUserNotifications };
+
 
 
 

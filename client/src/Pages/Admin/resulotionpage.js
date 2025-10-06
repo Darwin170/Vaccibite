@@ -132,19 +132,19 @@ function ResolutionPage() {
                     </span>
                   </td>
                   <td>
-                    {report.filePath ? (
-                      <a
-                        href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {report.filePath.split('/').pop()}
-                      </a>
-                    ) : (
-                      'No File'
-                    )}
-                  </td>
+                           {report.filePath ? (
+                               <a
+                                href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
+                                  target="_blank"
+                                          rel="noopener noreferrer"
+                                                  
+                                        >
+                                        {report.filePath.split('/').pop()}
+                                       </a>
+                                      ) : (
+                                                'N/A'
+                                  )}
+                    </td>
                 </tr>
               ))}
             </tbody>
@@ -156,6 +156,7 @@ function ResolutionPage() {
 }
 
 export default ResolutionPage;
+
 
 
 

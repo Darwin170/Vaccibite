@@ -10,7 +10,7 @@ function M_user() {
   const [editUserId, setEditUserId] = useState(null);
 
   const [newUser, setNewUser] = useState({
-    fullname: "",
+    fullName: "",
     email: "",
     password: "",
     barangay: "",
@@ -53,10 +53,10 @@ function M_user() {
         }
       );
       setNewUser({
-        fullName: "",
-        email: "",
+        fullName: user.fullName,
+        email: user.email,
         password: "",
-        barangay: "",
+        barangay: user.barangay,
       });
       setEditUserId(null);
       showAddMUserModal(false);
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

@@ -121,7 +121,7 @@ function M_user() {
                 <td>{user.MuserId}</td>
                 <td>{user.fullName}</td>
                 <td>{user.email}</td>
-                <td>{getBarangayName(Muser.barangay)}</td> 
+                <td>{getBarangayName(user.barangay)}</td> 
                 <td>
                   <button className="button" onClick={() => handleEdit(user)}>
                     Edit
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

@@ -5,7 +5,7 @@ import "./UserManagement.css";
 
 function M_user() {
   const [users, setUsers] = useState([]);
-  const [barangays, setBarangays] = useState([]); 
+  const [barangays, setBarangays] = useState([]); // ✅ Barangay list
   const [showAddMUserModal, setShowAddMUserModal] = useState(false);
   const [editUserId, setEditUserId] = useState(null);
 
@@ -41,7 +41,7 @@ function M_user() {
 
 
   const handleUpdateMUser = async () => {
-    const { fullName, email,  password, barangay } = newUser;
+    const { fullName, email, password, barangay } = newUser;
     if (!fullName || !email || !password || !barangay) return;
 
     try {
@@ -83,17 +83,17 @@ function M_user() {
   };
 
   const handleEdit = (user) => {
-    setEditUserId(user._Id);
+    setEditUserId(user._id);
     setNewUser({
       fullName: user.fullName,
       email: user.email,
       password: "",
-      barangay: user.barangay, 
+      barangay: user.barangay, // assuming this is the barangayId
     });
     setShowAddMUserModal(true);
   };
 
-
+  // ✅ Helper function to get barangay name from its ID
   const getBarangayName = (barangayId) => {
     const brgy = barangays.find((b) => b._id === barangayId);
     return brgy ? brgy.name : "Unknown";
@@ -159,6 +159,7 @@ function M_user() {
                   setNewUser({ ...newUser, email: e.target.value })
                 }
               />
+           
              <select
                 value={newUser.barangay}
                 onChange={(e) =>
@@ -204,12 +205,6 @@ function M_user() {
 }
 
 export default M_user;
-
-
-
-
-
-
 
 
 

@@ -82,8 +82,8 @@ function M_user() {
     }
   };
 
-  const handleEdit = (user) => {
-    setEditUserId(user.MuserId);
+  const handleEdit = (Muser) => {
+    setEditUserId(Muser._Id);
     setNewUser({
       name: user.fullName,
       email: user.email,
@@ -117,11 +117,11 @@ function M_user() {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user._id}>
-                <td>{user.MuserId}</td>
-                <td>{user.fullName}</td>
-                <td>{user.email}</td>
-                <td>{getBarangayName(user.barangay)}</td> 
+              <tr key={Muser._id}>
+                <td>{Muser.MuserId}</td>
+                <td>{Muser.fullName}</td>
+                <td>{Muser.email}</td>
+                <td>{getBarangayName(Muser.barangay)}</td> 
                 <td>
                   <button className="button" onClick={() => handleEdit(user)}>
                     Edit
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

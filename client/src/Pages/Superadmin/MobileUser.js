@@ -10,7 +10,7 @@ function M_user() {
   const [editUserId, setEditUserId] = useState(null);
 
   const [newUser, setNewUser] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
     barangay: "",
@@ -205,5 +205,6 @@ function M_user() {
 }
 
 export default M_user;
+
 
 

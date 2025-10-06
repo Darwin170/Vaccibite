@@ -40,7 +40,7 @@ const router = express.Router();
 router.post('/events/:id/view', authMiddleware, recordUniqueEventView); 
 router.get("/pdf-backup", downloadAllReports);
 router.post("/resend-otp", resendOtp ); 
-router.put('/updateMUser:id', authMiddleware,updateMUser);
+router.put('/updateMUser/:id', authMiddleware,updateMUser);
 router.get ("/event-views", getEventViews);
 router.get ("/resolved-reports", getResolvedReports);   
 router.get("/getreport28days", getLast28DaysReports);
@@ -74,6 +74,7 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 
 
 

@@ -23,24 +23,27 @@ const ActivityLogs = () => {
     return () => clearInterval(interval);
   }, []);
 
-  
   const filteredLogs = logs.filter((log) => {
-    const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();
-    const userPosition = log.user?.position || '';
-    if (userPosition === 'Super Admin') {
-    return false; 
+  const userPosition = log.user?.position || '';
+
+  // 1. Hardcoded Exclusion
+  if (userPosition === 'Super Admin') {
+    return false; // Exclude Super Admin logs immediately
   }
-    const action = log.action?.toLowerCase() || '';
 
-    const matchesSearch =
-      userName.includes(searchTerm.toLowerCase()) ||
-      action.includes(searchTerm.toLowerCase());
+  // 2. Existing Search and Role Filter Logic
+  const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();
+  const action = log.action?.toLowerCase() || '';
 
-    const matchesRole =
-      roleFilter === 'All' || userPosition === roleFilter;
+  const matchesSearch =
+    userName.includes(searchTerm.toLowerCase()) ||
+    action.includes(searchTerm.toLowerCase());
 
-    return matchesSearch && matchesRole;
-  });
+  const matchesRole =
+    roleFilter === 'All' || userPosition === roleFilter;
+
+  return matchesSearch && matchesRole;
+});
 
   return (
     <div className="Activity">
@@ -107,6 +110,7 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 
 

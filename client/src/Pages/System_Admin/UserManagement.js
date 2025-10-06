@@ -141,7 +141,7 @@ function UserManagement() {
         {/* Modal */}
         {showAddUserModal && (
           <div className="modal-overlay">
-            <div className="modal-content">
+            <div className="modal-contentMob">
               <h2>{editUserId ? "Edit User" : "Add New User"}</h2>
               <input
                 type="text"
@@ -188,4 +188,5 @@ function UserManagement() {
 }
 
 export default UserManagement;
+
 

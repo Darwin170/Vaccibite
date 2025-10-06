@@ -273,7 +273,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                 onChange={(e) => setTypeFilter(e.target.value)}
                                 aria-label="Filter by Report Type" // 👈 Added aria-label for accessibility
                             >
-                                <option value="id">All Types</option>
+                                <option value="">All Types</option>
                                 <option value="Animal Bite">Animal Bite</option>
                                 <option value="Missing Animal">Missing Animal</option>
                                 <option value="Roaming Animal">Roaming Animal</option>
@@ -286,7 +286,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                 onChange={(e) => setDistrictFilter(e.target.value)}
                                 aria-label="Filter by District" // 👈 Added aria-label for accessibility
                             >
-                                <option value="id">All Districts</option>
+                                <option value="">All Districts</option>
                         
                                 {Array.from(new Set(barangays.map(b => b.district)))
                                     .sort()
@@ -302,7 +302,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                 onChange={(e) => setStatusFilter(e.target.value)}
                                 aria-label="Filter by Status" // 👈 Added aria-label for accessibility
                             >
-                                <option value="id">All Statuses</option>
+                                <option value="">All Statuses</option>
                                 <option value="Pending">Pending</option>
                                 <option value="ongoing">Ongoing</option>
                             </select>
@@ -492,6 +492,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

@@ -1,18 +1,20 @@
 const Event = require('../model/evenandprogram');
 const ActivityLog = require('../model/Activitylogs');
-// Create Event
+const Notification = require('../model/Notification');
+const User = require('../model/M_User'); // Assuming you have a User model for sender lookup
+
 let io;
 try {
     // Dynamically require/import the Socket.IO instance from your main server setup.
-    // This is the CRUCIAL change to fix the "io is not defined" error.
-    io = require('../index').io; 
+    io = require('../index').io;  
 } catch (e) {
     console.warn("Socket.IO instance not found. Real-time notifications will be disabled.");
-    // In a production setup, this ensures the server still runs even if the path is temporarily wrong.
 }
+
 const createEvent = async (req, res) => {
     try {
-        const { title, start, end, details, barangayId,  } = req.body; // Added userId and onModel
+        // req.user and req.userType are assumed to be set by authentication middleware
+        const { title, start, end, details, barangayId } = req.body; 
 
         if (!title || !start || !end || !details || !barangayId ) {
             return res.status(400).json({ message: 'Missing required fields.' });
@@ -25,6 +27,7 @@ const createEvent = async (req, res) => {
             return res.status(400).json({ message: 'Invalid date format.' });
         }
 
+        // 1. Create and Save the Event
         const newEvent = new Event({
             title,
             start: startDate,
@@ -32,33 +35,52 @@ const createEvent = async (req, res) => {
             details,
             barangayId,
         });
-
         await newEvent.save();
-            if (io) {
-           
-            io.emit('new-event', { 
-                type: 'NOTIFICATION',
-                title: 'New Event Alert! 🎉',
-                message: `The barangay has posted a new event: "${newEvent.title}"`,
+
+        const notificationTitle = 'New Event Alert! 🎉';
+        const notificationMessage = `The QCVD - ACDCD has posted a new event: "${newEvent.title}"`;
+        
+        // 2. 🔑 CRITICAL: Create and Save the Broadcast Notification
+        // This single record is saved and marked as a broadcast.
+        const newNotification = new Notification({
+            title: notificationTitle,
+            message: notificationMessage,
+            senderId: req.user._id, // The user who created the event is the sender
+            isBroadcast: true,      // ⬅️ Flag this as a notification for ALL users
+        });
+        
+        const savedNotification = await newNotification.save(); // ⬅️ PERSISTS TO DB
+
+        // 3. Emit Real-Time Signal
+        if (io) {
+            // Emit a general event signal for all connected clients to trigger a refresh
+            io.emit('new-event', {  
+                type: 'BROADCAST',
+                title: notificationTitle,
+                message: notificationMessage,
                 event: newEvent 
             });
         }
+        
+        // 4. Save Activity Log
         const newLog = new ActivityLog({
             user: req.user._id, 
             onModel: req.userType, 
             action: 'Event Created',
             details: `A new event "${title}" was created.`,
         });
-
         await newLog.save();
 
-        res.status(201).json({ message: 'Event created successfully.', event: newEvent });
+        // 5. Send Successful Response
+        res.status(201).json({ 
+            message: 'Event created successfully, and notification broadcasted.', 
+            event: newEvent 
+        });
     } catch (error) {
         console.error('Create event error:', error.stack || error);
         res.status(500).json({ message: 'Server error creating event.' });
     }
 };
-
 
 // Delete Event
 const deleteEvent = async (req, res) => {
@@ -106,5 +128,6 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+
 
 

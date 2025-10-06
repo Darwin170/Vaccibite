@@ -13,394 +13,421 @@ const API_URL = process.env.REACT_APP_API_URL;
 const socket = io(process.env.REACT_APP_API_URL);
 
 const locales = {
-  "en-US": require("date-fns/locale/en-US"),
+    "en-US": require("date-fns/locale/en-US"),
 };
 
 const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }),
-  getDay,
-  locales,
+    format,
+    parse,
+    startOfWeek: () => startOfWeek(new Date(), { weekStartsOn: 1 }),
+    getDay,
+    locales,
 });
 
 const CustomToolbar = ({ label, onNavigate, onView, view }) => (
-  <div className="rbc-toolbar">
-    <span className="rbc-btn-group">
-      <button onClick={() => onNavigate("TODAY")}>Today</button>
-      <button onClick={() => onNavigate("PREV")}>Back</button>
-      <button onClick={() => onNavigate("NEXT")}>Next</button>
-    </span>
-    <span className="rbc-toolbar-label">{label}</span>
-    <span className="rbc-btn-group">
-      <button className={view === "month" ? "rbc-active" : ""} onClick={() => onView("month")}>Month</button>
-      <button className={view === "week" ? "rbc-active" : ""} onClick={() => onView("week")}>Week</button>
-      <button className={view === "day" ? "rbc-active" : ""} onClick={() => onView("day")}>Day</button>
-      <button className={view === "agenda" ? "rbc-active" : ""} onClick={() => onView("agenda")}>Agenda</button>
-    </span>
-  </div>
+    <div className="rbc-toolbar">
+        <span className="rbc-btn-group">
+            <button onClick={() => onNavigate("TODAY")}>Today</button>
+            <button onClick={() => onNavigate("PREV")}>Back</button>
+            <button onClick={() => onNavigate("NEXT")}>Next</button>
+        </span>
+        <span className="rbc-toolbar-label">{label}</span>
+        <span className="rbc-btn-group">
+            <button className={view === "month" ? "rbc-active" : ""} onClick={() => onView("month")}>Month</button>
+            <button className={view === "week" ? "rbc-active" : ""} onClick={() => onView("week")}>Week</button>
+            <button className={view === "day" ? "rbc-active" : ""} onClick={() => onView("day")}>Day</button>
+            <button className={view === "agenda" ? "rbc-active" : ""} onClick={() => onView("agenda")}>Agenda</button>
+        </span>
+    </div>
 );
 
 const CalendarScheduler = () => {
-  const [events, setEvents] = useState([]);
-  const [barangays, setBarangays] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [newEvent, setNewEvent] = useState({
-    title: "",
-    start: "",
-    end: "",
-    details: "",
-    district: "",
-    barangayId: "",
-  });
+    const [events, setEvents] = useState([]);
+    const [barangays, setBarangays] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [newEvent, setNewEvent] = useState({
+        title: "",
+        start: "",
+        end: "",
+        details: "",
+        district: "",
+        barangayId: "",
+    });
 
-  const [showModal, setShowModal] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editedEvent, setEditedEvent] = useState(null);
-  const [currentView, setCurrentView] = useState("month");
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-
-  useEffect(() => {
-    axios.get(`${API_URL}/auth/Barangays`)
-      .then(res => {
-        setBarangays(res.data);
-
-     
-        const uniqueDistricts = [...new Set(res.data.map(b => b.district))].sort();
-        setDistricts(uniqueDistricts);
-      })
-      .catch(err => console.error("Error fetching barangays:", err));
-  }, []);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editedEvent, setEditedEvent] = useState(null);
+    const [currentView, setCurrentView] = useState("month");
+    const [currentDate, setCurrentDate] = useState(new Date());
 
 
-  const fetchEvents = useCallback(async () => {
-    try {
-      const res = await axios.get(`${API_URL}/auth/getAllEvents`);
-      const formatted = res.data.map(ev => ({
-        ...ev,
-        start: new Date(ev.start),
-        end: new Date(ev.end),
-      }));
-      setEvents(formatted);
-    } catch (err) {
-      console.error("Error fetching events:", err);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
+    useEffect(() => {
+        axios.get(`${API_URL}/auth/Barangays`)
+            .then(res => {
+                setBarangays(res.data);
+                const uniqueDistricts = [...new Set(res.data.map(b => b.district))].sort();
+                setDistricts(uniqueDistricts);
+            })
+            .catch(err => console.error("Error fetching barangays:", err));
+    }, []);
 
 
-  const handleAddEvent = async () => {
-    const { title, start, end, details, barangayId } = newEvent;
-    if (!title || !start || !end || !details || !barangayId) {
-      console.error("Please fill out all fields.");
-      return;
-    }
+    const fetchEvents = useCallback(async () => {
+        try {
+            const res = await axios.get(`${API_URL}/auth/getAllEvents`);
+            const formatted = res.data.map(ev => ({
+                ...ev,
+                // Server's UTC time string is converted to a local Date object for the calendar
+                start: new Date(ev.start),
+                end: new Date(ev.end),
+            }));
+            setEvents(formatted);
+        } catch (err) {
+            console.error("Error fetching events:", err);
+        }
+    }, []);
 
-    try {
-      const res = await axios.post(`${API_URL}/auth/createEvent`, {
-        title,
-        start: new Date(start).toISOString(),
-        end: new Date(end).toISOString(),
-        details,
-        barangayId
-      },
+    useEffect(() => {
+        fetchEvents();
+        // Optional: Add socket listener here if you want real-time updates
+    }, [fetchEvents]);
+
+
+    const handleAddEvent = async () => {
+        const { title, start, end, details, barangayId } = newEvent;
+        if (!title || !start || !end || !details || !barangayId) {
+            console.error("Please fill out all fields.");
+            return;
+        }
+
+        try {
+            // New Date(start) treats the datetime-local string as local time.
+            // .toISOString() converts that local time to the corresponding UTC time for the server.
+            const res = await axios.post(`${API_URL}/auth/createEvent`, {
+                title,
+                start: new Date(start).toISOString(),
+                end: new Date(end).toISOString(),
+                details,
+                barangayId
+            },
                 {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 }
-      
-    );
+            );
 
-      const created = res.data.event;
-      setEvents([...events, { ...created, start: new Date(created.start), end: new Date(created.end) }]);
-      setNewEvent({ title: "", start: "", end: "", details: "", district: "", barangayId: "" });
-      setShowModal(false);
-    } catch (err) {
-      console.error("Error creating event:", err);
-    }
-  };
+            const created = res.data.event;
+            // Add the new event, converting the server's UTC string back to a local Date object
+            setEvents([...events, { ...created, start: new Date(created.start), end: new Date(created.end) }]);
+            setNewEvent({ title: "", start: "", end: "", details: "", district: "", barangayId: "" });
+            setShowModal(false);
+        } catch (err) {
+            console.error("Error creating event:", err);
+        }
+    };
 
 
-  const handleUpdateEvent = async () => {
-    if (!editedEvent) return;
+    const handleUpdateEvent = async () => {
+        if (!editedEvent) return;
 
-    try {
-      await axios.put(`${API_URL}/auth/updateEvent/${editedEvent._id}`, {
-        title: editedEvent.title,
-        start: new Date(editedEvent.start).toISOString(),
-        end: new Date(editedEvent.end).toISOString(),
-        details: editedEvent.details,
-        barangayId: editedEvent.barangayId
-      },
+        // Ensure start and end are Date objects if they haven't been re-edited in the input
+        const startValue = editedEvent.start instanceof Date ? editedEvent.start : new Date(editedEvent.start);
+        const endValue = editedEvent.end instanceof Date ? editedEvent.end : new Date(editedEvent.end);
+
+        try {
+            await axios.put(`${API_URL}/auth/updateEvent/${editedEvent._id}`, {
+                title: editedEvent.title,
+                start: startValue.toISOString(),
+                end: endValue.toISOString(),
+                details: editedEvent.details,
+                barangayId: editedEvent.barangayId
+            },
                 {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 });
 
-      setEvents(events.map(ev =>
-        ev._id === editedEvent._id
-          ? { ...editedEvent, start: new Date(editedEvent.start), end: new Date(editedEvent.end) }
-          : ev
-      ));
-      setShowEditModal(false);
-      setEditedEvent(null);
-    } catch (err) {
-      console.error("Error updating event:", err);
-    }
-  };
+            setEvents(events.map(ev =>
+                ev._id === editedEvent._id
+                    ? { ...editedEvent, start: new Date(editedEvent.start), end: new Date(editedEvent.end) }
+                    : ev
+            ));
+            setShowEditModal(false);
+            setEditedEvent(null);
+        } catch (err) {
+            console.error("Error updating event:", err);
+        }
+    };
 
-  
-  const handleDeleteEvent = async () => {
-    if (!selectedEvent) return;
+    
+    const handleDeleteEvent = async () => {
+        if (!selectedEvent) return;
 
-    try {
-      await axios.delete(`${API_URL}/auth/deleteEvents/${selectedEvent._id}`,
-        
+        try {
+            await axios.delete(`${API_URL}/auth/deleteEvents/${selectedEvent._id}`,
                 {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 }
-      );
-      setEvents(events.filter(ev => ev._id !== selectedEvent._id));
-      setSelectedEvent(null);
-    } catch (err) {
-      console.error("Error deleting event:", err);
-    }
-  };
+            );
+            setEvents(events.filter(ev => ev._id !== selectedEvent._id));
+            setSelectedEvent(null);
+        } catch (err) {
+            console.error("Error deleting event:", err);
+        }
+    };
 
-  
-  const formatDateForInput = (date) => {
-    if (!date) return "";
-    const dt = new Date(date);
-    dt.setMinutes(dt.getMinutes() - dt.getTimezoneOffset());
-    return dt.toISOString().slice(0, 16);
-  };
-
-  return (
-    <div style={{ display: "flex" }}>
-      <Sidebar />
-      <div className="reporting-container" style={{ marginLeft: "220px" }}>
-        <button className="add-button" onClick={() => setShowModal(true)}>+ Add Event</button>
-
+    
+    /**
+     * 🔑 CORRECTED FUNCTION: Converts a Date object (already in local time) 
+     * into the YYYY-MM-DDTHH:MM string format required by input[type="datetime-local"].
+     * This ensures the time shown in the edit field matches the calendar time.
+     */
+    const formatDateForInput = (date) => {
+        if (!date) return "";
+        const dt = new Date(date);
         
-        {showModal && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h3>New Event</h3>
-              <input
-                type="text"
-                placeholder="Event Title"
-                value={newEvent.title}
-                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                className="input"
-              />
+        // Extract local components
+        const year = dt.getFullYear();
+        const month = String(dt.getMonth() + 1).padStart(2, '0');
+        const day = String(dt.getDate()).padStart(2, '0');
+        const hour = String(dt.getHours()).padStart(2, '0');
+        const minute = String(dt.getMinutes()).padStart(2, '0');
+        
+        return `${year}-${month}-${day}T${hour}:${minute}`;
+    };
+
+    return (
+        <div style={{ display: "flex" }}>
+            <Sidebar />
+            <div className="reporting-container" style={{ marginLeft: "220px" }}>
+                <button className="add-button" onClick={() => setShowModal(true)}>+ Add Event</button>
+
+                
+                {/* --- New Event Modal --- */}
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h3>New Event</h3>
+                            <input
+                                type="text"
+                                placeholder="Event Title"
+                                value={newEvent.title}
+                                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                                className="input"
+                            />
+
+                            
+                            <label>District:</label>
+                            <select
+                                value={newEvent.district}
+                                onChange={(e) => setNewEvent({ ...newEvent, district: e.target.value, barangayId: "" })}
+                                className="input"
+                            >
+                                <option value="">-- Select District --</option>
+                                {districts.map((d, idx) => (
+                                    <option key={idx} value={d}>{d}</option>
+                                ))}
+                            </select>
+
+                            
+                            <label>Barangay:</label>
+                            <select
+                                value={newEvent.barangayId}
+                                onChange={(e) => setNewEvent({ ...newEvent, barangayId: e.target.value })}
+                                className="input"
+                                disabled={!newEvent.district}
+                            >
+                                <option value="">-- Select Barangay --</option>
+                                {barangays
+                                    .filter((b) => b.district === newEvent.district)
+                                    .map((b) => (
+                                        <option key={b._id} value={b._id}>{b.name}</option>
+                                    ))}
+                            </select>
+
+                            <label>Start:</label>
+                            <input
+                                type="datetime-local"
+                                value={newEvent.start}
+                                onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value })}
+                                className="input"
+                            />
+                            <label>End:</label>
+                            <input
+                                type="datetime-local"
+                                value={newEvent.end}
+                                onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value })}
+                                className="input"
+                            />
+                            <label>Details:</label>
+                            <textarea
+                                placeholder="Event Details"
+                                value={newEvent.details}
+                                onChange={(e) => setNewEvent({ ...newEvent, details: e.target.value })}
+                                className="textarea"
+                            />
+
+                            <div className="modal-buttons">
+                                <button onClick={() => setShowModal(false)} className="cancel-button">Cancel</button>
+                                <button onClick={handleAddEvent} className="save-button">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                
+                {/* --- View Event Modal --- */}
+                {selectedEvent && !showEditModal && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h3>{selectedEvent.title}</h3>
+                            <p><strong>District:</strong> {barangays.find(b => b._id === selectedEvent.barangayId)?.district || "N/A"}</p>
+                            <p><strong>Barangay:</strong> {barangays.find(b => b._id === selectedEvent.barangayId)?.name || "N/A"}</p>
+                            <p><strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
+                            <p><strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
+                            <p><strong>Details:</strong> {selectedEvent.details}</p>
+
+                            <div className="modal-buttons">
+                                <button 
+                                    onClick={() => {
+                                        // When editing, the Date objects in selectedEvent must be converted 
+                                        // to the string format for the input to display correctly.
+                                        const eventToEdit = {
+                                            ...selectedEvent,
+                                            // The district property needs to be included for the dropdown filter to work correctly in the modal
+                                            district: barangays.find(b => b._id === selectedEvent.barangayId)?.district || "",
+                                        };
+                                        setEditedEvent(eventToEdit);
+                                        setShowEditModal(true);
+                                    }} 
+                                    className="edit-button"
+                                >
+                                    Edit
+                                </button>
+                                <button onClick={handleDeleteEvent} className="delete-button">Delete</button>
+                                <button onClick={() => setSelectedEvent(null)} className="cancel-button">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+
+                {/* --- Edit Event Modal --- */}
+                {showEditModal && editedEvent && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h3>Edit Event</h3>
+                            <input
+                                type="text"
+                                value={editedEvent.title}
+                                onChange={(e) =>
+                                    setEditedEvent({ ...editedEvent, title: e.target.value })
+                                }
+                                className="input"
+                            />
+
+                            
+                            <label>District:</label>
+                            <select
+                                value={editedEvent.district || ""}
+                                onChange={(e) => setEditedEvent({ ...editedEvent, district: e.target.value, barangayId: "" })}
+                                className="input"
+                            >
+                                <option value="">-- Select District --</option>
+                                {districts.map((d, idx) => (
+                                    <option key={idx} value={d}>{d}</option>
+                                ))}
+                            </select>
+
+                            <label>Barangay:</label>
+                            <select
+                                value={editedEvent.barangayId}
+                                onChange={(e) =>
+                                    setEditedEvent({ ...editedEvent, barangayId: e.target.value })
+                                }
+                                className="input"
+                                disabled={!editedEvent.district}
+                            >
+                                <option value="">-- Select Barangay --</option>
+                                {barangays
+                                    .filter((b) => b.district === editedEvent.district)
+                                    .map((b) => (
+                                        <option key={b._id} value={b._id}>{b.name}</option>
+                                    ))}
+                            </select>
+
+                            <label>Start:</label>
+                            <input
+                                type="datetime-local"
+                                value={formatDateForInput(editedEvent.start)}
+                                onChange={(e) =>
+                                    setEditedEvent({ ...editedEvent, start: e.target.value })
+                                }
+                                className="input"
+                            />
+                            <label>End:</label>
+                            <input
+                                type="datetime-local"
+                                value={formatDateForInput(editedEvent.end)}
+                                onChange={(e) =>
+                                    setEditedEvent({ ...editedEvent, end: e.target.value })
+                                }
+                                className="input"
+                            />
+                            <label>Details:</label>
+                            <textarea
+                                value={editedEvent.details}
+                                onChange={(e) =>
+                                    setEditedEvent({ ...editedEvent, details: e.target.value })
+                                }
+                                className="textarea"
+                            />
+
+                            <div className="modal-buttons">
+                                <button 
+                                    onClick={() => {
+                                        setShowEditModal(false);
+                                        setEditedEvent(null);
+                                    }} 
+                                    className="cancel-button"
+                                >
+                                    Cancel
+                                </button>
+                                <button onClick={handleUpdateEvent} className="save-button">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             
-              <label>District:</label>
-              <select
-                value={newEvent.district}
-                onChange={(e) => setNewEvent({ ...newEvent, district: e.target.value, barangayId: "" })}
-                className="input"
-              >
-                <option value="">-- Select District --</option>
-                {districts.map((d, idx) => (
-                  <option key={idx} value={d}>{d}</option>
-                ))}
-              </select>
-
-              
-              <label>Barangay:</label>
-              <select
-                value={newEvent.barangayId}
-                onChange={(e) => setNewEvent({ ...newEvent, barangayId: e.target.value })}
-                className="input"
-                disabled={!newEvent.district}
-              >
-                <option value="">-- Select Barangay --</option>
-                {barangays
-                  .filter((b) => b.district === newEvent.district)
-                  .map((b) => (
-                    <option key={b._id} value={b._id}>{b.name}</option>
-                  ))}
-              </select>
-
-              <label>Start:</label>
-              <input
-                type="datetime-local"
-                value={newEvent.start}
-                onChange={(e) => setNewEvent({ ...newEvent, start: e.target.value })}
-                className="input"
-              />
-              <label>End:</label>
-              <input
-                type="datetime-local"
-                value={newEvent.end}
-                onChange={(e) => setNewEvent({ ...newEvent, end: e.target.value })}
-                className="input"
-              />
-              <label>Details:</label>
-              <textarea
-                placeholder="Event Details"
-                value={newEvent.details}
-                onChange={(e) => setNewEvent({ ...newEvent, details: e.target.value })}
-                className="textarea"
-              />
-
-              <div className="modal-buttons">
-                <button onClick={() => setShowModal(false)} className="cancel-button">Cancel</button>
-                <button onClick={handleAddEvent} className="save-button">Save</button>
-              </div>
+                {/* --- Calendar Display --- */}
+                <div className="calendar-wrapper">
+                    <Calendar
+                        localizer={localizer}
+                        events={events}
+                        startAccessor="start"
+                        endAccessor="end"
+                        style={{ height: 500 }}
+                        views={["month", "week", "day", "agenda"]}
+                        date={currentDate}
+                        view={currentView}
+                        onNavigate={setCurrentDate}
+                        onView={setCurrentView}
+                        components={{ toolbar: CustomToolbar }}
+                        popup
+                        onSelectEvent={setSelectedEvent}
+                    />
+                </div>
             </div>
-          </div>
-        )}
-
-        {selectedEvent && !showEditModal && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h3>{selectedEvent.title}</h3>
-              <p><strong>District:</strong> {barangays.find(b => b._id === selectedEvent.barangayId)?.district || "N/A"}</p>
-              <p><strong>Barangay:</strong> {barangays.find(b => b._id === selectedEvent.barangayId)?.name || "N/A"}</p>
-              <p><strong>Start:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
-              <p><strong>End:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
-              <p><strong>Details:</strong> {selectedEvent.details}</p>
-
-              <div className="modal-buttons">
-                <button 
-                  onClick={() => {
-                    setEditedEvent(selectedEvent);
-                    setShowEditModal(true);
-                  }} 
-                  className="edit-button"
-                >
-                  Edit
-                </button>
-                <button onClick={handleDeleteEvent} className="delete-button">Delete</button>
-                <button onClick={() => setSelectedEvent(null)} className="cancel-button">Cancel</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-
-        {showEditModal && editedEvent && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h3>Edit Event</h3>
-              <input
-                type="text"
-                value={editedEvent.title}
-                onChange={(e) =>
-                  setEditedEvent({ ...editedEvent, title: e.target.value })
-                }
-                className="input"
-              />
-
-              
-              <label>District:</label>
-              <select
-                value={editedEvent.district || ""}
-                onChange={(e) => setEditedEvent({ ...editedEvent, district: e.target.value, barangayId: "" })}
-                className="input"
-              >
-                <option value="">-- Select District --</option>
-                {districts.map((d, idx) => (
-                  <option key={idx} value={d}>{d}</option>
-                ))}
-              </select>
-
-              <label>Barangay:</label>
-              <select
-                value={editedEvent.barangayId}
-                onChange={(e) =>
-                  setEditedEvent({ ...editedEvent, barangayId: e.target.value })
-                }
-                className="input"
-                disabled={!editedEvent.district}
-              >
-                <option value="">-- Select Barangay --</option>
-                {barangays
-                  .filter((b) => b.district === editedEvent.district)
-                  .map((b) => (
-                    <option key={b._id} value={b._id}>{b.name}</option>
-                  ))}
-              </select>
-
-              <label>Start:</label>
-              <input
-                type="datetime-local"
-                value={formatDateForInput(editedEvent.start)}
-                onChange={(e) =>
-                  setEditedEvent({ ...editedEvent, start: e.target.value })
-                }
-                className="input"
-              />
-              <label>End:</label>
-              <input
-                type="datetime-local"
-                value={formatDateForInput(editedEvent.end)}
-                onChange={(e) =>
-                  setEditedEvent({ ...editedEvent, end: e.target.value })
-                }
-                className="input"
-              />
-              <label>Details:</label>
-              <textarea
-                value={editedEvent.details}
-                onChange={(e) =>
-                  setEditedEvent({ ...editedEvent, details: e.target.value })
-                }
-                className="textarea"
-              />
-
-              <div className="modal-buttons">
-                <button 
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setEditedEvent(null);
-                  }} 
-                  className="cancel-button"
-                >
-                  Cancel
-                </button>
-                <button onClick={handleUpdateEvent} className="save-button">
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-   
-        <div className="calendar-wrapper">
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            style={{ height: 500 }}
-            views={["month", "week", "day", "agenda"]}
-            date={currentDate}
-            view={currentView}
-            onNavigate={setCurrentDate}
-            onView={setCurrentView}
-            components={{ toolbar: CustomToolbar }}
-            popup
-            onSelectEvent={setSelectedEvent}
-          />
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default CalendarScheduler;
-
-

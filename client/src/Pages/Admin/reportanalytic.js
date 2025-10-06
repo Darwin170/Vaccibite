@@ -10,7 +10,12 @@ import {
 } from 'recharts';
 import { useNavigate } from "react-router-dom";
 
-const COLORS = ['#990000', '#08A045', '#ffc658'];
+const CATEGORY_COLORS = {
+  "Roaming Animal": "#ffc658",
+  "Animal Bite": "#990000",
+  "Missing Animal": "#08A045",
+  // Add other categories here
+};
 
 const Dashboard = () => {
     const [lineData, setLineData] = useState([]);
@@ -379,6 +384,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

@@ -12,7 +12,7 @@
   align-items: center;
   
   padding: 30px;
-  background-color: #fff;
+  background-color:linear-gradient(135deg, #d63384, #e83e8c);
   border-radius: 10px;
    box-shadow: 6px 6px 18px;
   max-width: 400px; 

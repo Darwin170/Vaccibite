@@ -92,6 +92,13 @@ const OtpVerification = () => {
   }, [cooldown]);
 
   return (
+     <div 
+      className="min-h-screen flex justify-center items-start font-inter p-4"
+      style={{ 
+        background: 'linear-gradient(135deg, #d63384, #e83e8c)', // Original CSS gradient
+        paddingTop: '12vh' // Simulates margin-top: 12% for the card
+      }}
+    >
     <div className="otp-container">
       <h2>OTP Verification</h2>
       <form onSubmit={handleVerify}>
@@ -109,6 +116,7 @@ const OtpVerification = () => {
       </button>
       {message && <p>{message}</p>}
     </div>
+  </div>    
   );
 };
 

@@ -1,6 +1,15 @@
 const Event = require('../model/evenandprogram');
 const ActivityLog = require('../model/Activitylogs');
 // Create Event
+let io;
+try {
+    // Dynamically require/import the Socket.IO instance from your main server setup.
+    // This is the CRUCIAL change to fix the "io is not defined" error.
+    io = require('../index').io; 
+} catch (e) {
+    console.warn("Socket.IO instance not found. Real-time notifications will be disabled.");
+    // In a production setup, this ensures the server still runs even if the path is temporarily wrong.
+}
 const createEvent = async (req, res) => {
     try {
         const { title, start, end, details, barangayId,  } = req.body; // Added userId and onModel
@@ -97,4 +106,5 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+
 

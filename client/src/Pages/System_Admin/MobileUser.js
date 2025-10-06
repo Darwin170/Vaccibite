@@ -46,7 +46,7 @@ function M_user() {
 
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/auth/updateMUser/${editUserId}`,
+        `${process.env.REACT_APP_API_URL}/auth/updateMUser/${editMUserId}`,
         newUser,{
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

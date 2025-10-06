@@ -53,10 +53,10 @@ function M_user() {
         }
       );
       setNewUser({
-        fullName: user.fullName,
-        email: user.email,
+        fullName: "",
+        email: "",
         password: "",
-        barangay: user.barangay,
+        barangay: "",
       });
       setEditUserId(null);
       showAddMUserModal(false);
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

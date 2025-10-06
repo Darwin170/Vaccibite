@@ -305,7 +305,6 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                 <option value="id">All Statuses</option>
                                 <option value="Pending">Pending</option>
                                 <option value="ongoing">Ongoing</option>
-                                <option value="Resolved">Resolved</option>
                             </select>
                         </div>
                 </div>
@@ -472,7 +471,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                               )}
                                         </td>
                                         <td>
-                                            <button className="view-btn" onClick={() => setSelectedDetails(report)}>👁️ View</button>
+                                            <button className="view-btn" onClick={() => setSelectedDetails(report)}>👁️</button>
                                             <button className="delete-btn" onClick={() => handleDelete(report._id)}>🗑️</button>
                                             <button className="download-btn"  onClick={() => handleDownload(report._id)}>Download PDF</button>
 
@@ -493,6 +492,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

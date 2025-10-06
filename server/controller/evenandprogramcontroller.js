@@ -44,8 +44,9 @@ const createEvent = async (req, res) => {
         const newNotification = new Notification({
             title: notificationTitle,
             message: notificationMessage,
-            senderId: req.user._id, // The user who created the event is the sender
-            isBroadcast: true,      // ⬅️ Flag this as a notification for ALL users
+            senderId: req.user._id, 
+             userId: report.userId,
+            isBroadcast: true,     
         });
         
         const savedNotification = await newNotification.save(); // ⬅️ PERSISTS TO DB
@@ -127,6 +128,7 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+
 
 
 

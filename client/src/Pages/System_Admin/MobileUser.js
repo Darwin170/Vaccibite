@@ -46,7 +46,7 @@ function M_user() {
 
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/auth/updateMUser/${editMUserId}`,
+        `${process.env.REACT_APP_API_URL}/auth/updateMUser/${editUserId}`,
         newUser,{
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -82,8 +82,8 @@ function M_user() {
     }
   };
 
-  const handleEdit = (Muser) => {
-    setEditUserId(Muser._Id);
+  const handleEdit = (user) => {
+    setEditUserId(user._Id);
     setNewUser({
       name: user.fullName,
       email: user.email,
@@ -204,6 +204,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

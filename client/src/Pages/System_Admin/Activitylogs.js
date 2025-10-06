@@ -27,7 +27,7 @@ const ActivityLogs = () => {
   const userPosition = log.user?.position || '';
 
   // 1. Hardcoded Exclusion
-  if (userPosition === 'Super Admin') {
+  if (userPosition === 'Super_Admin') {
     return false; // Exclude Super Admin logs immediately
   }
 
@@ -88,7 +88,7 @@ const ActivityLogs = () => {
                 <tr key={index}>
                   <td className="tableCells">
                     {new Date(log.timestamp).toLocaleString()}
-                  <td>const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();</td>
+                 <td className="tableCells">{log.user?.fullName || log.user?.name || 'N/A'}</td>
                   <td className="tableCells">{log.user?.position || 'N/A'}</td>
                   <td className="tableCells">{log.action}</td>
                   <td className="tableCells">{log.details || 'N/A'}</td>
@@ -109,6 +109,7 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 
 

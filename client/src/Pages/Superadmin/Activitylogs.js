@@ -49,19 +49,26 @@ const ActivityLogs = () => {
       
     }, []);
 
-    const filteredLogs = logs.filter((log) => {
-        const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();
-        const userPosition = log.user?.position || '';
-        const action = log.action?.toLowerCase() || '';
+   const filteredLogs = logs.filter((log) => {
+    const userPosition = log.user?.position || '';
+    
+   
+        return false; 
+    }
 
-        const matchesSearch =
-            userName.includes(searchTerm.toLowerCase()) ||
-            action.includes(searchTerm.toLowerCase());
+    // 2. EXISTING SEARCH AND ROLE FILTER LOGIC
+    const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();
+    const action = log.action?.toLowerCase() || '';
 
-        const matchesRole = roleFilter === 'All' || userPosition === roleFilter;
+    const matchesSearch =
+        userName.includes(searchTerm.toLowerCase()) ||
+        action.includes(searchTerm.toLowerCase());
 
-        return matchesSearch && matchesRole;
-    });
+    const matchesRole = 
+        roleFilter === '' || roleFilter === 'All' || userPosition === roleFilter;
+
+    return matchesSearch && matchesRole;
+});
 
     return (
         <div className="Activity">
@@ -130,6 +137,7 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 
 

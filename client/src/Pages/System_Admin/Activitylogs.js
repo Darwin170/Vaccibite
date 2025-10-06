@@ -99,6 +99,7 @@ const ActivityLogs = () => {
                 <td className="tableCells" colSpan="5" style={{ textAlign: 'center' }}>
                   No matching logs found.
                 </td>
+                </td>
               </tr>
             )}
           </tbody>
@@ -109,6 +110,7 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 
 

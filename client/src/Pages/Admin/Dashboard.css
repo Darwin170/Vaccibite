@@ -48,13 +48,12 @@
   }
   
   .chart-card {
-    background-color: #ffffff;
     padding: 60px;
     padding-top:20px;
     padding-bottom:20px;
     border-radius:10px;
     margin-left: 10px;
-    background: #9f9d9d;
+    background: #a2c2c8;
     
   }
   
@@ -69,6 +68,7 @@
     font-weight: bold;
   }
   
+
 
 
 

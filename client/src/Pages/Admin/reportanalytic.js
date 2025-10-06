@@ -365,8 +365,14 @@ const Dashboard = () => {
                                         outerRadius={80}
                                         label
                                     >
-                                        {pieData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        const color = CATEGORY_COLORS[entry.name] || '#ccc';
+
+                                        return (
+                                    <Cell 
+                                            key={`cell-${index}`} 
+                                    fill={color} 
+                                                />
+                                                );
                                         ))}
                                     </Pie>
                                     <Tooltip />
@@ -384,6 +390,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

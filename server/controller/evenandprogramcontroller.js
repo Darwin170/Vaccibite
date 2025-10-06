@@ -1,7 +1,7 @@
 const Event = require('../model/evenandprogram');
 const ActivityLog = require('../model/Activitylogs');
 const Notification = require('../model/Notification');
-const M_User = require('../model/M_User'); // 🔑 CRITICAL: Import your Mobile User model
+const M_User = require('../model/M_user'); // 🔑 CRITICAL: Import your Mobile User model
 
 let io;
 try {
@@ -137,6 +137,7 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+
 
 
 

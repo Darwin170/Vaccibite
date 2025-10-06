@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const CATEGORY_COLORS = {
-    "Roaming Animal": "#FFB10A",
+    "Roaming Animal": "#B87D00",
     "Animal Bite": "#990000",
     "Missing Animal": "#08A045",
     // Add other categories here
@@ -393,5 +393,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 

@@ -41,8 +41,8 @@ function M_user() {
 
 
   const handleUpdateMUser = async () => {
-    const { fullName, email, phone, password, barangay } = newUser;
-    if (!fullName || !email || !phone || !password || !barangay) return;
+    const { fullName, email, password, barangay } = newUser;
+    if (!fullName || !email || !password || !barangay) return;
 
     try {
       await axios.put(
@@ -205,6 +205,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

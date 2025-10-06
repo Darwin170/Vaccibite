@@ -142,7 +142,7 @@ function M_user() {
         {showAddMUserModal && (
           <div className="modal-overlay">
             <div className="modal-content">
-              <h2>{editUserId ? "Edit User" : "Add New User"}</h2>
+              <h2>{editUserId ? "Edit User" }</h2>
               <input
                 type="text"
                 placeholder="Name"
@@ -205,6 +205,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

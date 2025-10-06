@@ -83,7 +83,7 @@ function M_user() {
   };
 
   const handleEdit = (user) => {
-    setEditUserId(user.MuserId);
+    setEditUserId(user._id);
     setNewUser({
       fullName: user.fullName,
       email: user.email,
@@ -205,6 +205,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

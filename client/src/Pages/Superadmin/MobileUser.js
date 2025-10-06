@@ -87,7 +87,7 @@ function M_user() {
     setNewUser({
       fullName: user.fullName,
       email: user.email,
-      password: "",
+      password: user.password,
       barangay: user.barangay, // assuming this is the barangayId
     });
     setShowAddMUserModal(true);
@@ -205,6 +205,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

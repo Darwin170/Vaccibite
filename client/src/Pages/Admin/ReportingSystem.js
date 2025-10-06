@@ -367,7 +367,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                         <p><strong>Size:</strong> {selectedDetails.categoryDetails?.size || 'N/A'}</p>
                                         <p><strong>District:</strong> {selectedDetails.categoryDetails?.location || 'N/A'}</p>
                                         <p><strong>Time:</strong> {selectedDetails.categoryDetails?.Time || 'N/A'}</p>
-                                        <p><strong>Behavior:</strong> {selectedDetails.categoryDetails?.behavior || 'N/A'}</p>
+                                        <p><strong>Behavior:</strong> {selectedDetails.categoryDetails?.bahavior || 'N/A'}</p>
                                     </>
                                 )}
                                 {selectedDetails.type === "Missing Animal" && (
@@ -492,6 +492,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

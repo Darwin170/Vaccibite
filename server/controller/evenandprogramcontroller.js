@@ -1,6 +1,7 @@
 const Event = require('../model/evenandprogram');
 const ActivityLog = require('../model/Activitylogs');
 const Notification = require('../model/Notification');
+const M_User = require('../model/M_User'); // 🔑 CRITICAL: Import your Mobile User model
 
 let io;
 try {
@@ -12,7 +13,6 @@ try {
 
 const createEvent = async (req, res) => {
     try {
-        // req.user and req.userType are assumed to be set by authentication middleware
         const { title, start, end, details, barangayId } = req.body; 
 
         if (!title || !start || !end || !details || !barangayId ) {
@@ -39,29 +39,36 @@ const createEvent = async (req, res) => {
         const notificationTitle = 'New Event Alert! 🎉';
         const notificationMessage = `The QCVD - ACDCD has posted a new event: "${newEvent.title}"`;
         
-        // 2. 🔑 CRITICAL: Create and Save the Broadcast Notification
-        // This single record is saved and marked as a broadcast.
-        if(events.userId){
-        const newNotification = new Notification({
+        // --- FAN-OUT BROADCAST LOGIC ---
+        
+        // A. 🔑 Fetch IDs of ALL mobile users
+        const users = await M_User.find({}, '_id'); 
+        
+        // B. Create an array of notification documents, one for each user
+        const notificationDocuments = users.map(user => ({
             title: notificationTitle,
             message: notificationMessage,
-            senderId: req.user._id, 
-             userId: events.userId,
-            isBroadcast: true,     
-        });
+            senderId: req.user._id,
+            userId: user._id, // ⬅️ Satisfies the 'required: true' constraint
+            // We omit the 'isBroadcast' field as it is no longer needed.
+        }));
         
-        const savedNotification = await newNotification.save(); // ⬅️ PERSISTS TO DB
+        // C. 🔑 Insert all documents in bulk
+        if (notificationDocuments.length > 0) {
+            await Notification.insertMany(notificationDocuments);
+        }
+        
+        // --- END FAN-OUT LOGIC ---
 
         // 3. Emit Real-Time Signal
         if (io) {
-            // Emit a general event signal for all connected clients to trigger a refresh
+            // This emits to ALL connected users, ensuring they trigger a refresh.
             io.emit('new-event', {  
                 type: 'BROADCAST',
                 title: notificationTitle,
                 message: notificationMessage,
                 event: newEvent 
             });
-         }
         }
         
         // 4. Save Activity Log
@@ -75,7 +82,7 @@ const createEvent = async (req, res) => {
 
         // 5. Send Successful Response
         res.status(201).json({ 
-            message: 'Event created successfully, and notification broadcasted.', 
+            message: 'Event created successfully, and notification broadcasted to all users.', 
             event: newEvent 
         });
     } catch (error) {
@@ -130,6 +137,7 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+
 
 
 

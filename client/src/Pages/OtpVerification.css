@@ -1,3 +1,9 @@
+#root {
+  /* Ensure it takes up the full height of the viewport */
+  min-height: 100vh;
+  /* Set the background color */
+  background-color: linear-gradient(135deg,#d63384,#e83e8c);
+}
 .otp-container {
   
   display: flex;

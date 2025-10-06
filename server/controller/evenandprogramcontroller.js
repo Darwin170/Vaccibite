@@ -1,7 +1,6 @@
 const Event = require('../model/evenandprogram');
 const ActivityLog = require('../model/Activitylogs');
 const Notification = require('../model/Notification');
-const User = require('../model/M_User'); // Assuming you have a User model for sender lookup
 
 let io;
 try {
@@ -128,6 +127,7 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+
 
 
 

@@ -59,8 +59,8 @@ const getBarangayColor = (reportsInBarangay) => {
     const hasRoaming = reportsInBarangay.some(r => r.type === 'Roaming Animal');
 
     if (hasBite) return 'red';
-    if (hasMissing) return 'orange';
-    if (hasRoaming) return 'blue';
+    if (hasMissing) return 'green';
+    if (hasRoaming) return 'yellow';
     return 'gray';
 };
 
@@ -166,7 +166,7 @@ const MapPage = () => {
                                 <option value="">All</option>
                                 <option value="Animal Bite">Animal Bite</option>
                                 <option value="Missing Animal">Missing Animal</option>
-                                <option value="Animal Sighting">Animal Sighting</option>
+                                <option value="Roaming Animal">Roaming Animal</option>
                             </select>
                         </div>
                     </div>
@@ -291,6 +291,7 @@ const MapPage = () => {
 };
 
 export default MapPage;
+
 
 
 

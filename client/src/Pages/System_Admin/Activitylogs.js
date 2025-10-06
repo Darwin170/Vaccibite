@@ -25,8 +25,11 @@ const ActivityLogs = () => {
 
   
   const filteredLogs = logs.filter((log) => {
-    const userName = log.user?.name?.toLowerCase() || '';
+    const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();
     const userPosition = log.user?.position || '';
+    if (userPosition === 'Super Admin') {
+    return false; 
+  }
     const action = log.action?.toLowerCase() || '';
 
     const matchesSearch =
@@ -59,7 +62,7 @@ const ActivityLogs = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
             style={{ padding: '8px', borderRadius: '5px', border: '1px solid #ccc' }}
           >
-            <option value="All">All Roles</option>
+            <option value="">All Roles</option>
             <option value="mobile">Mobile User</option>
             <option value="Admin">Admin</option>
             <option value="System_Admin">System Admin</option>
@@ -104,5 +107,6 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 

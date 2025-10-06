@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import { useNavigate } from "react-router-dom";
 
-const COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
+const COLORS = ['#8884d8', '#08A045', '#ffc658'];
 
 const Dashboard = () => {
     const [lineData, setLineData] = useState([]);
@@ -379,6 +379,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

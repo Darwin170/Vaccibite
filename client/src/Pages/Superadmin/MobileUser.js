@@ -53,7 +53,7 @@ function M_user() {
         }
       );
       setNewUser({
-        FullName: "",
+        fullName: "",
         email: "",
         password: "",
         barangay: "",
@@ -205,6 +205,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

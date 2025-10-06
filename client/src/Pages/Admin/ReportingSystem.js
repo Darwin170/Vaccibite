@@ -327,7 +327,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
                                 <p>
                                     <strong>File:</strong>{' '}
                                     <a
-                                        href={`${process.env.REACT_APP_API_URL}/${report.filePath}`}
+                                        href={`${API_URL}/${selectedDetails.filePath}`}
                                         download
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -492,6 +492,7 @@ const updateReportStatus = async (reportId, newStatus, file = null) => {
 }
 
 export default ReportingPage;
+
 
 
 

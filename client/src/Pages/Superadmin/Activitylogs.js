@@ -50,7 +50,7 @@ const ActivityLogs = () => {
     }, []);
 
     const filteredLogs = logs.filter((log) => {
-        const userName = log.user?.name?.toLowerCase() || '';
+        const userName = (log.user?.fullName || log.user?.name || '').toLowerCase();
         const userPosition = log.user?.position || '';
         const action = log.action?.toLowerCase() || '';
 
@@ -110,7 +110,7 @@ const ActivityLogs = () => {
                                         <tr key={log.timestamp || index}> 
                                             <td className="tableCells">
                                                 {new Date(log.timestamp).toLocaleString()}
-                                            </td><td className="tableCells">{log.user?.name || 'N/A'}</td><td className="tableCells">{log.user?.position || 'N/A'}</td><td className="tableCells">{log.action}</td><td className="tableCells">{log.details || 'N/A'}</td>
+                                            </td><td className="tableCells">{log.user?.fullName || log.user?.name || 'N/A'}</td><td className="tableCells">{log.user?.position || 'N/A'}</td><td className="tableCells">{log.action}</td><td className="tableCells">{log.details || 'N/A'}</td>
                                         </tr>
                                     ))
                                 ) : (
@@ -130,5 +130,6 @@ const ActivityLogs = () => {
 };
 
 export default ActivityLogs;
+
 
 

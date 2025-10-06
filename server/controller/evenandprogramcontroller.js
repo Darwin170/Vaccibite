@@ -41,6 +41,7 @@ const createEvent = async (req, res) => {
         
         // 2. 🔑 CRITICAL: Create and Save the Broadcast Notification
         // This single record is saved and marked as a broadcast.
+        if(events,userId){
         const newNotification = new Notification({
             title: notificationTitle,
             message: notificationMessage,
@@ -60,6 +61,7 @@ const createEvent = async (req, res) => {
                 message: notificationMessage,
                 event: newEvent 
             });
+         }
         }
         
         // 4. Save Activity Log
@@ -128,6 +130,7 @@ module.exports = {
   deleteEvent,
   getAllEvents,
 };
+
 
 
 

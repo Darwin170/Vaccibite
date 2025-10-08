@@ -24,7 +24,9 @@ const addAnimalBite = async (req, res) => {
       age,
       gender,
       severity,
-      caughtStatus
+      caughtStatus,
+       latitude, 
+       longitude, 
     } = req.body;
 
     // 🔑 Keep fetching the name for the main report object display
@@ -38,7 +40,18 @@ const addAnimalBite = async (req, res) => {
             console.warn(`Barangay ID ${barangayId} not found.`);
         }
     }
+    if (type === 'Animal Bite') {
 
+        if (!latitude || !longitude) {
+            return res.status(400).json({ message: 'Latitude and Longitude are required for Animal Bite reports.' });
+        }
+        
+        details = {
+            latitude: latitude,
+            longitude: longitude,
+         
+        };
+    } 
 
     // Save uploaded file path
     const filePath = req.file ? `uploads/${req.file.filename}` : null;
@@ -104,6 +117,7 @@ const addAnimalBite = async (req, res) => {
 };
 
 module.exports = { addAnimalBite };
+
 
 
 

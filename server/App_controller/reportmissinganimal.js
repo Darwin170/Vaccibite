@@ -19,7 +19,9 @@ const addMissinganimal = async (req, res) => {
       size,
       location,
       reportDate,  // ✅ renamed instead of "Date"
-      Special
+      Special,
+        latitude, 
+       longitude, 
     } = req.body;
 
     // 🔑 NEW LOGIC: Fetch Barangay Name
@@ -33,7 +35,18 @@ const addMissinganimal = async (req, res) => {
             console.warn(`Barangay ID ${barangayId} not found for Missing Animal report.`);
         }
     }
+ if (type === 'Missing Animal') {
 
+        if (!latitude || !longitude) {
+            return res.status(400).json({ message: 'Latitude and Longitude are required for Animal Bite reports.' });
+        }
+        
+        details = {
+            latitude: latitude,
+            longitude: longitude,
+         
+        };
+    } 
 
     // ✅ Check required fields
     if (!barangayId || !Name_of_the_animal_missing) {
@@ -86,6 +99,7 @@ const addMissinganimal = async (req, res) => {
   }
 };
 module.exports = { addMissinganimal };
+
 
 
 

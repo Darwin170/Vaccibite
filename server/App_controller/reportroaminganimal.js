@@ -18,7 +18,9 @@ const addRoamingAnimal = async (req, res) => {
       size,
       location,
       Time,
-      bahavior
+      bahavior,
+        latitude, 
+       longitude, 
     } = req.body;
 
     // 🔑 NEW LOGIC: Fetch Barangay Name
@@ -32,6 +34,19 @@ const addRoamingAnimal = async (req, res) => {
             console.warn(`Barangay ID ${barangayId} not found for Roaming Animal report.`);
         }
     }
+       if (type === 'Roaming Animal) {
+
+        if (!latitude || !longitude) {
+            return res.status(400).json({ message: 'Latitude and Longitude are required for Animal Bite reports.' });
+        }
+        
+        details = {
+            latitude: latitude,
+            longitude: longitude,
+         
+        };
+    } 
+
 
  // Save uploaded file path
    const filePath = req.file ? `uploads/${req.file.filename}` : null;
@@ -80,6 +95,7 @@ module.exports = {
 
   addRoamingAnimal
 };
+
 
 
 

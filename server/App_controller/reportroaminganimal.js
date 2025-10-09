@@ -34,7 +34,7 @@ const addRoamingAnimal = async (req, res) => {
             console.warn(`Barangay ID ${barangayId} not found for Roaming Animal report.`);
         }
     }
-       if (type === 'Roaming Animal) {
+       if (type === 'Roaming Animal') {
 
         if (!latitude || !longitude) {
             return res.status(400).json({ message: 'Latitude and Longitude are required for Animal Bite reports.' });
@@ -95,6 +95,7 @@ module.exports = {
 
   addRoamingAnimal
 };
+
 
 
 

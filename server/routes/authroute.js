@@ -34,9 +34,11 @@ const {getOngoingReport}=require("../controller/ongoingcout");
 const {resendOtp}=require("../controller/resend-OTP");
 const {downloadAllReports}= require("../controller/backupPDf");
 const { recordUniqueEventView } = require('../controller/recordUniqueEventView'); 
+const {getMonthNumber }= require('../controller/interpretation');
 
 const router = express.Router();
 
+router.get('/average-resolution-time',getMonthNumber);
 router.post('/events/:id/view', authMiddleware, recordUniqueEventView); 
 router.get("/pdf-backup", downloadAllReports);
 router.post("/resend-otp", resendOtp ); 
@@ -74,6 +76,7 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 
 
 

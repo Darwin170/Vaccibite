@@ -36,7 +36,7 @@ const createUser = async (req, res) => {
       user: req.user._id, // admin ID
       onModel: req.userType, // The model name for this user
       action: 'New User Registered',
-      details: `New user ${newUser.email} registered with position ${newUser.position}.`,
+      details: `New user ${newUser.name} registered with position ${newUser.position}.`,
     });
 
     await newLog.save();
@@ -56,5 +56,6 @@ const createUser = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 module.exports = { createUser };

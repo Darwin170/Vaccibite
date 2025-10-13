@@ -16,12 +16,19 @@ const buildFilter = (query) => {
         };
     }
     
-    // 2. Type Filter
-    if (incidentType) {
-        // Handle potential naming mismatch
-        filter.incidentType = incidentType === 'Animal Roaming' ? 'Roaming Animal' ? 'Animal Bite': incidentType;
-    }
+      if (incidentType) {
+        let dbIncidentType = incidentType;
+        
+        // Correctly handle specific frontend names that map to different DB values
+        if (incidentType === 'Animal Roaming') {
+            dbIncidentType = 'Roaming Animal'; 
+        } else if (incidentType === 'Animal Bite') {
+            
+            dbIncidentType = 'Animal Bite'; // Change this to your actual DB value if different
+        }
 
+        filter.incidentType = dbIncidentType;
+    }
     // 3. Location Filters
     if (district) {
         filter.district = district;
@@ -60,4 +67,5 @@ const getResolvedReports = async (req, res) => {
 };
 
 module.exports = { getResolvedReports };
+
 

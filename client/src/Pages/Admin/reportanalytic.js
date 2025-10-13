@@ -260,7 +260,7 @@ const Dashboard = () => {
                             <option value="">All Types</option>
                             <option value="Animal Bite">Animal Bite</option>
                             <option value="Missing Animal">Missing Animal</option>
-                            <option value="Animal Roaming">Animal Roaming</option>
+                            <option value="Roaming Animal">Animal Roaming</option>
                         </select>
                     </label>
 
@@ -393,6 +393,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

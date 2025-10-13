@@ -1,46 +1,24 @@
 const report = require('../model/reportsmodel');
 const mongoose = require('mongoose');
 
-// Get reports from the last 28 days
-const getLast28DaysReports = async (req, res) => {
-      const { startMonth, endMonth, status, incidentType, district, barangayId } = query;
+// Helper function to build non-date-specific filters (Location, Status, Type)
+const buildGeneralFilters = (query) => {
+    // Destructure query parameters
+    const { status, incidentType, district, barangayId } = query;
     const filter = {};
 
-    // 1. Time Filter (Months) - Assumes reports have a 'date' field
-    if (startMonth || endMonth) {
-        // NOTE: This assumes filtering reports for a single, current year. 
-        // For multi-year data, year filters are essential.
-        const dateFilter = {};
-        
-        // Get the current year for time context
-        const currentYear = new Date().getFullYear();
-
-        if (startMonth) {
-            // First day of the start month
-            dateFilter.$gte = new Date(currentYear, parseInt(startMonth) - 1, 1);
-        }
-        if (endMonth) {
-            // Last day of the end month
-            dateFilter.$lte = new Date(currentYear, parseInt(endMonth), 0); // Month+1, Day 0 gives the last day of the previous month
-        }
-        
-        if (Object.keys(dateFilter).length > 0) {
-            filter.date = dateFilter;
-        }
-    }
-
-    // 2. Status Filter
+    // 1. Status Filter
     if (status) {
         filter.status = status;
     }
 
-    // 3. Type Filter
+    // 2. Type Filter
     if (incidentType) {
-        // The frontend sends "Animal Roaming" but the DB might store "Roaming Animal"
+        // Handle potential naming mismatch between frontend and DB
         filter.incidentType = incidentType === 'Animal Roaming' ? 'Roaming Animal' : incidentType;
     }
 
-    // 4. Location Filter
+    // 3. Location Filter
     if (district) {
         filter.district = district;
     }
@@ -51,22 +29,39 @@ const getLast28DaysReports = async (req, res) => {
 
     return filter;
 };
-    try {
-        // Calculate the date 28 days ago
-        const today = new Date();
-        const past28Days = new Date(today);
-        past28Days.setDate(today.getDate() - 28);
 
-        // Fetch reports with createdAt >= past28Days
-        const reports = await report.find({ date: { $gte: past28Days } }).sort({ date: -1 });
+// Get reports from the last 28 days
+const getLast28DaysReports = async (req, res) => {
+    try {
+        // 1. Get all query parameters from the request
+        const query = req.query;
+        
+        // 2. Define the mandatory 28-day time filter
+        const past28Days = new Date();
+        past28Days.setDate(past28Days.getDate() - 28);
+
+        // 3. Build the general filters (Status, Type, Location)
+        const generalFilters = buildGeneralFilters(query);
+        
+        // 4. Combine general filters with the 28-day time constraint
+        // This ensures the count reflects the last 28 days AND the user's selected location/type.
+        const finalFilter = {
+            ...generalFilters, 
+            date: { $gte: past28Days }
+        };
+
+        // 5. Execute the Query
+        // Use the finalFilter to restrict the documents
+        const reports = await report.find(finalFilter).sort({ date: -1 });
 
         res.status(200).json({
             success: true,
-            count: reports.length,
-            data: reports
+            // Return the count of matching reports for the frontend KPI
+            count: reports.length, 
+            data: reports // Optionally return the data itself
         });
     } catch (error) {
-        console.error(error);
+        console.error("Error fetching last 28 days reports:", error);
         res.status(500).json({
             success: false,
             message: 'Failed to fetch reports from last 28 days',
@@ -76,4 +71,3 @@ const getLast28DaysReports = async (req, res) => {
 };
 
 module.exports = { getLast28DaysReports };
-

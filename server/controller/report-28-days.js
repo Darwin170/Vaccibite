@@ -3,6 +3,54 @@ const mongoose = require('mongoose');
 
 // Get reports from the last 28 days
 const getLast28DaysReports = async (req, res) => {
+      const { startMonth, endMonth, status, incidentType, district, barangayId } = query;
+    const filter = {};
+
+    // 1. Time Filter (Months) - Assumes reports have a 'date' field
+    if (startMonth || endMonth) {
+        // NOTE: This assumes filtering reports for a single, current year. 
+        // For multi-year data, year filters are essential.
+        const dateFilter = {};
+        
+        // Get the current year for time context
+        const currentYear = new Date().getFullYear();
+
+        if (startMonth) {
+            // First day of the start month
+            dateFilter.$gte = new Date(currentYear, parseInt(startMonth) - 1, 1);
+        }
+        if (endMonth) {
+            // Last day of the end month
+            dateFilter.$lte = new Date(currentYear, parseInt(endMonth), 0); // Month+1, Day 0 gives the last day of the previous month
+        }
+        
+        if (Object.keys(dateFilter).length > 0) {
+            filter.date = dateFilter;
+        }
+    }
+
+    // 2. Status Filter
+    if (status) {
+        filter.status = status;
+    }
+
+    // 3. Type Filter
+    if (incidentType) {
+        // The frontend sends "Animal Roaming" but the DB might store "Roaming Animal"
+        filter.incidentType = incidentType === 'Animal Roaming' ? 'Roaming Animal' : incidentType;
+    }
+
+    // 4. Location Filter
+    if (district) {
+        filter.district = district;
+    }
+    if (barangayId) {
+        // Assuming your report schema links to the Barangay by ID
+        filter.barangayId = barangayId;
+    }
+
+    return filter;
+};
     try {
         // Calculate the date 28 days ago
         const today = new Date();
@@ -28,3 +76,4 @@ const getLast28DaysReports = async (req, res) => {
 };
 
 module.exports = { getLast28DaysReports };
+

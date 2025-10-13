@@ -20,9 +20,20 @@ const buildFilter = (query) => {
     // Including it here would allow the user to override "Ongoing", which is counter-intuitive for this KPI.
 
     // 2. Type Filter
-    if (incidentType) {
-        // Handle potential naming mismatch
-        filter.incidentType = incidentType === 'Animal Roaming' ? 'Roaming Animal' : incidentType;
+      if (incidentType) {
+        let dbIncidentType = incidentType;
+        
+        // Correctly handle specific frontend names that map to different DB values
+        if (incidentType === 'Animal Roaming') {
+            dbIncidentType = 'Roaming Animal'; 
+        } else if (incidentType === 'Animal Bite') {
+            // Assuming your database value is 'Animal Bite' or 'Bite Incident'.
+            // If the DB stores 'Animal Bite', this line is optional. 
+            // If the DB stores 'Bite Incident', you must change the value below:
+            dbIncidentType = 'Animal Bite'; // Change this to your actual DB value if different
+        }
+
+        filter.incidentType = dbIncidentType;
     }
 
     // 3. Location Filters
@@ -63,3 +74,4 @@ const getOngoingReport = async (req, res) => {
 };
 
 module.exports = { getOngoingReport };
+

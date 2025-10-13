@@ -19,7 +19,7 @@ const buildFilter = (query) => {
     // 2. Type Filter
     if (incidentType) {
         // Handle potential naming mismatch
-        filter.incidentType = incidentType === 'Animal Roaming' ? 'Roaming Animal' : incidentType;
+        filter.incidentType = incidentType === 'Animal Roaming' ? 'Roaming Animal' ? 'Animal Bite': incidentType;
     }
 
     // 3. Location Filters
@@ -60,3 +60,4 @@ const getResolvedReports = async (req, res) => {
 };
 
 module.exports = { getResolvedReports };
+

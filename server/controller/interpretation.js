@@ -1,8 +1,9 @@
-const Report = require('../model/reportsmodel');
-const mongoose = require('mongoose');
+const Report = require('../models/reportsmodel');
 
-const getMonthNumber = (month) => parseInt(month, 10);
+
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
+const getMonthNumber = (month) => parseInt(month, 10);
+
 
 const getAverageResolutionTime = async (req, res) => {
     try {

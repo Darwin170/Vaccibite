@@ -1,5 +1,5 @@
 const Report = require('../model/reportsmodel');
-const Location = require('../model/Barangays');
+const Location = require('../model/barangaymodel');
 const mongoose = require('mongoose');
 
 const MS_PER_DAY = 1000 * 60 * 60 * 24;

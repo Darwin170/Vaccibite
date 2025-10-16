@@ -13,9 +13,8 @@ const buildGeneralFilters = (query) => {
     }
 
     // 2. Type Filter
-    if (incidentType) {
-        // Handle potential naming mismatch between frontend and DB
-        filter.incidentType = incidentType === 'Animal Roaming' ? 'Roaming Animal' : incidentType;
+     if (incidentType) {
+      matchQuery.type = incidentType;
     }
 
     // 3. Location Filter
@@ -71,3 +70,4 @@ const getLast28DaysReports = async (req, res) => {
 };
 
 module.exports = { getLast28DaysReports };
+

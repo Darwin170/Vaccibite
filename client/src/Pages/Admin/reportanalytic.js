@@ -15,7 +15,7 @@ const CATEGORY_COLORS = {
     "Roaming Animal": "#B87D00",
     "Animal Bite": "#990000",
     "Missing Animal": "#08A045",
-    // Add other categories here
+   
 };
 
 const Dashboard = () => {
@@ -179,17 +179,16 @@ const Dashboard = () => {
             fetchAvgResolutionTime();
         };
 
-        fetchData(); // Initial call
+        fetchData(); 
 
-        const interval = setInterval(fetchData, 10000); // Interval call
+        const interval = setInterval(fetchData, 10000); 
 
         return () => clearInterval(interval);
     }, [startMonth, endMonth, incidentType, selectedDistrict, selectedBarangay, status]);
 
 
-    // --- 5. Dynamic Summary Sentence Logic (Diagnostic Analytics) ---
     const getSummaryText = () => {
-        // --- 1. Build Filter Context ---
+       
         const contextFilters = [];
         
         if (selectedBarangay) {
@@ -203,7 +202,7 @@ const Dashboard = () => {
             contextFilters.push(`for ${status.toLowerCase()} reports`);
         }
 
-        // Time Filter (Only display if changed from default 1-12)
+        
         if (startMonth !== '1' || endMonth !== '12') {
             const start = new Date(0, parseInt(startMonth) - 1).toLocaleString('default', { month: 'long' });
             const end = new Date(0, parseInt(endMonth) - 1).toLocaleString('default', { month: 'long' });
@@ -218,7 +217,7 @@ const Dashboard = () => {
         const contextString = contextFilters.length > 0 ? contextFilters.join(', ') : 'overall';
         const totalReportsText = `A total of ${totalFilteredReports} report${totalFilteredReports !== 1 ? 's' : ''} were filed ${contextString}.`;
         
-        // --- 2. Generate the Diagnostic Sentence ---
+     
         if (totalFilteredReports > 0) {
             const distribution = pieData
                 .map(item => ({
@@ -231,7 +230,7 @@ const Dashboard = () => {
 
             const distributionString = distribution.join(', ');
 
-            // Final requested format
+       
             return `${totalReportsText} The incident breakdown is: ${distributionString}.`;
 
         } else if (contextFilters.length > 0) {
@@ -242,7 +241,7 @@ const Dashboard = () => {
     };
 
 
-    // --- 6. Render UI ---
+
     return (
         <div style={{ display: 'flex' }}>
             <Sidebar />
@@ -373,7 +372,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                     
-                    {/* NEW: Average Resolution Time Card */}
+                
                     <div className="chart-card">
                         <h2 className="chart-title">⏱️ Avg. Resolution Time</h2>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
@@ -453,3 +452,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

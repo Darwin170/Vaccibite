@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { useNavigate } from "react-router-dom";
 
+
 const CATEGORY_COLORS = {
     "Roaming Animal": "#B87D00",
     "Animal Bite": "#990000",
@@ -18,22 +19,26 @@ const CATEGORY_COLORS = {
 };
 
 const Dashboard = () => {
+ 
     const [lineData, setLineData] = useState([]);
     const [pieData, setPieData] = useState([]);
     const [locations, setLocations] = useState([]);
     const [filteredBarangays, setFilteredBarangays] = useState([]);
     const [newReportsCount, setNewReportsCount] = useState(0);
     const [reportsLast28Days, setReportsLast28Days] = useState(0);
-    const navigate = useNavigate();
     const [eventViewsCount, setEventViewsCount] = useState(0);
     const [resolvedReportsCount, setResolvedReportsCount] = useState(0);
     const [ongoingReportsCount, setOngoingReportsCount] = useState(0);
+    const [totalFilteredReports, setTotalFilteredReports] = useState(0); 
+    const [avgResolutionTime, setAvgResolutionTime] = useState(null); 
     const [startMonth, setStartMonth] = useState('1');
     const [endMonth, setEndMonth] = useState('12');
     const [status, setStatus] = useState('');
     const [incidentType, setIncidentType] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
     const [selectedBarangay, setSelectedBarangay] = useState('');
+    
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (selectedDistrict) {
@@ -49,6 +54,20 @@ const Dashboard = () => {
         }
     }, [selectedDistrict, locations, selectedBarangay]);
 
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`);
+                setLocations(res.data || []);
+                setFilteredBarangays(res.data || []);
+            } catch (error) {
+                console.error('Error fetching locations:', error);
+            }
+        };
+        fetchLocations();
+    }, []);
+
+    // --- 3. Fetch Charts and Calculate Total Reports ---
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
@@ -66,29 +85,23 @@ const Dashboard = () => {
                     axios.get(`${process.env.REACT_APP_API_URL}/auth/pie-data`, { params }),
                 ]);
 
+                const newPieData = pieRes.data || [];
                 setLineData(lineRes.data || []);
-                setPieData(pieRes.data || []);
+                setPieData(newPieData);
+                
+                // CRUCIAL: Calculate total count from pie data for the summary sentence
+                const total = newPieData.reduce((sum, item) => sum + item.value, 0);
+                setTotalFilteredReports(total); 
+
             } catch (err) {
-                console.error("Error fetching dashboard data:", err);
+                console.error("Error fetching chart data:", err);
             }
         };
 
         fetchDashboardData();
     }, [startMonth, endMonth, status, incidentType, selectedDistrict, selectedBarangay]);
 
-    useEffect(() => {
-        const fetchLocations = async () => {
-            try {
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/Barangays`);
-                setLocations(res.data || []);
-                setFilteredBarangays(res.data || []);
-            } catch (error) {
-                console.error('Error fetching locations:', error);
-            }
-        };
-        fetchLocations();
-    }, []);
-
+    // --- 4. Fetch KPI Counts (with auto-refresh) ---
     useEffect(() => {
         const params = {
             startMonth,
@@ -128,7 +141,8 @@ const Dashboard = () => {
 
         const fetchOngoingReports = async () => {
             try {
-                const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth//getOngoingReport`, { params });
+                // 🚨 FIXED URL: Corrected to remove double slash
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getOngoingReport`, { params });
                 setOngoingReportsCount(res.data.count || 0);
             } catch (error) {
                 console.error("Error fetching ongoing reports:", error);
@@ -143,56 +157,92 @@ const Dashboard = () => {
                 console.error("Error fetching event views:", error);
             }
         };
+        
+        // 👇 NEW: Fetch Average Resolution Time
+        const fetchAvgResolutionTime = async () => {
+            try {
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/average-resolution-time`, { params });
+                setAvgResolutionTime(res.data.averageTime || 'N/A');
+            } catch (error) {
+                console.error("Error fetching average resolution time:", error);
+                setAvgResolutionTime('Error'); 
+            }
+        };
 
 
-        checkNewReports();
-        fetchReportsLast28Days();
-        fetchResolvedReports();
-        fetchOngoingReports();
-        fetchEventViews();
-
-        const interval = setInterval(() => {
+        const fetchData = () => {
             checkNewReports();
             fetchReportsLast28Days();
             fetchResolvedReports();
             fetchOngoingReports();
             fetchEventViews();
-        }, 10000);
+            fetchAvgResolutionTime();
+        };
+
+        fetchData(); // Initial call
+
+        const interval = setInterval(fetchData, 10000); // Interval call
 
         return () => clearInterval(interval);
     }, [startMonth, endMonth, incidentType, selectedDistrict, selectedBarangay, status]);
 
+
+    // --- 5. Dynamic Summary Sentence Logic (Diagnostic Analytics) ---
     const getSummaryText = () => {
-        const filters = [];
+        // --- 1. Build Filter Context ---
+        const contextFilters = [];
+        
         if (selectedBarangay) {
             const barangayName = filteredBarangays.find(b => b._id === selectedBarangay)?.name;
-            if (barangayName) filters.push(` of ${barangayName}`);
+            if (barangayName) contextFilters.push(`in Barangay ${barangayName}`);
         } else if (selectedDistrict) {
-            filters.push(`all barangays in District ${selectedDistrict}`);
+            contextFilters.push(`in District ${selectedDistrict}`);
         }
-        if (incidentType) {
-            filters.push(`${incidentType.toLowerCase()}`);
-        }
+        
         if (status) {
-            filters.push(` ${status.toLowerCase()} reports and`);
+            contextFilters.push(`for ${status.toLowerCase()} reports`);
         }
-        if (startMonth && endMonth) {
+
+        // Time Filter (Only display if changed from default 1-12)
+        if (startMonth !== '1' || endMonth !== '12') {
             const start = new Date(0, parseInt(startMonth) - 1).toLocaleString('default', { month: 'long' });
             const end = new Date(0, parseInt(endMonth) - 1).toLocaleString('default', { month: 'long' });
+            
             if (start === end) {
-                filters.push(`for the month of ${start}`);
+                contextFilters.push(`for the month of ${start}`);
             } else {
-                filters.push(`from ${start} to ${end}`);
+                contextFilters.push(`from ${start} to ${end}`);
             }
         }
+        
+        const contextString = contextFilters.length > 0 ? contextFilters.join(', ') : 'overall';
+        const totalReportsText = `A total of ${totalFilteredReports} report${totalFilteredReports !== 1 ? 's' : ''} were filed ${contextString}.`;
+        
+        // --- 2. Generate the Diagnostic Sentence ---
+        if (totalFilteredReports > 0) {
+            const distribution = pieData
+                .map(item => ({
+                    percentage: Math.round((item.value / totalFilteredReports) * 100),
+                    name: item.name
+                }))
+                .filter(item => item.percentage > 0)
+                .sort((a, b) => b.percentage - a.percentage)
+                .map(item => `${item.percentage}% ${item.name.toLowerCase()} incidents`);
 
-        if (filters.length === 0) {
-            return "Showing statistic.";
+            const distributionString = distribution.join(', ');
+
+            // Final requested format
+            return `${totalReportsText} The incident breakdown is: ${distributionString}.`;
+
+        } else if (contextFilters.length > 0) {
+            return `No reports were found matching the criteria: ${contextString}.`;
         }
 
-        return `Showing statistic ${filters.join(' ')}`;
+        return "Showing statistic: No reports were found in the system.";
     };
 
+
+    // --- 6. Render UI ---
     return (
         <div style={{ display: 'flex' }}>
             <Sidebar />
@@ -291,7 +341,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="Summary">
-                    <p>{getSummaryText()}</p>
+                    <p>{getSummaryText()}</p> {/* Renders the dynamic summary */}
                 </div>
 
 
@@ -322,6 +372,17 @@ const Dashboard = () => {
                             </span>
                         </div>
                     </div>
+                    
+                    {/* NEW: Average Resolution Time Card */}
+                    <div className="chart-card">
+                        <h2 className="chart-title">⏱️ Avg. Resolution Time</h2>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
+                            <span style={{ fontSize: "50px", fontWeight: "bold", color: "#6366f1", textAlign: "center" }}>
+                                {avgResolutionTime !== null ? avgResolutionTime : '...'}
+                                <span style={{ fontSize: "20px", marginLeft: "10px" }}>days</span> 
+                            </span>
+                        </div>
+                    </div>
 
                     <div className="chart-card">
                         <h2 className="chart-title">👁️ Event Views</h2>
@@ -332,6 +393,7 @@ const Dashboard = () => {
                         </div>
                     </div>
                 </div>
+                
                 <div className="chart-grid">
                     <div className="chart-card">
                         <h2 className="chart-title">Reports Over Time</h2>
@@ -365,7 +427,6 @@ const Dashboard = () => {
                                         outerRadius={80}
                                         label
                                     >
-                                        {/* CORRECTED: Switched to block function (using {}) and added 'return' */}
                                         {pieData.map((entry, index) => {
                                             const color = CATEGORY_COLORS[entry.name] || '#ccc';
 
@@ -376,7 +437,6 @@ const Dashboard = () => {
                                                 />
                                             );
                                         })}
-                                        {/* ------------------------------------------------------------------- */}
                                     </Pie>
                                     <Tooltip />
                                     <Legend />
@@ -393,7 +453,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-
-
-

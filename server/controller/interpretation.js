@@ -1,4 +1,4 @@
-const Report = require('../models/reportsmodel');
+const Report = require('../model/reportsmodel');
 const mongoose = require('mongoose');
 
 

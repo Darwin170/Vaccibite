@@ -48,6 +48,7 @@ const signupUser = async (req, res) => {
       email,
       password: hashedPassword,
       barangay,
+      isActivated: false,
     });
 
     await newUser.save();
@@ -59,6 +60,7 @@ const signupUser = async (req, res) => {
         fullName: newUser.fullName,
         email: newUser.email,
         barangay: newUser.barangay,
+        isActivated: newUser.isActivated,
       },
     });
   } catch (error) {
@@ -70,4 +72,5 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+
 

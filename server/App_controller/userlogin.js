@@ -25,6 +25,21 @@ const loginUser = async (req, res) => {
         // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: 'Invalid password.' });
+        if (!user.isActivated) {
+            // Log this attempt before rejecting the login
+            await new ActivityLog({
+                user: user._id,
+                onModel: "Mobile_User",
+                action: "Login Attempt Blocked",
+                details: `User ${user.email} attempted to log in but account is pending activation.`,
+            }).save();
+            
+            // Return a 403 Forbidden status with a clear message
+            return res.status(403).json({ 
+                message: "Your account is currently pending administrator approval. Please wait for an activation email.",
+                isActivated: false
+            });
+        }
         // ✅ Generate OTP
         const otpCode = Math.floor(100000 + Math.random() * 900000); // 6-digit
         const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 min
@@ -70,6 +85,7 @@ const loginUser = async (req, res) => {
 
 
 module.exports = { loginUser };
+
 
 
 

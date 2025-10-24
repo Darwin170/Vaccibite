@@ -15,12 +15,20 @@ const signupUser = async (req, res) => {
       return res.status(400).json({ message: 'Passwords do not match.' });
     }
 
-    if (password.length < 6) {
+    if (password.length < 8 ) {
       return res
         .status(400)
-        .json({ message: 'Password must be at least 6 characters long.' });
+        .json({ message: 'Password must be at least 8 characters long.' });
     }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
+    if (!passwordRegex.test(password)) {
+        return res
+            .status(400)
+            .json({ 
+                message: 'Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character (@, $, !, %, *, ?, &).' 
+            });
+    }
     // --- Check if user already exists by email ---
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -62,3 +70,4 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+

@@ -445,9 +445,9 @@ const Dashboard = () => {
                             <p style={{ textAlign: 'center', padding: '1rem' }}>No data available</p>
                         )}
                     </div>
+                </div>
                           <div className="Summary">
                     <p>{getSummaryText()}</p> {/* Renders the dynamic summary */}
-                        </div>
                 </div>
             </div>
         </div>
@@ -455,5 +455,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 

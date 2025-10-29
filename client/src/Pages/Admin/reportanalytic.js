@@ -338,56 +338,6 @@ const Dashboard = () => {
                         </select>
                     </label>
                 </div>
-
-                <div className="NumAnal">
-                    <div className="chart-card">
-                        <h2 className="chart-title">📊 Reports in the Last 28 Days</h2>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
-                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#2563eb" }}>
-                                {reportsLast28Days}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="chart-card">
-                        <h2 className="chart-title">✅ Reports Resolved</h2>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
-                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#16a34a" }}>
-                                {resolvedReportsCount}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="chart-card">
-                        <h2 className="chart-title">🚨 Ongoing Reports</h2>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
-                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#eab308" }}>
-                                {ongoingReportsCount}
-                            </span>
-                        </div>
-                    </div>
-                    
-                
-                    <div className="chart-card">
-                        <h2 className="chart-title">⏱️ Avg. Resolution Time</h2>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
-                            <span style={{ fontSize: "50px", fontWeight: "bold", color: "#6366f1", textAlign: "center" }}>
-                                {avgResolutionTime !== null ? avgResolutionTime : '...'}
-                                <span style={{ fontSize: "20px", marginLeft: "10px" }}>days</span> 
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="chart-card">
-                        <h2 className="chart-title">👁️ Event Views</h2>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
-                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#f59e0b" }}>
-                                {eventViewsCount}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                
                 <div className="chart-grid">
                     <div className="chart-card">
                         <h2 className="chart-title">Reports Over Time</h2>
@@ -441,6 +391,56 @@ const Dashboard = () => {
                         )}
                     </div>
                 </div>
+                <div className="NumAnal">
+                    <div className="chart-card">
+                        <h2 className="chart-title">📊 Reports in the Last 28 Days</h2>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
+                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#2563eb" }}>
+                                {reportsLast28Days}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="chart-card">
+                        <h2 className="chart-title">✅ Reports Resolved</h2>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
+                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#16a34a" }}>
+                                {resolvedReportsCount}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="chart-card">
+                        <h2 className="chart-title">🚨 Ongoing Reports</h2>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
+                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#eab308" }}>
+                                {ongoingReportsCount}
+                            </span>
+                        </div>
+                    </div>
+                    
+                
+                    <div className="chart-card">
+                        <h2 className="chart-title">⏱️ Avg. Resolution Time</h2>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
+                            <span style={{ fontSize: "50px", fontWeight: "bold", color: "#6366f1", textAlign: "center" }}>
+                                {avgResolutionTime !== null ? avgResolutionTime : '...'}
+                                <span style={{ fontSize: "20px", marginLeft: "10px" }}>days</span> 
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="chart-card">
+                        <h2 className="chart-title">👁️ Event Views</h2>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
+                            <span style={{ fontSize: "85px", fontWeight: "bold", color: "#f59e0b" }}>
+                                {eventViewsCount}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                
                           <div className="Summary">
                     <p>{getSummaryText()}</p> {/* Renders the dynamic summary */}
                 </div>
@@ -450,6 +450,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

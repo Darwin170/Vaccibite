@@ -112,6 +112,7 @@ function M_user() {
               <th>Name</th>
               <th>Email</th>
               <th>Barangay</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -205,6 +206,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

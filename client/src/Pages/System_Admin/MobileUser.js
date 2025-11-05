@@ -14,6 +14,7 @@ function M_user() {
     email: "",
     password: "",
     barangay: "",
+    isActive:false,
   });
 
   useEffect(() => {
@@ -57,6 +58,7 @@ function M_user() {
         email: "",
         password: "",
         barangay: "",
+        isActive:true,
       });
       setEditUserId(null);
       showAddMUserModal(false);
@@ -88,13 +90,12 @@ function M_user() {
       fullName: user.fullName,
       email: user.email,
       password: user.password,
-      barangay: user.barangay, // assuming this is the barangayId
+      barangay: user.barangay, 
     });
     setShowAddMUserModal(true);
   };
 
-  // ✅ Helper function to get barangay name from its ID
-  const getBarangayName = (barangayId) => {
+   const getBarangayName = (barangayId) => {
     const brgy = barangays.find((b) => b._id === barangayId);
     return brgy ? brgy.name : "Unknown";
   };
@@ -123,6 +124,9 @@ function M_user() {
                 <td>{user.fullName}</td>
                 <td>{user.email}</td>
                 <td>{getBarangayName(user.barangay)}</td> 
+                <td style={{ color: user.isActive ? 'green' : 'red', fontWeight: 'bold' }}>
+                    {user.isActive ? 'Active' : 'Inactive'}
+                </td>
                 <td>
                   <button className="button" onClick={() => handleEdit(user)}>
                     Edit
@@ -206,6 +210,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

@@ -83,7 +83,28 @@ function M_user() {
       console.error("Error deleting user:", err);
     }
   };
+const handleToggleStatus = async (user) => {
+    const newStatus = !user.isActive;
+    const action = newStatus ? "activate" : "deactivate";
 
+    if (!window.confirm(`Are you sure you want to ${action} ${user.fullName}'s account?`)) return;
+
+    try {
+      
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/auth/toggleMUserStatus/${user._id}`,
+        { isActive: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      fetchUsers();
+    } catch (err) {
+      console.error(`Error ${action}ing user:`, err);
+      alert(`Failed to ${action} user. Check console for details.`);
+    }
+  };
   const handleEdit = (user) => {
     setEditUserId(user._id);
     setNewUser({
@@ -216,6 +237,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

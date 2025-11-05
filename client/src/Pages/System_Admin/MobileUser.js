@@ -128,6 +128,12 @@ function M_user() {
                     {user.isActive ? 'Active' : 'Inactive'}
                 </td>
                 <td>
+                      <button 
+                        className={user.isActive ? 'deactivate-button' : 'activate-button'} 
+                        onClick={() => handleToggleStatus(user)}
+                        style={{ marginLeft: '5px', backgroundColor: user.isActive ? '#dc3545' : '#28a745', color: 'white' }}>
+                        {user.isActive ? 'Deactivate' : 'Activate'}
+                    </button> 
                   <button className="button" onClick={() => handleEdit(user)}>
                     Edit
                   </button>
@@ -210,6 +216,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

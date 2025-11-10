@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "./Sidebar"; 
+import Sidebar from "./Sidebar";
 import "./UserManagement.css";
+
 
 function M_user() {
   const [users, setUsers] = useState([]);
-  const [barangays, setBarangays] = useState([]); // ✅ Barangay list
+  const [barangays, setBarangays] = useState([]); 
   const [showAddMUserModal, setShowAddMUserModal] = useState(false);
   const [editUserId, setEditUserId] = useState(null);
 
@@ -14,6 +15,7 @@ function M_user() {
     email: "",
     password: "",
     barangay: "",
+    isActive: false,
   });
 
   useEffect(() => {
@@ -42,14 +44,14 @@ function M_user() {
 
   const handleUpdateMUser = async () => {
     const { fullName, email, password, barangay } = newUser;
-    if (!fullName || !email || !password || !barangay) return;
+    if (!fullName || !email || !barangay) return; 
 
     try {
       await axios.put(
         `${process.env.REACT_APP_API_URL}/auth/updateMUser/${editUserId}`,
-        newUser,{
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}` },
+        newUser, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
       setNewUser({
@@ -57,9 +59,10 @@ function M_user() {
         email: "",
         password: "",
         barangay: "",
+        isActive: true,
       });
       setEditUserId(null);
-      showAddMUserModal(false);
+      setShowAddMUserModal(false); 
       fetchUsers();
     } catch (err) {
       console.error("Error updating user:", err);
@@ -69,16 +72,39 @@ function M_user() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteMUser/${id}`,{
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
+      await axios.delete(`${process.env.REACT_APP_API_URL}/auth/deleteMUser/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
       );
       fetchUsers();
     }
-    
+
     catch (err) {
       console.error("Error deleting user:", err);
+    }
+  };
+
+  const handleToggleStatus = async (user) => {
+    const newStatus = !user.isActive;
+    const action = newStatus ? "activate" : "deactivate";
+
+    if (!window.confirm(`Are you sure you want to ${action} ${user.fullName}'s account?`)) return;
+
+    try {
+
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/auth/toggleMUserStatus/${user._id}`,
+        { isActive: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+      fetchUsers();
+    } catch (err) {
+      console.error(`Error ${action}ing user:`, err);
+      alert(`Failed to ${action} user. Check console for details.`);
     }
   };
 
@@ -87,24 +113,26 @@ function M_user() {
     setNewUser({
       fullName: user.fullName,
       email: user.email,
-      password: user.password,
-      barangay: user.barangay, // assuming this is the barangayId
+      password: "", 
+      barangay: user.barangay,
     });
     setShowAddMUserModal(true);
   };
 
-  // ✅ Helper function to get barangay name from its ID
   const getBarangayName = (barangayId) => {
     const brgy = barangays.find((b) => b._id === barangayId);
     return brgy ? brgy.name : "Unknown";
   };
+  
+ 
 
   return (
     <div className="User-container">
       <Sidebar />
       <div style={{ marginLeft: "250px", padding: "20px" }}>
         
-
+        <h1>Mobile User Management</h1> 
+        
         <table className="table">
           <thead>
             <tr>
@@ -112,7 +140,10 @@ function M_user() {
               <th>Name</th>
               <th>Email</th>
               <th>Barangay</th>
-              <th>Actions</th>
+              <th>Status</th>
+              <th>Confirmation Document</th> 
+              <th>Status Control</th> 
+              <th>Actions</th> 
             </tr>
           </thead>
           <tbody>
@@ -121,7 +152,33 @@ function M_user() {
                 <td>{user.MuserId}</td>
                 <td>{user.fullName}</td>
                 <td>{user.email}</td>
-                <td>{getBarangayName(user.barangay)}</td> 
+                <td>{getBarangayName(user.barangay)}</td>
+                <td style={{ color: user.isActive ? 'green' : 'red', fontWeight: 'bold' }}>
+                  {user.isActive ? 'Active' : 'Inactive'}
+                </td>
+                <td>
+                  {user.confirmationDocument ? (
+                    <button
+                      className="view-doc-button"
+                      onClick={() => handleViewDocument(user.confirmationDocument)}
+                      style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
+                    >
+                      View Document
+                    </button>
+                  ) : (
+                    <span style={{ color: 'gray' }}>No Document</span>
+                  )}
+                </td>
+                
+                <td>
+                  <button
+                    className={user.isActive ? 'deactivate-button' : 'activate-button'}
+                    onClick={() => handleToggleStatus(user)}
+                    style={{ backgroundColor: user.isActive ? '#dc3545' : '#28a745', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
+                  >
+                    {user.isActive ? 'Deactivate' : 'Activate'}
+                  </button>
+                </td>
                 <td>
                   <button className="button" onClick={() => handleEdit(user)}>
                     Edit
@@ -138,11 +195,12 @@ function M_user() {
           </tbody>
         </table>
 
-      
+
+
         {showAddMUserModal && (
           <div className="modal-overlay">
             <div className="modal-content">
-              <h2>{editUserId ? "Edit User": "Edit User" }</h2>
+              <h2>{editUserId ? "Edit User" : "Edit User"}</h2>
               <input
                 type="text"
                 placeholder="Name"
@@ -159,8 +217,8 @@ function M_user() {
                   setNewUser({ ...newUser, email: e.target.value })
                 }
               />
-           
-             <select
+
+              <select
                 value={newUser.barangay}
                 onChange={(e) =>
                   setNewUser({ ...newUser, barangay: e.target.value })
@@ -176,13 +234,13 @@ function M_user() {
 
               <input
                 type="password"
-                placeholder="Password"
+                placeholder="New Password (Leave blank to keep old one)"
                 value={newUser.password}
                 onChange={(e) =>
                   setNewUser({ ...newUser, password: e.target.value })
                 }
               />
-             <div className="modal-buttons">
+              <div className="modal-buttons">
                 <button
                   className="submit-btn"
                   onClick={handleUpdateMUser}
@@ -205,16 +263,5 @@ function M_user() {
 }
 
 export default M_user;
-
-
-
-
-
-
-
-
-
-
-
 
 

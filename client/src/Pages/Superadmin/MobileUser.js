@@ -126,7 +126,7 @@ function M_user() {
   
  const handleViewDocument = (documentPath) => {
   
-    window.open(fullUrl, '_blank');
+    // window.open(fullUrl, '_blank');
   };
 
   return (
@@ -266,6 +266,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

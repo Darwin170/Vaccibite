@@ -1,21 +1,32 @@
 const User = require('../model/M_user');
 const generateId = require('../utils/generateId');
 const bcrypt = require('bcryptjs');
+const fs = require('fs');
 
 const signupUser = async (req, res) => {
+  const confirmationDocumentPath = req.file ? req.file.path : null;
+
   try {
     const { fullName, email, password, confirmPassword, barangay } = req.body;
 
-    // --- Basic validation ---
-    if (!fullName || !email || !password || !confirmPassword || !barangay) {
-      return res.status(400).json({ message: 'Please fill in all fields.' });
+    const cleanupFile = () => {
+      if (confirmationDocumentPath && fs.existsSync(confirmationDocumentPath)) {
+        fs.unlinkSync(confirmationDocumentPath);
+      }
+    };
+    
+    if (!fullName || !email || !password || !confirmPassword || !barangay || !confirmationDocumentPath) {
+      cleanupFile();
+      return res.status(400).json({ message: 'Please fill in all fields and upload a confirmation document.' });
     }
 
     if (password !== confirmPassword) {
+      cleanupFile();
       return res.status(400).json({ message: 'Passwords do not match.' });
     }
 
     if (password.length < 8 ) {
+      cleanupFile();
       return res
         .status(400)
         .json({ message: 'Password must be at least 8 characters long.' });
@@ -23,48 +34,49 @@ const signupUser = async (req, res) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
     if (!passwordRegex.test(password)) {
-        return res
-            .status(400)
-            .json({ 
-                message: 'Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character (@, $, !, %, *, ?, &).' 
-            });
+      cleanupFile();
+      return res
+        .status(400)
+        .json({ 
+          message: 'Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character (@, $, !, %, *, ?, &).' 
+        });
     }
-    // --- Check if user already exists by email ---
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      cleanupFile();
       return res.status(400).json({ message: 'Email is already registered.' });
     }
 
-    // --- Hash password once ---
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // --- Generate custom userId ---
     const MuserId = await generateId('Muser');
 
-    // --- Create new user document ---
     const newUser = new User({
-      MuserId,        // ✅ generated ID
+      MuserId,
       fullName,
       email,
       password: hashedPassword,
       barangay,
       isActivated: false,
+      confirmationDocument: confirmationDocumentPath, 
     });
 
     await newUser.save();
 
     return res.status(201).json({
-      message: 'User registered successfully!',
+      message: 'User registered successfully! Awaiting admin confirmation.',
       user: {
         MuserId: newUser.MuserId,
         fullName: newUser.fullName,
         email: newUser.email,
         barangay: newUser.barangay,
         isActivated: newUser.isActivated,
+        confirmationDocument: newUser.confirmationDocument,
       },
     });
   } catch (error) {
     console.error('Signup error:', error);
+    cleanupFile(); 
     return res
       .status(500)
       .json({ message: 'Server error, please try again later.' });
@@ -72,5 +84,3 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
-
-

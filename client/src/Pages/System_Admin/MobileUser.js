@@ -26,7 +26,6 @@ function M_user() {
   const fetchUsers = async () => {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/getMobileUser`);
-      // Assuming user objects now include confirmationDocument: string
       setUsers(res.data);
     } catch (err) {
       console.error("Failed to fetch users:", err);
@@ -45,8 +44,6 @@ function M_user() {
 
   const handleUpdateMUser = async () => {
     const { fullName, email, password, barangay } = newUser;
-    // NOTE: You should typically NOT update the user's password here unless a new one is explicitly entered.
-    // If the modal is used for editing, you might want to skip password if it's empty.
     if (!fullName || !email || !barangay) return; 
 
     try {
@@ -65,7 +62,7 @@ function M_user() {
         isActive: true,
       });
       setEditUserId(null);
-      setShowAddMUserModal(false); // Corrected: Use setShowAddMUserModal(false)
+      setShowAddMUserModal(false); 
       fetchUsers();
     } catch (err) {
       console.error("Error updating user:", err);
@@ -116,8 +113,6 @@ function M_user() {
     setNewUser({
       fullName: user.fullName,
       email: user.email,
-      // NOTE: Never pre-fill password in an edit form for security.
-      // If the field is left blank, your backend update route should ignore it.
       password: "", 
       barangay: user.barangay,
     });
@@ -129,19 +124,13 @@ function M_user() {
     return brgy ? brgy.name : "Unknown";
   };
   
-  // NEW: Function to open the document in a new tab
-  const handleViewDocument = (documentPath) => {
-    // Construct the full URL using the path returned from the backend
-    const fullUrl = `${FILE_BASE_URL}/${documentPath}`;
-    window.open(fullUrl, '_blank');
-  };
+ 
 
   return (
     <div className="User-container">
       <Sidebar />
       <div style={{ marginLeft: "250px", padding: "20px" }}>
         
-        {/* Table Title (Optional, but good practice) */}
         <h1>Mobile User Management</h1> 
         
         <table className="table">
@@ -152,11 +141,8 @@ function M_user() {
               <th>Email</th>
               <th>Barangay</th>
               <th>Status</th>
-              {/* NEW COLUMN */}
               <th>Confirmation Document</th> 
-              {/* RENAMED COLUMN */}
               <th>Status Control</th> 
-              {/* SEPARATE ACTIONS COLUMN */}
               <th>Actions</th> 
             </tr>
           </thead>
@@ -170,8 +156,6 @@ function M_user() {
                 <td style={{ color: user.isActive ? 'green' : 'red', fontWeight: 'bold' }}>
                   {user.isActive ? 'Active' : 'Inactive'}
                 </td>
-                
-                {/* NEW TABLE DATA CELL */}
                 <td>
                   {user.confirmationDocument ? (
                     <button
@@ -186,7 +170,6 @@ function M_user() {
                   )}
                 </td>
                 
-                {/* STATUS CONTROL ACTIONS */}
                 <td>
                   <button
                     className={user.isActive ? 'deactivate-button' : 'activate-button'}
@@ -196,8 +179,6 @@ function M_user() {
                     {user.isActive ? 'Deactivate' : 'Activate'}
                   </button>
                 </td>
-                
-                {/* GENERAL ACTIONS */}
                 <td>
                   <button className="button" onClick={() => handleEdit(user)}>
                     Edit
@@ -215,7 +196,7 @@ function M_user() {
         </table>
 
 
-        {/* Modal remains the same, but note about password field has been added in code */}
+
         {showAddMUserModal && (
           <div className="modal-overlay">
             <div className="modal-content">
@@ -282,4 +263,5 @@ function M_user() {
 }
 
 export default M_user;
+
 

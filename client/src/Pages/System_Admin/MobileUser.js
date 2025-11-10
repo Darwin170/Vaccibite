@@ -125,7 +125,7 @@ function M_user() {
   };
   const handleViewDocument = (documentPath) => {
     // Construct the full URL using the path returned from the backend
-    const fullUrl = `${FILE_BASE_URL}/${documentPath}`;
+  
     window.open(fullUrl, '_blank');
   };
  
@@ -267,6 +267,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

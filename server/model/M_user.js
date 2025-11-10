@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
         enum: ['Barangay Presentative'], 
         default: 'Barangay Presentative',
     },
+   confirmationDocument: {
+        type: String,
+        required: true, 
+    },
    isActivated: {
         type: Boolean,
         default: false, 
@@ -45,6 +49,7 @@ const userSchema = new mongoose.Schema({
 const M_User = mongoose.model('Mobile_User', userSchema);
 
 module.exports = M_User;
+
 
 
 

@@ -3,9 +3,6 @@ import axios from "axios";
 import Sidebar from "./Sidebar";
 import "./UserManagement.css";
 
-// Assuming your backend serves static files (like confirmation documents) from a base URL
-// Example: http://localhost:5000/uploads/confirmation_documents/file-name.jpg
-const FILE_BASE_URL = process.env.REACT_APP_API_URL.replace('/api', ''); // Adjust this based on your API structure
 
 function M_user() {
   const [users, setUsers] = useState([]);
@@ -285,3 +282,4 @@ function M_user() {
 }
 
 export default M_user;
+

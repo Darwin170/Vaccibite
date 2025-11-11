@@ -42,7 +42,7 @@ const Sidebar = () => {
 
       <button onClick={() => navigate("/System_Admin/UserManagement")}>Admin</button>
       <button onClick={() => navigate("/System_Admin/MobileUser")}>Mobile User</button>
-      <button onClick={() => navigate("/System_Admin/Activitylogs")}>Activity Log</button>
+      <button onClick={() => navigate("/System_Admin/Activitylogs")}>Audit Trail</button>
       <button onClick={() => navigate("/System_Admin/Backup")}>Back-up</button>
       <button onClick={() => navigate("/System_Admin/Archive")}>Archive</button>
 

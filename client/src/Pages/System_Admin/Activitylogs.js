@@ -49,7 +49,7 @@ const ActivityLogs = () => {
     <div className="Activity">
       <Sidebar />
       <div style={{ marginLeft: "250px", padding: "20px" }}>
-        <h2>Activity Logs</h2>
+        <h2>Audit Trail</h2>
 
         
         <div className="controls" style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>

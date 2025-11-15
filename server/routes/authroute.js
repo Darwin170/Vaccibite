@@ -35,9 +35,11 @@ const {resendOtp}=require("../controller/resend-OTP");
 const {downloadAllReports}= require("../controller/backupPDf");
 const { recordUniqueEventView } = require('../controller/recordUniqueEventView'); 
 const {getAverageResolutionTime  }= require('../controller/interpretation');
+const { toggleMUserStatus} = require('../controller/ActiveController');
 
 const router = express.Router();
 
+router.get('/activecontroller', toggleMUserStatus);
 router.get('/average-resolution-time',getAverageResolutionTime );
 router.post('/events/:id/view', authMiddleware, recordUniqueEventView); 
 router.get("/pdf-backup", downloadAllReports);
@@ -76,6 +78,7 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 
 
 

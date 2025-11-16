@@ -32,9 +32,10 @@ Mrouter.post('/Roaming',authMiddleware, upload.single('image'), addRoamingAnimal
 Mrouter.post('/a',authMiddleware, upload.single('image'), addAnimalBite);
 Mrouter.post('/verification', verify);
 Mrouter.post('/login',  loginUser);
-Mrouter.post('/signup', signupUser);
+Mrouter.post('/signup', upload.single('image'), signupUser);
 
 module.exports = Mrouter;
+
 
 
 

@@ -39,7 +39,7 @@ const { toggleMUserStatus} = require('../controller/ActiveController');
 
 const router = express.Router();
 
-router.get('/activecontroller', toggleMUserStatus);
+router.get('/activecontroller/:id', toggleMUserStatus);
 router.get('/average-resolution-time',getAverageResolutionTime );
 router.post('/events/:id/view', authMiddleware, recordUniqueEventView); 
 router.get("/pdf-backup", downloadAllReports);
@@ -78,6 +78,7 @@ router.post('/login', loginUser);
 router.get('/reports', getAllReports);
 
 module.exports = router;
+
 
 
 

@@ -123,12 +123,7 @@ function M_user() {
     const brgy = barangays.find((b) => b._id === barangayId);
     return brgy ? brgy.name : "Unknown";
   };
-  const handleViewDocument = (documentPath) => {
-    // Construct the full URL using the path returned from the backend
   
-    // window.open(fullUrl, '_blank');
-  };
- 
 
   return (
     <div className="User-container">
@@ -267,6 +262,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

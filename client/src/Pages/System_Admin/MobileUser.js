@@ -161,17 +161,17 @@ function M_user() {
                   {user.isActive ? 'Active' : 'Inactive'}
                 </td>
                 <td>
-                  {user.confirmationDocument ? (
-                    <button
-                      className="view-doc-button"
-                      onClick={() => handleViewDocument(user.confirmationDocument)}
-                      style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
-                    >
-                      View Document
-                    </button>
-                  ) : (
-                    <span style={{ color: 'gray' }}>No Document</span>
-                  )}
+                    {user.filePath ? ( 
+                        <a
+                            href={`${process.env.REACT_APP_API_URL}/${user.filePath}`} 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {user.filePath.split('/').pop()}
+                        </a>
+                    ) : (
+                        'N/A'
+                    )}
                 </td>
                 
                 <td>
@@ -267,6 +267,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

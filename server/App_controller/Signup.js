@@ -4,18 +4,18 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 
 const signupUser = async (req, res) => {
-  const confirmationDocumentPath = req.file ? req.file.path : null;
+  const filepath = req.file ? req.file.path : null;
 
   try {
-    const { fullName, email, password, confirmPassword, barangay } = req.body;
+    const { fullName, email, password, confirmPassword, barangay, filepath} = req.body;
 
     const cleanupFile = () => {
-      if (confirmationDocumentPath && fs.existsSync(confirmationDocumentPath)) {
-        fs.unlinkSync(confirmationDocumentPath);
+      if (filepath && fs.existsSync(filepath)) {
+        fs.unlinkSync(filepath);
       }
     };
     
-    if (!fullName || !email || !password || !confirmPassword || !barangay || !confirmationDocumentPath) {
+    if (!fullName || !email || !password || !confirmPassword || !barangay || !filepath) {
       cleanupFile();
       return res.status(400).json({ message: 'Please fill in all fields and upload a confirmation document.' });
     }
@@ -58,7 +58,7 @@ const signupUser = async (req, res) => {
       password: hashedPassword,
       barangay,
       isActivated: false,
-      confirmationDocument: confirmationDocumentPath, 
+      filepath: filepath, 
     });
 
     await newUser.save();
@@ -71,7 +71,7 @@ const signupUser = async (req, res) => {
         email: newUser.email,
         barangay: newUser.barangay,
         isActivated: newUser.isActivated,
-        confirmationDocument: newUser.confirmationDocument,
+        filepath: newUser.filepath,
       },
     });
   } catch (error) {
@@ -84,3 +84,4 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+

@@ -1,4 +1,3 @@
-// controller/mauth.js (FIXED)
 
 const User = require('../model/M_user');
 const generateId = require('../utils/generateId');
@@ -74,3 +73,4 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+

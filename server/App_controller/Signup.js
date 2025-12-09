@@ -47,7 +47,7 @@ const signupUser = async (req, res) => {
       password: hashedPassword,
       barangay,
       isActivated: false,
-      filepath: uploadedFilepath, 
+      filePath: uploadedFilepath, 
     });
 
     await newUser.save();
@@ -73,4 +73,5 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+
 

@@ -94,7 +94,7 @@ function M_user() {
     try {
 
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/auth/activecontroller/${user._id}`,
+        `${process.env.REACT_APP_API_URL}/auth/toggleMUserStatus/${user._id}`,
         { isActive: newStatus },
         {
           headers: {
@@ -266,6 +266,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

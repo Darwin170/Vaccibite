@@ -34,9 +34,9 @@ const sendActivationEmail = async (email, fullName) => {
 
 const toggleMUserStatus = async (req, res) => {
     const { id } = req.params;
-    const { isActive } = req.body;
+    const { isActivated } = req.body;  // <-- match schema
 
-    if (typeof isActive !== 'boolean') {
+    if (typeof isActivated !== 'boolean') {
         return res.status(400).json({ message: "Invalid status provided." });
     }
 
@@ -46,12 +46,12 @@ const toggleMUserStatus = async (req, res) => {
         if (!currentUser) {
             return res.status(404).json({ message: "Mobile user not found." });
         }
-        
-        const shouldSendEmail = !currentUser.isActive && isActive;
+
+        const shouldSendEmail = !currentUser.isActivated && isActivated;
 
         const updatedUser = await MobileUser.findByIdAndUpdate(
             id,
-            { isActive: isActive },
+            { isActivated }, // <-- match schema
             { new: true, runValidators: true }
         );
 
@@ -60,7 +60,7 @@ const toggleMUserStatus = async (req, res) => {
         }
 
         res.status(200).json({
-            message: `User ${updatedUser.fullName} status updated to ${isActive ? 'Active' : 'Inactive'}`,
+            message: `User ${updatedUser.fullName} status updated to ${isActivated ? 'Active' : 'Inactive'}`,
             user: updatedUser
         });
 
@@ -68,8 +68,4 @@ const toggleMUserStatus = async (req, res) => {
         console.error("Error toggling mobile user status:", error);
         res.status(500).json({ message: "Server error during status update." });
     }
-};
-
-module.exports = {
-    toggleMUserStatus
 };

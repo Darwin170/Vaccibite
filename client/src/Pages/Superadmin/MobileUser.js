@@ -159,19 +159,25 @@ function M_user() {
                 <td style={{ color: user.isActive ? 'green' : 'red', fontWeight: 'bold' }}>
                   {user.isActive ? 'Active' : 'Inactive'}
                 </td>
-                <td>
-                  {user.confirmationDocument ? (
-                    <button
-                      className="view-doc-button"
-                      onClick={() => handleViewDocument(user.confirmationDocument)}
-                      style={{ backgroundColor: '#007bff', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
-                    >
-                      View Document
-                    </button>
-                  ) : (
-                    <span style={{ color: 'gray' }}>No Document</span>
-                  )}
-                </td>
+               <td>
+                    {user.filePath ? (
+                      <button
+                        className="view-doc-button"
+                        onClick={() => handleViewDocument(user.filePath)}
+                        style={{
+                          backgroundColor: '#007bff',
+                          color: 'white',
+                          border: 'none',
+                          padding: '5px 10px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        View Document
+                      </button>
+                    ) : (
+                      <span style={{ color: 'gray' }}>No Document</span>
+                    )}
+                  </td>
                 
                 <td>
                   <button
@@ -266,6 +272,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

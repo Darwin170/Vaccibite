@@ -16,7 +16,8 @@ const signupUser = async (req, res) => {
   try {
     const { fullName, email, password, confirmPassword, barangay } = req.body;
 
-
+    console.log('req.body:', req.body);
+console.log('req.file:', req.file);
     if (!fullName || !email || !password || !confirmPassword || !barangay || !uploadedFilepath) {
       cleanupFile();
       return res.status(400).json({ message: 'Please fill in all fields and upload a confirmation document.' });
@@ -73,5 +74,6 @@ const signupUser = async (req, res) => {
 };
 
 module.exports = { signupUser };
+
 
 

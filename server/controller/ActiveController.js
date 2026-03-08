@@ -69,3 +69,6 @@ const toggleMUserStatus = async (req, res) => {
         res.status(500).json({ message: "Server error during status update." });
     }
 };
+module.exports = {
+    toggleMUserStatus
+};

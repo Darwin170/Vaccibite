@@ -156,9 +156,9 @@ function M_user() {
                 <td>{user.fullName}</td>
                 <td>{user.email}</td>
                 <td>{getBarangayName(user.barangay)}</td>
-                <td style={{ color: user.isActive ? 'green' : 'red', fontWeight: 'bold' }}>
-                  {user.isActive ? 'Active' : 'Inactive'}
-                </td>
+                <td style={{ color: user.isActivated ? 'green' : 'red', fontWeight: 'bold' }}>
+                      {user.isActivated ? 'Active' : 'Inactive'}
+                    </td>
                <td>
                     {user.filePath ? (
                       <button
@@ -272,6 +272,7 @@ function M_user() {
 }
 
 export default M_user;
+
 
 
 

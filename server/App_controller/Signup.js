@@ -23,7 +23,14 @@ console.log('req.file:', req.file);
       return res.status(400).json({ message: 'Please fill in all fields and upload a confirmation document.' });
     }
 
-
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    
+    if (!passwordRegex.test(password)) {
+      cleanupFile();
+      return res.status(400).json({ 
+        message: 'Password too weak. Must be at least 8 characters long and include uppercase, lowercase, a number, and a special character.' 
+      });
+    }
     
     if (password !== confirmPassword) {
       cleanupFile();
@@ -74,6 +81,7 @@ console.log('req.file:', req.file);
 };
 
 module.exports = { signupUser };
+
 
 
 

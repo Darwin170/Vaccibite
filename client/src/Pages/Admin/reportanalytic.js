@@ -445,12 +445,11 @@ const Dashboard = () => {
                     </div>
                 </div>
                 
-                <div className="Summary">
-  
+            <div className="Summary">
     {(() => {
         const summary = getSummaryText();
         return (
-            <>
+            <> 
                 <p><strong>{summary.headline}</strong></p>
                 <p>{summary.insight}</p>
                 <p><i>{summary.healthCheck}</i></p>
@@ -465,6 +464,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

@@ -187,59 +187,67 @@ const Dashboard = () => {
     }, [startMonth, endMonth, incidentType, selectedDistrict, selectedBarangay, status]);
 
 
-    const getSummaryText = () => {
-       
-        const contextFilters = [];
+  const getSummaryText = () => {
+    const contextFilters = [];
+    
+    
+    if (selectedBarangay) {
+        const barangayName = filteredBarangays.find(b => b._id === selectedBarangay)?.name;
+        if (barangayName) contextFilters.push(`in Barangay ${barangayName}`);
+    } else if (selectedDistrict) {
+        contextFilters.push(`in District ${selectedDistrict}`);
+    }
+    
+    if (status) {
+        contextFilters.push(`for ${status.toLowerCase()} reports`);
+    }
+
+    if (startMonth !== '1' || endMonth !== '12') {
+        const start = new Date(0, parseInt(startMonth) - 1).toLocaleString('default', { month: 'long' });
+        const end = new Date(0, parseInt(endMonth) - 1).toLocaleString('default', { month: 'long' });
+        contextFilters.push(start === end ? `for ${start}` : `between ${start} and ${end}`);
+    }
+    
+    const contextString = contextFilters.length > 0 ? contextFilters.join(', ') : 'overall';
+    const totalReportsText = `A total of ${totalFilteredReports} report${totalFilteredReports !== 1 ? 's' : ''} were recorded ${contextString}.`;
+
+    
+    if (totalFilteredReports > 0) {
+        const sortedData = [...pieData]
+            .map(item => ({
+                name: item.name.toLowerCase(),
+                percentage: Math.round((item.value / totalFilteredReports) * 100),
+                raw: item.value
+            }))
+            .filter(item => item.percentage > 0)
+            .sort((a, b) => b.raw - a.raw);
+
+        const topIncident = sortedData[0];
         
-        if (selectedBarangay) {
-            const barangayName = filteredBarangays.find(b => b._id === selectedBarangay)?.name;
-            if (barangayName) contextFilters.push(`in Barangay ${barangayName}`);
-        } else if (selectedDistrict) {
-            contextFilters.push(`in District ${selectedDistrict}`);
+        // Format the distribution list with a natural "and" at the end
+        const distributionArray = sortedData.map(item => `${item.percentage}% ${item.name}`);
+        const distributionString = distributionArray.length > 1 
+            ? `${distributionArray.slice(0, -1).join(', ')} and ${distributionArray.slice(-1)}`
+            : distributionArray[0];
+
+        
+        let interpretation = `${totalReportsText} `;
+        
+        if (sortedData.length === 1) {
+            interpretation += `All reported incidents during this period were related to ${topIncident.name}.`;
+        } else {
+            interpretation += `The primary concern identified is ${topIncident.name}, which accounts for ${topIncident.percentage}% of the total volume. `;
+            interpretation += `The full distribution consists of ${distributionString}.`;
         }
-        
-        if (status) {
-            contextFilters.push(`for ${status.toLowerCase()} reports`);
-        }
 
-        
-        if (startMonth !== '1' || endMonth !== '12') {
-            const start = new Date(0, parseInt(startMonth) - 1).toLocaleString('default', { month: 'long' });
-            const end = new Date(0, parseInt(endMonth) - 1).toLocaleString('default', { month: 'long' });
-            
-            if (start === end) {
-                contextFilters.push(`for the month of ${start}`);
-            } else {
-                contextFilters.push(`from ${start} to ${end}`);
-            }
-        }
-        
-        const contextString = contextFilters.length > 0 ? contextFilters.join(', ') : 'overall';
-        const totalReportsText = `A total of ${totalFilteredReports} report${totalFilteredReports !== 1 ? 's' : ''} were filed ${contextString}.`;
-        
-     
-        if (totalFilteredReports > 0) {
-            const distribution = pieData
-                .map(item => ({
-                    percentage: Math.round((item.value / totalFilteredReports) * 100),
-                    name: item.name
-                }))
-                .filter(item => item.percentage > 0)
-                .sort((a, b) => b.percentage - a.percentage)
-                .map(item => `${item.percentage}% ${item.name.toLowerCase()} incidents`);
+        return interpretation;
 
-            const distributionString = distribution.join(', ');
+    } else if (contextFilters.length > 0) {
+        return `No records found for the selected criteria: ${contextString}.`;
+    }
 
-       
-            return `${totalReportsText} The incident breakdown is: ${distributionString}.`;
-
-        } else if (contextFilters.length > 0) {
-            return `No reports were found matching the criteria: ${contextString}.`;
-        }
-
-        return "Showing statistic: No reports were found in the system.";
-    };
-
+    return "No report data is currently available in the system.";
+};
 
 
     return (
@@ -450,6 +458,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

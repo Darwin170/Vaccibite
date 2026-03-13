@@ -445,9 +445,19 @@ const Dashboard = () => {
                     </div>
                 </div>
                 
-                
-                          <div className="Summary">
-                    <p>{getSummaryText()}</p> {/* Renders the dynamic summary */}
+                <div className="Summary">
+  
+    {(() => {
+        const summary = getSummaryText();
+        return (
+            <>
+                <p><strong>{summary.headline}</strong></p>
+                <p>{summary.insight}</p>
+                <p><i>{summary.healthCheck}</i></p>
+            </>
+        );
+    })()}
+</div>
                 </div>
             </div>
         </div>
@@ -455,6 +465,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

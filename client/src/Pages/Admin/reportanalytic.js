@@ -187,10 +187,10 @@ const Dashboard = () => {
     }, [startMonth, endMonth, incidentType, selectedDistrict, selectedBarangay, status]);
 
 
-  const getSummaryText = (previousTotal = null) => {
+  const getSummaryText = () => {
     const contextFilters = [];
     
-    // 1. Context Building (Barangay, District, Status)
+    // 1. Context Logic
     if (selectedBarangay) {
         const barangayName = filteredBarangays.find(b => b._id === selectedBarangay)?.name;
         if (barangayName) contextFilters.push(`in Barangay ${barangayName}`);
@@ -200,66 +200,49 @@ const Dashboard = () => {
     
     if (status) contextFilters.push(`for ${status.toLowerCase()} reports`);
 
-    // 2. Date Range Text
-    if (startMonth !== '1' || endMonth !== '12') {
-        const start = new Date(0, parseInt(startMonth) - 1).toLocaleString('default', { month: 'long' });
-        const end = new Date(0, parseInt(endMonth) - 1).toLocaleString('default', { month: 'long' });
-        contextFilters.push(start === end ? `for ${start}` : `between ${start} and ${end}`);
-    }
-    
-    const contextString = contextFilters.length > 0 ? contextFilters.join(', ') : 'overall';
+    const contextString = contextFilters.length > 0 ? contextFilters.join(', ') : 'across the system';
 
-    // 3. The Interpretation Logic
     if (totalFilteredReports > 0) {
+        // 2. Data Breakdown
         const sortedData = [...pieData]
             .map(item => ({
                 name: item.name.toLowerCase(),
                 percentage: Math.round((item.value / totalFilteredReports) * 100),
                 raw: item.value
             }))
-            .filter(item => item.percentage > 0)
             .sort((a, b) => b.raw - a.raw);
 
         const topIncident = sortedData[0];
-        
-        // Natural language joining (A, B, and C)
-        const distributionArray = sortedData.map(item => `${item.percentage}% ${item.name}`);
-        const distributionString = distributionArray.length > 1 
-            ? `${distributionArray.slice(0, -1).join(', ')} and ${distributionArray.slice(-1)}`
-            : distributionArray[0];
+        const remaining = sortedData.slice(1).filter(i => i.percentage > 0);
 
-        // 4. Comparison Analysis
-        let comparisonText = "";
-        if (previousTotal !== null && previousTotal > 0) {
-            const diff = totalFilteredReports - previousTotal;
-            const percentChange = Math.abs(Math.round((diff / previousTotal) * 100));
-            const direction = diff > 0 ? "increase" : "decrease";
-            
-            if (diff === 0) {
-                comparisonText = "This volume is consistent with the previous period.";
-            } else {
-                comparisonText = `This represents a ${percentChange}% ${direction} compared to the previous period.`;
-            }
+        // 3. Efficiency Metric (Resolution Rate)
+        const resolutionRate = Math.round((resolvedReportsCount / totalFilteredReports) * 100);
+
+        // 4. Narrative Construction
+        let headline = `A total of ${totalFilteredReports} reports were recorded ${contextString}. `;
+        
+        let insight = `The primary concern is ${topIncident.name}, which accounts for ${topIncident.percentage}% of the total volume. `;
+        
+        if (remaining.length > 0) {
+            const remainingText = remaining.map(i => `${i.percentage}% ${i.name}`).join(', ').replace(/, ([^,]*)$/, ' and $1');
+            insight += `The remaining reports consist of ${remainingText}. `;
         }
 
-        // 5. Final Narrative Assembly
-        let finalOutput = `A total of ${totalFilteredReports} report${totalFilteredReports !== 1 ? 's' : ''} were recorded ${contextString}. `;
-        
-        if (comparisonText) finalOutput += `${comparisonText} `;
-
-        if (sortedData.length === 1) {
-            finalOutput += `All reported activity is currently categorized as ${topIncident.name}.`;
-        } else {
-            finalOutput += `The primary concern is ${topIncident.name} (${topIncident.percentage}% of total). `;
-            finalOutput += `The remaining reports consist of ${distributionString}.`;
+        let healthCheck = `Currently, the resolution rate stands at ${resolutionRate}%. `;
+        if (resolutionRate < 50 && totalFilteredReports > 5) {
+            healthCheck += `This suggests a growing backlog that may require administrative attention.`;
+        } else if (resolutionRate > 80) {
+            healthCheck += `This indicates a very high efficiency in closing cases.`;
         }
 
-        return finalOutput;
+        return {
+            headline,
+            insight,
+            healthCheck
+        };
 
     } else {
-        return contextFilters.length > 0 
-            ? `No records found matching these criteria: ${contextString}.` 
-            : "No report data is currently available.";
+        return { headline: `No reports found matching the criteria ${contextString}.`, insight: "", healthCheck: "" };
     }
 };
 
@@ -472,6 +455,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

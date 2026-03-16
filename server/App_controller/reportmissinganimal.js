@@ -23,7 +23,7 @@ const addMissinganimal = async (req, res) => {
         latitude, 
        longitude, 
     } = req.body;
-
+        const type = 'Missing Animal';
     // 🔑 NEW LOGIC: Fetch Barangay Name
     let barangayName = null;
     if (barangayId) {
@@ -35,6 +35,7 @@ const addMissinganimal = async (req, res) => {
             console.warn(`Barangay ID ${barangayId} not found for Missing Animal report.`);
         }
     }
+          
  if (type === 'Missing Animal') {
 
         if (!latitude || !longitude) {

@@ -177,7 +177,7 @@ function M_user() {
                     {user.isActive ? 'Deactivate' : 'Activate'}
                   </button>
                 </td>
-                <td>
+                
                 <td>
                   <button className="button" onClick={() => handleEdit(user)}>
                     Edit

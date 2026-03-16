@@ -28,6 +28,7 @@ const addAnimalBite = async (req, res) => {
        latitude, 
        longitude, 
     } = req.body;
+            const type = 'Animal Bite';
 
     // 🔑 Keep fetching the name for the main report object display
     let barangayName = null;

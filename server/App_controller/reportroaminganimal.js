@@ -22,7 +22,7 @@ const addRoamingAnimal = async (req, res) => {
         latitude, 
        longitude, 
     } = req.body;
-
+        const type = 'Roaming Animal';
     // 🔑 NEW LOGIC: Fetch Barangay Name
     let barangayName = null;
     if (barangayId) {

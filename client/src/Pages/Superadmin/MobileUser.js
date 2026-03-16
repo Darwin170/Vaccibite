@@ -124,10 +124,6 @@ function M_user() {
     return brgy ? brgy.name : "Unknown";
   };
   
- const handleViewDocument = (documentPath) => {
-  
-    // window.open(fullUrl, '_blank');
-  };
 
   return (
     <div className="User-container">
@@ -159,25 +155,19 @@ function M_user() {
                 <td style={{ color: user.isActivated ? 'green' : 'red', fontWeight: 'bold' }}>
                       {user.isActivated ? 'Active' : 'Inactive'}
                     </td>
-               <td>
-                    {user.filePath ? (
-                      <button
-                        className="view-doc-button"
-                        onClick={() => handleViewDocument(user.filePath)}
-                        style={{
-                          backgroundColor: '#007bff',
-                          color: 'white',
-                          border: 'none',
-                          padding: '5px 10px',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        View Document
-                      </button>
+              <td>
+                    {user.filePath ? ( 
+                        <a
+                            href={`${process.env.REACT_APP_API_URL}/${user.filePath}`} 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {user.filePath.split('/').pop()}
+                        </a>
                     ) : (
-                      <span style={{ color: 'gray' }}>No Document</span>
+                        'N/A'
                     )}
-                  </td>
+                </td>
                 
                 <td>
                   <button

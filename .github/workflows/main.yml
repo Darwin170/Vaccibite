@@ -14,15 +14,17 @@ jobs:
       uses: actions/checkout@v5 
 
     - name: Setup Node.js
-      uses: actions/setup-node@v5 
+      uses: actions/setup-node@v5
       with:
         node-version: '20' 
 
     - name: Install Dependencies
+      working-directory: ./server 
       run: |
         npm install
 
     - name: Compile to Standalone EXE
+      working-directory: ./server
       run: |
         npm install -g pkg
         pkg . --targets node20-win-x64 --output dist/my-mern-app.exe
@@ -31,4 +33,4 @@ jobs:
       uses: actions/upload-artifact@v4 
       with:
         name: Windows-Executable
-        path: dist/my-mern-app.exe
+        path: ./server/dist/my-mern-app.exe

@@ -3,7 +3,10 @@ name: Compile MERN to Windows EXE
 on:
   push:
     branches: [ "main" ] 
-  workflow_dispatch:    
+  workflow_dispatch:     
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   build-windows-exe:
@@ -14,19 +17,18 @@ jobs:
       uses: actions/checkout@v4 
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4 
+      uses: actions/setup-node@v4
       with:
-        node-with-version: '18'
+        node-version: '20' # Fixed: changed from 'node-with-version' to 'node-version'
 
     - name: Install Dependencies
       run: |
         npm install
-       
 
     - name: Compile to Standalone EXE
       run: |
         npm install -g pkg
-        pkg . --targets node18-win-x64 --output dist/my-mern-app.exe
+        pkg . --targets node20-win-x64 --output dist/my-mern-app.exe
 
     - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4 

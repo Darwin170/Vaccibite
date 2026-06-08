@@ -5,21 +5,18 @@ on:
     branches: [ "main" ] 
   workflow_dispatch:     
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-
 jobs:
   build-windows-exe:
     runs-on: windows-latest 
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4 
+      uses: actions/checkout@v5 
 
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5 
       with:
-        node-version: '20' # Fixed: changed from 'node-with-version' to 'node-version'
+        node-version: '20' 
 
     - name: Install Dependencies
       run: |
